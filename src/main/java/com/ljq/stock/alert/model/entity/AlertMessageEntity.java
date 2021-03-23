@@ -1,0 +1,62 @@
+package com.ljq.stock.alert.model.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.ljq.stock.alert.model.BaseEntity;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 预警消息实体类
+ *
+ * @author junqiang.lu
+ * @date 2021-03-22 17:17:06
+ */
+@Data
+@TableName(value = "alert_message", resultMap = "alertMessageMap")
+@ApiModel(value = "预警消息", description = "预警消息")
+public class AlertMessageEntity extends BaseEntity {
+
+	private static final long serialVersionUID = 1L;
+
+    /**
+     * id
+     **/
+    @TableId(value = "ID", type = IdType.AUTO)
+    @ApiModelProperty(value = "id", name = "id")
+    private Long id;
+    /**
+     * 用户信息
+     **/
+    @TableField(value = "USER_ID")
+    @ApiModelProperty(value = "用户信息", name = "userId")
+    private Long userId;
+    /**
+     * 手机发送,1-发送成功,2-发送失败,3-未发送
+     **/
+    @TableField(value = "PHONE_SEND")
+    @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送", name = "phoneSend")
+    private Integer phoneSend;
+    /**
+     * 邮箱发送,1-发送成功,2-发送失败,3-未发送
+     **/
+    @TableField(value = "EMAIL_SEND")
+    @ApiModelProperty(value = "邮箱发送,1-发送成功,2-发送失败,3-未发送", name = "emailSend")
+    private Integer emailSend;
+    /**
+     * 股票 id
+     **/
+    @TableField(value = "STOCK_ID")
+    @ApiModelProperty(value = "股票 id", name = "stockId")
+    private Long stockId;
+    /**
+     * 消息内容
+     **/
+    @TableField(value = "CONTENT")
+    @ApiModelProperty(value = "消息内容", name = "content")
+    private String content;
+
+}
