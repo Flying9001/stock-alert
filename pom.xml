@@ -70,6 +70,16 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>${springfox-swagger3.version}</version>
         </dependency>
+        <!-- Apache httpClient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
+
 
         <!-- lombok -->
         <dependency>

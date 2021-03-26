@@ -1,8 +1,6 @@
 package com.ljq.stock.alert.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ljq.stock.alert.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -22,12 +20,6 @@ public class UserInfoEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     **/
-    @TableId(value = "ID", type = IdType.AUTO)
-    @ApiModelProperty(value = "id", name = "id")
-    private Long id;
     /**
      * 账户
      **/

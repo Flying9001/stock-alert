@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 /**
  * 股票源
  * 
@@ -37,7 +39,7 @@ public class StockSourceController {
      */
     @PostMapping(value = "/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "股票源新增(单条)",  notes = "股票源新增(单条)")
-    public ResponseEntity<ApiResult<StockSourceEntity>> save(@Validated @RequestBody StockSourceSaveParam saveParam) {
+    public ResponseEntity<ApiResult<StockSourceEntity>> save(@Validated @RequestBody StockSourceSaveParam saveParam) throws IOException {
         return ResponseEntity.ok(ApiResult.success(stockSourceService.save(saveParam)));
     }
 
@@ -53,6 +55,8 @@ public class StockSourceController {
         return ResponseEntity.ok(ApiResult.success(stockSourceService.info(infoParam)));
     }
 
+
+
     /**
      * 分页查询
      *
@@ -66,16 +70,16 @@ public class StockSourceController {
     }
 
     /**
-     * 修改(单条)
+     * 分页查询实时股票数据
      *
-     * @param
+     * @param listRealTimeParam
      * @return
      */
-    @PutMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "股票源修改(单条)",  notes = "股票源修改(单条)")
-    public ResponseEntity<ApiResult<Void>> update(@Validated @RequestBody StockSourceUpdateParam updateParam) {
-        stockSourceService.update(updateParam);
-        return ResponseEntity.ok(ApiResult.success());
+    @GetMapping(value = "/page/realTime", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "分页查询实时股票数据",  notes = "分页查询实时股票数据")
+    public ResponseEntity<ApiResult<IPage<StockSourceEntity>>> pageRealTime(@Validated StockSourceListRealTimeParam
+                        listRealTimeParam) throws IOException {
+        return ResponseEntity.ok(ApiResult.success(stockSourceService.pageRealTime(listRealTimeParam)));
     }
 
     /**

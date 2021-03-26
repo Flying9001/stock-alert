@@ -1,6 +1,8 @@
 package com.ljq.stock.alert.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,6 +19,12 @@ public class BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -4742455868884603111L;
 
+    /**
+     * id
+     **/
+    @TableId(value = "ID", type = IdType.NONE)
+    @ApiModelProperty(value = "id", name = "id")
+    private Long id;
     /**
      * 创建时间
      **/

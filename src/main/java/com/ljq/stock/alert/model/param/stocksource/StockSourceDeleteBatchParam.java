@@ -23,8 +23,8 @@ public class StockSourceDeleteBatchParam implements Serializable {
     /**
      * id 列表
      **/
-    @NotEmpty(message = "id 不能为空")
-    @ApiModelProperty(value = "id不能为空", name = "idList")
+    @NotEmpty(message = "请选择需要删除的条目")
+    @ApiModelProperty(value = "id列表", name = "idList")
     private List<Long> idList;
 
 

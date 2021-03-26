@@ -1,8 +1,6 @@
 package com.ljq.stock.alert.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ljq.stock.alert.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -10,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 股票源实体类
@@ -26,17 +23,17 @@ public class StockSourceEntity extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     **/
-    @TableId(value = "ID", type = IdType.AUTO)
-    @ApiModelProperty(value = "id", name = "id")
-    private Long id;
-    /**
      * 市场类型,1-上海,2-深圳,3-香港,4-美国
      **/
     @TableField(value = "MARKET_TYPE")
     @ApiModelProperty(value = "市场类型,1-上海,2-深圳,3-香港,4-美国", name = "marketType")
     private Integer marketType;
+    /**
+     * 市场类型编码
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "市场类型编码", name = "marketTypeCode")
+    private String marketTypeCode;
     /**
      * 股票代码
      **/
@@ -92,7 +89,7 @@ public class StockSourceEntity extends BaseEntity {
     @ApiModelProperty(value = "今日最低价", name = "todayMinPrice")
     private BigDecimal todayMinPrice;
     /**
-     * 交易量
+     * 交易量(单位:手)
      **/
     @TableField(value = "TRADE_NUMBER")
     @ApiModelProperty(value = "交易量", name = "tradeNumber")
@@ -108,7 +105,7 @@ public class StockSourceEntity extends BaseEntity {
      **/
     @TableField(value = "DATE")
     @ApiModelProperty(value = "日期", name = "date")
-    private Date date;
+    private String date;
     /**
      * 时间
      **/

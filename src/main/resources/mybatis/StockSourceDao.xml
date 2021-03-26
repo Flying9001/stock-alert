@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljq.stock.alert.dao.StockSourceDao">
+
+	<!-- 股票源结果集resultMap -->
+    <resultMap type="com.ljq.stock.alert.model.entity.StockSourceEntity" id="stockSourceMap">
+        <id property="id" column="ID" />
+        <result property="marketType" column="MARKET_TYPE"/>
+        <result property="stockCode" column="STOCK_CODE"/>
+        <result property="companyName" column="COMPANY_NAME"/>
+        <result property="todayStartPrice" column="TODAY_START_PRICE"/>
+        <result property="yesterdayEndPrice" column="YESTERDAY_END_PRICE"/>
+        <result property="currentPrice" column="CURRENT_PRICE"/>
+        <result property="increase" column="INCREASE"/>
+        <result property="increasePer" column="INCREASE_PER"/>
+        <result property="todayMaxPrice" column="TODAY_MAX_PRICE"/>
+        <result property="todayMinPrice" column="TODAY_MIN_PRICE"/>
+        <result property="tradeNumber" column="TRADE_NUMBER"/>
+        <result property="tradeAmount" column="TRADE_AMOUNT"/>
+        <result property="date" column="DATE"/>
+        <result property="time" column="TIME"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+    </resultMap>
+
+   <!-- 股票源-基础字段 -->
+	<sql id="stock_source_base_field">
+        `ID`,
+        `MARKET_TYPE`,
+        `STOCK_CODE`,
+        `COMPANY_NAME`,
+        `TODAY_START_PRICE`,
+        `YESTERDAY_END_PRICE`,
+        `CURRENT_PRICE`,
+        `INCREASE`,
+        `INCREASE_PER`,
+        `TODAY_MAX_PRICE`,
+        `TODAY_MIN_PRICE`,
+        `TRADE_NUMBER`,
+        `TRADE_AMOUNT`,
+        `DATE`,
+        `TIME`,
+        `CREATE_TIME`,
+        `UPDATE_TIME`
+	</sql>
+
+</mapper>

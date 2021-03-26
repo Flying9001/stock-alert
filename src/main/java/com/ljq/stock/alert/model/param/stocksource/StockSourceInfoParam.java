@@ -1,11 +1,7 @@
 package com.ljq.stock.alert.model.param.stocksource;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 /**
  * 股票源查询详情(单条)
@@ -15,16 +11,8 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "股票源查询详情(单条)", description = "股票源查询详情(单条)")
-public class StockSourceInfoParam implements Serializable {
+public class StockSourceInfoParam extends StockSourceCommonParam {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * id
-     **/
-    @NotNull(message = "id 不能为空")
-    @ApiModelProperty(value = "id 不能为空", name = "id")
-    private Long id;
-
 
 }
