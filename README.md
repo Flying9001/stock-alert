@@ -69,6 +69,10 @@ maven 打包
 ./doc/sql/stock_alert_init.sql
 ```
 
+[需求分析](./doc/requirement_analysis.md)  
+
+  
+
 
 
 

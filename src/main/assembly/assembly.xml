@@ -36,6 +36,20 @@
                 <include>*.md</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>doc/sql</directory>
+            <outputDirectory>./doc/sql</outputDirectory>
+            <includes>
+                <include>*.sql</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>doc</directory>
+            <outputDirectory>./doc</outputDirectory>
+            <includes>
+                <include>*.md</include>
+            </includes>
+        </fileSet>
 
     </fileSets>
 
