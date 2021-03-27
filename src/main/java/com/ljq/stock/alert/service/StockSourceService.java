@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.param.stocksource.*;
 
-import java.io.IOException;
-
 /**
  * 股票源业务层接口
  * 
@@ -19,9 +17,8 @@ public interface StockSourceService {
 	 *
 	 * @param saveParam
 	 * @return
-	 * @throws IOException
 	 */
-	StockSourceEntity save(StockSourceSaveParam saveParam) throws IOException;
+	StockSourceEntity save(StockSourceSaveParam saveParam);
 
 	/**
      * 查询详情(单条)
@@ -37,7 +34,7 @@ public interface StockSourceService {
 	 * @param infoRealTimeParam
 	 * @return
 	 */
-	StockSourceEntity infoRealTime(StockSourceInfoRealTimeParam infoRealTimeParam) throws IOException;
+	StockSourceEntity infoRealTime(StockSourceInfoRealTimeParam infoRealTimeParam);
 
 	/**
      * 分页查询
@@ -52,9 +49,8 @@ public interface StockSourceService {
 	 *
 	 * @param listRealTimeParam
 	 * @return
-	 * @throws IOException
 	 */
-	IPage<StockSourceEntity> pageRealTime(StockSourceListRealTimeParam listRealTimeParam) throws IOException;
+	IPage<StockSourceEntity> pageRealTime(StockSourceListRealTimeParam listRealTimeParam);
 
 	/**
      * 删除(单条)

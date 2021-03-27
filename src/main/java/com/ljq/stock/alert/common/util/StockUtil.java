@@ -1,8 +1,11 @@
 package com.ljq.stock.alert.common.util;
 
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.constant.MarketEnum;
+import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
@@ -18,6 +21,7 @@ import java.util.Objects;
  * @Author: junqiang.lu
  * @Date: 2021/3/25
  */
+@Slf4j
 public class StockUtil {
 
     private StockUtil(){
@@ -31,21 +35,28 @@ public class StockUtil {
      * @param marketType 股票市场类型
      * @return
      */
-    public static StockSourceEntity getStockFromSina(StockApiConfig apiConfig, String stockCode, int marketType)
-            throws IOException {
+    public static StockSourceEntity getStockFromSina(StockApiConfig apiConfig, String stockCode, int marketType) {
         // 获取股票市场类型
         MarketEnum marketEnum = MarketEnum.getMarketByType(marketType);
         if (Objects.equals(marketEnum, MarketEnum.UNKNOWN)) {
-            // TODO 异常抛出
+            throw new CommonException(ApiMsgEnum.STOCK_UNKNOWN_MARKET_TYPE);
         }
         // 获取股票数据
         String pathParam = marketEnum.getCode() + stockCode;
-        HttpResponse httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAddress(), pathParam, null, null);
-        if (!Objects.equals(httpResponse.getStatusLine(), HttpStatus.SC_OK)) {
-            // TODO 抛出异常
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAddress(), pathParam, null, null);
+            if (!Objects.equals(httpResponse.getStatusLine().getStatusCode(), HttpStatus.SC_OK)) {
+                throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
+            }
+            return createStock(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"),
+                    marketType, stockCode);
+        } catch (IOException e) {
+            log.error("{}", e.getMessage());
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
+        } catch (ArrayIndexOutOfBoundsException e2) {
+            throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
         }
-        return createStock(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"),
-                marketType, stockCode);
     }
 
     /**
@@ -55,25 +66,30 @@ public class StockUtil {
      * @param stockList 股票列表(包含股票代码,股票市场类型)
      * @return
      */
-    public static List<StockSourceEntity> getStocksFromSina(StockApiConfig apiConfig, List<StockSourceEntity> stockList)
-            throws IOException {
+    public static List<StockSourceEntity> getStocksFromSina(StockApiConfig apiConfig, List<StockSourceEntity> stockList){
         StringBuilder queryParamBuilder = new StringBuilder();
         stockList.stream().forEach(stock -> {
             setMarketType(stock);
             queryParamBuilder.append(getQueryParam(stock));
         });
-        HttpResponse httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAddress(),
-                queryParamBuilder.toString(), null, null);
-        if (!Objects.equals(httpResponse.getStatusLine(), HttpStatus.SC_OK)) {
-            // TODO 抛出异常
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAddress(),
+                    queryParamBuilder.toString(), null, null);
+            if (!Objects.equals(httpResponse.getStatusLine().getStatusCode(), HttpStatus.SC_OK)) {
+                throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
+            }
+            String[] stockDataArr = EntityUtils.toString(httpResponse.getEntity(), "UTF-8").split(";");
+            List<StockSourceEntity> resultStockList = new ArrayList<>();
+            for (int i = 0; i < stockList.size(); i++) {
+                resultStockList.add(createStock(stockDataArr[i], stockList.get(i).getMarketType(),
+                        stockList.get(i).getStockCode()));
+            }
+            return resultStockList;
+        } catch (IOException e) {
+            log.error("{}", e.getMessage());
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
         }
-        String[] stockDataArr = EntityUtils.toString(httpResponse.getEntity(), "UTF-8").split(";");
-        List<StockSourceEntity> resultStockList = new ArrayList<>();
-        for (int i = 0; i < stockList.size(); i++) {
-            resultStockList.add(createStock(stockDataArr[i], stockList.get(i).getMarketType(),
-                    stockList.get(i).getStockCode()));
-        }
-        return resultStockList;
     }
 
     /**
@@ -114,9 +130,6 @@ public class StockUtil {
      */
     private static void setMarketType(StockSourceEntity stock) {
         MarketEnum marketEnum = MarketEnum.getMarketByType(stock.getMarketType());
-        if (Objects.equals(marketEnum, MarketEnum.UNKNOWN)) {
-            // TODO 异常抛出
-        }
         stock.setMarketTypeCode(marketEnum.getCode());
     }
 

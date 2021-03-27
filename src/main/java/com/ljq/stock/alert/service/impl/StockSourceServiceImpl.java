@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.config.StockApiConfig;
+import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.StockUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
 import com.ljq.stock.alert.dao.UserStockDao;
@@ -48,7 +50,7 @@ public class StockSourceServiceImpl implements StockSourceService {
 	 */
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-	public StockSourceEntity save(StockSourceSaveParam saveParam) throws IOException {
+	public StockSourceEntity save(StockSourceSaveParam saveParam) {
 		// 校验-股票是否已入库
 		StockSourceEntity stockSourceDB = stockSourceDao.selectOne(Wrappers.lambdaQuery(new StockSourceEntity())
 				.eq(StockSourceEntity::getStockCode, saveParam.getStockCode())
@@ -82,12 +84,14 @@ public class StockSourceServiceImpl implements StockSourceService {
 	 *
 	 * @param infoRealTimeParam
 	 * @return
+	 * @throws IOException
+	 * @throws CommonException
 	 */
 	@Override
-	public StockSourceEntity infoRealTime(StockSourceInfoRealTimeParam infoRealTimeParam) throws IOException {
+	public StockSourceEntity infoRealTime(StockSourceInfoRealTimeParam infoRealTimeParam) {
 		StockSourceEntity stockDB = info(infoRealTimeParam);
 		if (Objects.isNull(stockDB)) {
-			// TODO 异常抛出
+			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		// 获取股票信息
 		return StockUtil.getStockFromSina(stockApiConfig, infoRealTimeParam.getStockCode(),
@@ -120,10 +124,9 @@ public class StockSourceServiceImpl implements StockSourceService {
 	 *
 	 * @param listRealTimeParam
 	 * @return
-	 * @throws IOException
 	 */
 	@Override
-	public IPage<StockSourceEntity> pageRealTime(StockSourceListRealTimeParam listRealTimeParam) throws IOException {
+	public IPage<StockSourceEntity> pageRealTime(StockSourceListRealTimeParam listRealTimeParam) {
 		IPage<StockSourceEntity> page = page(listRealTimeParam);
 		page.setRecords(StockUtil.getStocksFromSina(stockApiConfig, page.getRecords()));
 		return page;
@@ -142,15 +145,13 @@ public class StockSourceServiceImpl implements StockSourceService {
 		int countStock = stockSourceDao.selectCount(Wrappers.lambdaQuery(new StockSourceEntity())
 				.eq(StockSourceEntity::getId, deleteParam.getId()));
 		if (countStock < 1) {
-			// TODO 异常抛出
-			return;
+			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		// 判断是否有用户添加关注
 		int countUserStock = userStockDao.selectCount(Wrappers.lambdaQuery(new UserStockEntity())
 				.eq(UserStockEntity::getStockId, deleteParam.getId()));
 		if (countUserStock > 0) {
-			// TODO 异常抛出
-			return;
+			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
 		// 删除
 		stockSourceDao.deleteById(deleteParam.getId());
@@ -168,14 +169,12 @@ public class StockSourceServiceImpl implements StockSourceService {
 		int countStock = stockSourceDao.selectCount(Wrappers.lambdaQuery(new StockSourceEntity())
 				.in(StockSourceEntity::getId, deleteBatchParam.getIdList()));
 		if (countStock < deleteBatchParam.getIdList().size()) {
-			// TODO 异常抛出
-			return;
+			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		int countUserStock = userStockDao.selectCount(Wrappers.lambdaQuery(new UserStockEntity())
 				.in(UserStockEntity::getStockId, deleteBatchParam.getIdList()));
 		if (countUserStock > 0) {
-			// TODO 异常抛出
-			return;
+			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
 		// 删除对象
 		stockSourceDao.deleteBatchIds(deleteBatchParam.getIdList());

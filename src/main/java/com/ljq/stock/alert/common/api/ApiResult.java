@@ -128,6 +128,15 @@ public class ApiResult<T> {
     /**
      * 失败
      *
+     * @param apiMsgEnum 返回消息枚举类
+     * @return
+     */
+    public static <T> ApiResult <T> fail(ApiMsgEnum apiMsgEnum) {
+        return fail(apiMsgEnum.getKey(), apiMsgEnum.getDefaultMsg());
+    }
+    /**
+     * 失败
+     *
      * @param responseKey 返回结果 key
      * @param message 返回提示信息
      * @return
