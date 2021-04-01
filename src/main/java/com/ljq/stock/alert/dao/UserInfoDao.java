@@ -2,6 +2,7 @@ package com.ljq.stock.alert.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,5 +13,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserInfoDao extends BaseMapper<UserInfoEntity> {
+
+    /**
+     * 登录
+     *
+     * @param account
+     * @return
+     */
+    UserInfoEntity login(@Param("account") String account);
 	
 }

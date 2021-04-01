@@ -21,6 +21,22 @@ public interface UserInfoService {
 	UserInfoEntity save(UserInfoSaveParam saveParam);
 
 	/**
+	 * 用户注册
+	 *
+	 * @param registerParam
+	 * @return
+	 */
+	UserInfoEntity register(UserRegisterParam registerParam);
+
+	/**
+	 * 用户登录
+	 *
+	 * @param loginParam
+	 * @return
+	 */
+	UserInfoEntity login(UserLoginParam loginParam);
+
+	/**
      * 查询详情(单条)
      *
      * @param infoParam

@@ -17,14 +17,23 @@
 
    <!-- 用户信息-基础字段 -->
 	<sql id="user_info_base_field">
-        `ID`,
-        `ACCOUNT`,
-        `NICK_NAME`,
-        `PASSCODE`,
-        `MOBILE_PHONE`,
-        `EMAIL`,
-        `CREATE_TIME`,
-        `UPDATE_TIME`
+        u.`ID`,
+        u.`ACCOUNT`,
+        u.`NICK_NAME`,
+        u.`PASSCODE`,
+        u.`MOBILE_PHONE`,
+        u.`EMAIL`,
+        u.`CREATE_TIME`,
+        u.`UPDATE_TIME`
 	</sql>
+
+    <!-- 用户登录 -->
+    <select id="login" parameterType="java.lang.String" resultMap="userInfoMap" >
+        SELECT
+        <include refid="user_info_base_field" />
+        FROM `user_info` u
+        WHERE 1 = 1
+        AND (u.ACCOUNT = #{ACCOUNT} OR u.MOBILE_PHONE = #{accuunt} OR u.EMAIL = #{account})
+    </select>
 
 </mapper>

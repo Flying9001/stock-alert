@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2021/3/26 16:27:00                           */
+/* Created on:     2021/3/29 19:51:11                           */
 /*==============================================================*/
 
 
@@ -67,7 +67,7 @@ ALTER TABLE STOCK_SOURCE COMMENT '股票源';
 CREATE TABLE USER_INFO
 (
    ID                   BIGINT NOT NULL COMMENT 'id',
-   ACCOUNT              VARCHAR(20) COMMENT '账户',
+   ACCOUNT              VARCHAR(64) COMMENT '账户',
    NICK_NAME            VARCHAR(20) COMMENT '昵称',
    PASSCODE             VARCHAR(128) COMMENT '密码',
    MOBILE_PHONE         VARCHAR(15) COMMENT '手机号',

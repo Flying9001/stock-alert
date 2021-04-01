@@ -42,6 +42,31 @@ public class UserInfoController {
     }
 
     /**
+     * 用户注册
+     *
+     * @param registerParam
+     * @return
+     */
+    @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "用户注册",  notes = "用户注册")
+    public ResponseEntity<ApiResult<UserInfoEntity>> register(@Validated @RequestBody UserRegisterParam registerParam) {
+        // TODO 验证码校验
+        return ResponseEntity.ok(ApiResult.success(userInfoService.register(registerParam)));
+    }
+
+    /**
+     * 用户登录
+     *
+     * @param loginParam
+     * @return
+     */
+    @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "用户登录",  notes = "用户登录")
+    public ResponseEntity<ApiResult<UserInfoEntity>> login(@Validated @RequestBody UserLoginParam loginParam) {
+        return ResponseEntity.ok(ApiResult.success(userInfoService.login(loginParam)));
+    }
+
+    /**
      * 查询详情(单条)
      *
      * @param infoParam

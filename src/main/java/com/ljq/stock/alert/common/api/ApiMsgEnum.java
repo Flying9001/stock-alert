@@ -37,6 +37,15 @@ public enum ApiMsgEnum {
     STOCK_DELETE_ERROR_USER_HAS_FOLLOWED("api.response.stock.userHasFollowed", "当前股票用户已经关注,不可删除"),
 
     /**
+     * 用户信息
+     */
+    USER_EMAIL_REGISTERED("api.response.user.emailRegistered","邮箱已注册"),
+    USER_MOBILE_PHONE_REGISTERED("api.response.user.mobilePhoneRegistered","手机号已注册"),
+    USER_ACCOUNT_NOT_EXIST("api.response.user.accountAccountNotExist","账户不存在"),
+    USER_PASSCODE_ERROR("api.response.user.passcodeError", "密码错误"),
+
+
+    /**
      * 未知异常
      */
     UNKNOWN_ERROR("api.response.unknownError", "未知异常");

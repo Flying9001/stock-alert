@@ -3,10 +3,12 @@ package com.ljq.stock.alert.model.param.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户信息新增(单条)
@@ -21,47 +23,31 @@ public class UserInfoSaveParam implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 账户
-     * */
-    @NotNull(message = "账户 不能为空")
-    @ApiModelProperty(value = "账户", name = "account", required = true)
-    private String account;
-    /**
      * 昵称
      * */
-    @NotNull(message = "昵称 不能为空")
+    @Length(max = 16,message = "昵称需要控制在 16 字符以内")
     @ApiModelProperty(value = "昵称", name = "nickName", required = true)
     private String nickName;
     /**
      * 密码
      * */
-    @NotNull(message = "密码 不能为空")
+    @Pattern(regexp = "^[\\S]{8,32}$", message = "密码不能包含空格、换行等")
+    @Length(min = 8, max = 32, message = "密码需要控制在 8-32 位字符,建议使用字母、数字、符号组合")
     @ApiModelProperty(value = "密码", name = "passcode", required = true)
     private String passcode;
     /**
      * 手机号
      * */
-    @NotNull(message = "手机号 不能为空")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
     @ApiModelProperty(value = "手机号", name = "mobilePhone", required = true)
     private String mobilePhone;
     /**
      * 邮箱
      * */
-    @NotNull(message = "邮箱 不能为空")
+    @NotBlank(message = "邮箱 不能为空")
+    @Email(message = "邮箱格式错误")
     @ApiModelProperty(value = "邮箱", name = "email", required = true)
     private String email;
-    /**
-     * 创建时间
-     * */
-    @NotNull(message = "创建时间 不能为空")
-    @ApiModelProperty(value = "创建时间", name = "createDate", required = true)
-    private Date createDate;
-    /**
-     * 更新时间
-     * */
-    @NotNull(message = "更新时间 不能为空")
-    @ApiModelProperty(value = "更新时间", name = "updateTime", required = true)
-    private Date updateTime;
 
 
 }

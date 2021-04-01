@@ -16,8 +16,7 @@ public class MebConfig implements WebMvcConfigurer {
     /**
      * 无需 token 的接口路径
      */
-    private static String[] NO_TOKEN_API = {"/swagger-resources/*", "/webjars/*", "/v2/*", "/swagger-ui.html/*",
-            "/swagger-ui/*", "/*/favicon.ico", "/*/download**"};
+    private static String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**"};
 
     @Bean
     WebInterceptor webInterceptor() {
@@ -43,10 +42,13 @@ public class MebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui")
-                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:META-INF/resources/webjars/springfox-swagger-ui/");
         registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+                .addResourceLocations("classpath:META-INF/resources/webjars/");
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:META-INF/resources/","classpath:resources/", "classpath:static/",
+                        "classpath:public/");
     }
 
     /**
