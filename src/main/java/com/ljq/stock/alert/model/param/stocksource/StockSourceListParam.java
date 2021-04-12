@@ -23,12 +23,6 @@ public class StockSourceListParam extends BasePageParam {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     * */
-    @Min(value = 1, message = "id 至少为 1")
-    @ApiModelProperty(value = "id 不能为空,至少为 1", name = "id", example = "0")
-    private Long id;
-    /**
      * 市场类型,1-上海,2-深圳,3-香港,4-美国
      * */
     @Min(value = 1, message = "市场类型设置错误")

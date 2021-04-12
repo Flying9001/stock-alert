@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -25,6 +26,13 @@ public class UserStockInfoParam implements Serializable {
     @NotNull(message = "id 不能为空")
     @ApiModelProperty(value = "id 不能为空", name = "id")
     private Long id;
+    /**
+     * 用户 id
+     * */
+    @NotNull(message = "用户 id 不能为空")
+    @Min(value = 1, message = "用户 id 至少为 1")
+    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", required = true, example = "0")
+    private Long userId;
 
 
 }

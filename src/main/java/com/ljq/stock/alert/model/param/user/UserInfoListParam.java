@@ -35,7 +35,7 @@ public class UserInfoListParam extends BasePageParam {
     /**
      * 手机号
      * */
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
+    @Pattern(regexp = "^(1[3-9]\\d{9})?$", message = "手机号格式错误")
     @ApiModelProperty(value = "手机号", name = "mobilePhone", required = true)
     private String mobilePhone;
     /**

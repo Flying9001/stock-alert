@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,9 +25,16 @@ public class UserStockDeleteBatchParam implements Serializable {
     /**
      * id 列表
      **/
-    @NotEmpty(message = "id 不能为空")
+    @NotEmpty(message = "请选择需要删除的对象")
     @ApiModelProperty(value = "id不能为空", name = "idList")
     private List<Long> idList;
+    /**
+     * 用户 id
+     * */
+    @NotNull(message = "用户 id 不能为空")
+    @Min(value = 1, message = "用户 id 至少为 1")
+    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", required = true, example = "0")
+    private Long userId;
 
 
 }

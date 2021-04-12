@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.common.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.constant.MarketEnum;
@@ -13,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,6 +69,9 @@ public class StockUtil {
      * @return
      */
     public static List<StockSourceEntity> getStocksFromSina(StockApiConfig apiConfig, List<StockSourceEntity> stockList){
+        if (CollectionUtil.isEmpty(stockList)) {
+            return Collections.emptyList();
+        }
         StringBuilder queryParamBuilder = new StringBuilder();
         stockList.stream().forEach(stock -> {
             setMarketType(stock);

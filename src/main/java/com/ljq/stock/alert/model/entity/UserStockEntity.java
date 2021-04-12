@@ -46,5 +46,11 @@ public class UserStockEntity extends BaseEntity {
     @TableField(value = "MIN_PRICE")
     @ApiModelProperty(value = "股价预警最低价", name = "minPrice")
     private BigDecimal minPrice;
+    /**
+     * 股票信息
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "股票信息", name = "stockSource")
+    private StockSourceEntity stockSource;
 
 }

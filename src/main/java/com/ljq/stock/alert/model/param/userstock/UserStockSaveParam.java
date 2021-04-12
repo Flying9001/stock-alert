@@ -1,14 +1,13 @@
 package com.ljq.stock.alert.model.param.userstock;
 
+import com.ljq.stock.alert.model.param.stocksource.StockSourceCommonParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 用户股票新增(单条)
@@ -18,17 +17,10 @@ import java.util.Date;
  */
 @Data
 @ApiModel(value = "用户股票新增(单条)", description = "用户股票新增(单条)")
-public class UserStockSaveParam implements Serializable {
+public class UserStockSaveParam extends StockSourceCommonParam {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 股票 id
-     * */
-    @NotNull(message = "股票 id 不能为空")
-    @Min(value = 1, message = "股票 id 至少为 1")
-    @ApiModelProperty(value = "股票 id 不能为空,至少为 1", name = "stockId", required = true, example = "0")
-    private Long stockId;
     /**
      * 用户 id
      * */
@@ -40,26 +32,16 @@ public class UserStockSaveParam implements Serializable {
      * 股价预警最高价
      * */
     @NotNull(message = "股价预警最高价 不能为空")
+    @Min(value = 0, message = "股价预警最高价不能未负")
     @ApiModelProperty(value = "股价预警最高价", name = "maxPrice", required = true)
     private BigDecimal maxPrice;
     /**
      * 股价预警最低价
      * */
     @NotNull(message = "股价预警最低价 不能为空")
+    @Min(value = 0, message = "股价预警最低价不能未负")
     @ApiModelProperty(value = "股价预警最低价", name = "minPrice", required = true)
     private BigDecimal minPrice;
-    /**
-     * 创建时间
-     * */
-    @NotNull(message = "创建时间 不能为空")
-    @ApiModelProperty(value = "创建时间", name = "createTime", required = true)
-    private Date createTime;
-    /**
-     * 更新时间
-     * */
-    @NotNull(message = "更新时间 不能为空")
-    @ApiModelProperty(value = "更新时间", name = "updateTime", required = true)
-    private Date updateTime;
 
 
 }

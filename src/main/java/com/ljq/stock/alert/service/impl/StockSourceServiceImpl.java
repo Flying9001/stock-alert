@@ -108,8 +108,7 @@ public class StockSourceServiceImpl implements StockSourceService {
 	public IPage<StockSourceEntity> page(StockSourceListParam listParam) {
 		// 请求参数获
 		LambdaQueryWrapper<StockSourceEntity> queryWrapper = Wrappers.lambdaQuery();
-		queryWrapper.eq(Objects.nonNull(listParam.getId()), StockSourceEntity::getId, listParam.getId())
-				.eq(Objects.nonNull(listParam.getMarketType()), StockSourceEntity::getMarketType,
+		queryWrapper.eq(Objects.nonNull(listParam.getMarketType()), StockSourceEntity::getMarketType,
 						listParam.getMarketType())
 				.like(CharSequenceUtil.isNotBlank(listParam.getStockCode()), StockSourceEntity::getStockCode,
 						listParam.getStockCode())
