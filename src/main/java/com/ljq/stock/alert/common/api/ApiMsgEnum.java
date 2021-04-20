@@ -50,6 +50,11 @@ public enum ApiMsgEnum {
     USER_STOCK_EXISTED("api.response.userStock.existed","用户已经添加关注,请勿重复操作"),
     USER_STOCK_NOT_EXIST("api.response.userStock.notExist", "没有查询到用户关注的股票信息"),
 
+    /**
+     * 消息提醒
+     */
+    ALERT_MESSAGE_NOT_EXIST("api.response.alterMessage.notExist", "提醒消息不存在"),
+
 
     /**
      * 未知异常

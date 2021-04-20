@@ -29,6 +29,14 @@ public interface AlertMessageService {
 	AlertMessageEntity info(AlertMessageInfoParam infoParam);
 
 	/**
+	 * 查询用户的消息详情
+	 *
+	 * @param infoUserParam
+	 * @return
+	 */
+	AlertMessageEntity infoUser(AlertMessageInfoUserParam infoUserParam);
+
+	/**
      * 分页查询
      *
      * @param listParam
@@ -37,12 +45,12 @@ public interface AlertMessageService {
 	IPage<AlertMessageEntity> page(AlertMessageListParam listParam);
 
 	/**
-     * 更新(单条)
-     *
-     * @param updateParam
-     * @return
-     */
-	void update(AlertMessageUpdateParam updateParam);
+	 * 分页查询用户消息列表
+	 *
+	 * @param listUserParam
+	 * @return
+	 */
+	IPage<AlertMessageEntity> pageUser(AlertMessageListUserParam listUserParam);
 
 	/**
      * 删除(单条)
@@ -53,12 +61,26 @@ public interface AlertMessageService {
 	void delete(AlertMessageDeleteParam deleteParam);
 
 	/**
+	 * 删除用户消息(单条)
+	 *
+	 * @param deleteUserParam
+	 */
+	void deleteUser(AlertMessageDeleteUserParam deleteUserParam);
+
+	/**
      * 批量删除
      *
      * @param deleteBatchParam
      * @return
      */
 	void deleteBatch(AlertMessageDeleteBatchParam deleteBatchParam);
+
+	/**
+	 * 批量删除用户消息
+	 *
+	 * @param deleteBatchUserParam
+	 */
+	void deleteBatchUser(AlertMessageDeleteBatchUserParam deleteBatchUserParam);
 
 
 

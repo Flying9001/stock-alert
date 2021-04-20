@@ -1,6 +1,15 @@
 package com.ljq.stock.alert.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.text.CharSequenceUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.dao.AlertMessageDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.param.message.*;
@@ -10,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 预警消息业务层具体实现类
@@ -36,9 +48,10 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	public AlertMessageEntity save(AlertMessageSaveParam saveParam) {
 		// 请求参数获取
 		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
+		BeanUtil.copyProperties(saveParam, alertMessageParam, CopyOptions.create().ignoreNullValue());
 		// 保存
-
-		return null;
+		alertMessageDao.insert(alertMessageParam);
+		return alertMessageParam;
 	}
 
 	/**
@@ -49,11 +62,21 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	 */
 	@Override
 	public AlertMessageEntity info(AlertMessageInfoParam infoParam) {
-		// 请求参数获取
-		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
-		// 查询
+		return alertMessageDao.selectOne(Wrappers.lambdaQuery(new AlertMessageEntity())
+				.eq(AlertMessageEntity::getId, infoParam.getId())
+				.eq(Objects.nonNull(infoParam.getUserId()), AlertMessageEntity::getUserId, infoParam.getUserId()));
+	}
 
-		return null;
+	/**
+	 * 查询用户的消息详情
+	 *
+	 * @param infoUserParam
+	 * @return
+	 */
+	@Override
+	public AlertMessageEntity infoUser(AlertMessageInfoUserParam infoUserParam) {
+		// TODO 通过 token 获取用户 Id
+		return info(infoUserParam);
 	}
 
 	/**
@@ -64,31 +87,29 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	 */
 	@Override
 	public IPage<AlertMessageEntity> page(AlertMessageListParam listParam) {
+		IPage<AlertMessageEntity> page = new Page<>(listParam.getCurrentPage(), listParam.getPageSize());
 		// 请求参数获
-		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
+		LambdaQueryWrapper<AlertMessageEntity> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.eq(Objects.nonNull(listParam.getUserId()), AlertMessageEntity::getUserId, listParam.getUserId())
+				.eq(Objects.nonNull(listParam.getPhoneSend()), AlertMessageEntity::getPhoneSend, listParam.getPhoneSend())
+				.eq(Objects.nonNull(listParam.getEmailSend()), AlertMessageEntity::getEmailSend, listParam.getEmailSend())
+				.eq(Objects.nonNull(listParam.getStockId()), AlertMessageEntity::getStockId, listParam.getStockId())
+				.like(CharSequenceUtil.isNotBlank(listParam.getContent()), AlertMessageEntity::getContent, listParam.getContent());
 		// 分页查询
-
-
-		return null;
+		page = alertMessageDao.selectPage(page, queryWrapper);
+		return page;
 	}
 
 	/**
-	 * 更新(单条)
+	 * 分页查询用户消息列表
 	 *
-	 * @param updateParam
+	 * @param listUserParam
 	 * @return
 	 */
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
-	public void update(AlertMessageUpdateParam updateParam) {
-		// 请求参数获取
-		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
-		alertMessageParam.setId(updateParam.getId());
-
-		// 判断对象是否存在
-
-		// 更新对象
-
+	public IPage<AlertMessageEntity> pageUser(AlertMessageListUserParam listUserParam) {
+		// TODO 通过 token 获取用户 Id
+		return page(listUserParam);
 	}
 
 	/**
@@ -100,12 +121,27 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void delete(AlertMessageDeleteParam deleteParam) {
-		// 请求参数获取
-		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
+		LambdaQueryWrapper<AlertMessageEntity> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.eq(AlertMessageEntity::getId, deleteParam.getId())
+				.eq(Objects.nonNull(deleteParam.getUserId()), AlertMessageEntity::getUserId, deleteParam.getUserId());
 		// 判断对象是否存在
+		AlertMessageEntity alertMessageDB = alertMessageDao.selectOne(queryWrapper);
+		if (Objects.isNull(alertMessageDB)) {
+			throw new CommonException(ApiMsgEnum.ALERT_MESSAGE_NOT_EXIST);
+		}
+		// 删除对象
+		alertMessageDao.delete(queryWrapper);
+	}
 
-		// 更新对象
-
+	/**
+	 * 删除用户消息(单条)
+	 *
+	 * @param deleteUserParam
+	 */
+	@Override
+	public void deleteUser(AlertMessageDeleteUserParam deleteUserParam) {
+		// TODO 通过 token 获取用户 id
+		delete(deleteUserParam);
 	}
 
 	/**
@@ -117,14 +153,29 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void deleteBatch(AlertMessageDeleteBatchParam deleteBatchParam) {
-		// 请求参数获取
-			AlertMessageEntity alertMessageParam = new AlertMessageEntity();
+		LambdaQueryWrapper<AlertMessageEntity> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.eq(Objects.nonNull(deleteBatchParam.getUserId()),AlertMessageEntity::getUserId,
+				deleteBatchParam.getUserId())
+				.in(AlertMessageEntity::getId, deleteBatchParam.getIdList());
 		// 判断对象是否存在
-
-		// 更新对象
-
+		List<AlertMessageEntity> messageDBList = alertMessageDao.selectList(queryWrapper);
+		if (CollectionUtil.isEmpty(messageDBList) || messageDBList.size() < deleteBatchParam.getIdList().size()) {
+			throw new CommonException(ApiMsgEnum.ALERT_MESSAGE_NOT_EXIST);
+		}
+		// 删除对象
+		alertMessageDao.delete(queryWrapper);
 	}
 
+	/**
+	 * 批量删除用户消息
+	 *
+	 * @param deleteBatchUserParam
+	 */
+	@Override
+	public void deleteBatchUser(AlertMessageDeleteBatchUserParam deleteBatchUserParam) {
+		// TODO 通过 token 获取用户 id
+		deleteBatch(deleteBatchUserParam);
+	}
 
 
 }

@@ -45,6 +45,12 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "股票 id", name = "stockId")
     private Long stockId;
     /**
+     * 消息标题
+     */
+    @TableField(value = "TITLE")
+    @ApiModelProperty(value = "消息标题", name = "title")
+    private String title;
+    /**
      * 消息内容
      **/
     @TableField(value = "CONTENT")

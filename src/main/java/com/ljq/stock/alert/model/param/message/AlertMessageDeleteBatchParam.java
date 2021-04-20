@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
@@ -20,6 +21,12 @@ public class AlertMessageDeleteBatchParam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 用户 id
+     * */
+    @Min(value = 1, message = "用户 id 至少为 1")
+    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", required = true, example = "0")
+    private Long userId;
     /**
      * id 列表
      **/

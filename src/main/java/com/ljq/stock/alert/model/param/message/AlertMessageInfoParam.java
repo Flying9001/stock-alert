@@ -1,11 +1,11 @@
 package com.ljq.stock.alert.model.param.message;
 
+import com.ljq.stock.alert.model.BaseInfoParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import javax.validation.constraints.Min;
 
 /**
  * 预警消息查询详情(单条)
@@ -15,16 +15,15 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "预警消息查询详情(单条)", description = "预警消息查询详情(单条)")
-public class AlertMessageInfoParam implements Serializable {
+public class AlertMessageInfoParam extends BaseInfoParam {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     **/
-    @NotNull(message = "id 不能为空")
-    @ApiModelProperty(value = "id 不能为空", name = "id")
-    private Long id;
-
+     * 用户信息
+     * */
+    @Min(value = 1, message = "用户 ID 至少为 1")
+    @ApiModelProperty(value = "用户信息 不能为空,至少为 1", name = "userId", example = "0")
+    private Long userId;
 
 }

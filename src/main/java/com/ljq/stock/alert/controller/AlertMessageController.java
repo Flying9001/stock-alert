@@ -30,18 +30,6 @@ public class AlertMessageController {
 	private AlertMessageService alertMessageService;
 
     /**
-     * 新增(单条)
-     *
-     * @param saveParam
-     * @return
-     */
-    @PostMapping(value = "/add", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息新增(单条)",  notes = "预警消息新增(单条)")
-    public ResponseEntity<ApiResult<AlertMessageEntity>> save(@Validated @RequestBody AlertMessageSaveParam saveParam) {
-        return ResponseEntity.ok(ApiResult.success(alertMessageService.save(saveParam)));
-    }
-
-    /**
      * 查询详情(单条)
      *
      * @param infoParam
@@ -54,7 +42,19 @@ public class AlertMessageController {
     }
 
     /**
-     * 分页查询api
+     * 查询用户的消息详情
+     *
+     * @param infoUserParam
+     * @return
+     */
+    @GetMapping(value = "/info/user", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "查询用户的消息详情",  notes = "查询用户的消息详情")
+    public ResponseEntity<ApiResult<AlertMessageEntity>> infoUser(@Validated AlertMessageInfoUserParam infoUserParam) {
+        return ResponseEntity.ok(ApiResult.success(alertMessageService.infoUser(infoUserParam)));
+    }
+
+    /**
+     * 分页查询
      *
      * @param listParam
      * @return
@@ -66,16 +66,16 @@ public class AlertMessageController {
     }
 
     /**
-     * 修改(单条)
+     * 分页查询用户的消息列表
      *
-     * @param
+     * @param listUserParam
      * @return
      */
-    @PutMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息修改(单条)",  notes = "预警消息修改(单条)")
-    public ResponseEntity<ApiResult<Void>> update(@Validated @RequestBody AlertMessageUpdateParam updateParam) {
-        alertMessageService.update(updateParam);
-        return ResponseEntity.ok(ApiResult.success());
+    @GetMapping(value = "/page/user", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "分页查询用户的消息列表",  notes = "分页查询用户的消息列表")
+    public ResponseEntity<ApiResult<IPage<AlertMessageEntity>>> pageUser(@Validated AlertMessageListUserParam
+                                                                                     listUserParam) {
+        return ResponseEntity.ok(ApiResult.success(alertMessageService.pageUser(listUserParam)));
     }
 
     /**
@@ -92,6 +92,20 @@ public class AlertMessageController {
     }
 
     /**
+     * 删除用户消息(单条)
+     *
+     * @param deleteUserParam
+     * @return
+     */
+    @DeleteMapping(value = "/delete/user", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "删除用户消息(单条)",  notes = "删除用户消息(单条)")
+    public ResponseEntity<ApiResult<Void>> deleteUser(@Validated @RequestBody AlertMessageDeleteUserParam
+                                                                  deleteUserParam) {
+        alertMessageService.deleteUser(deleteUserParam);
+        return ResponseEntity.ok(ApiResult.success());
+    }
+
+    /**
      * 批量删除
      *
      * @param deleteBatchParam
@@ -99,8 +113,23 @@ public class AlertMessageController {
      */
     @DeleteMapping(value = "/delete/batch", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "预警消息批量删除",  notes = "预警消息批量删除")
-    public ResponseEntity<ApiResult<Void>> deleteBatch(@Validated @RequestBody AlertMessageDeleteBatchParam deleteBatchParam) {
+    public ResponseEntity<ApiResult<Void>> deleteBatch(@Validated @RequestBody AlertMessageDeleteBatchParam
+                                                                   deleteBatchParam) {
         alertMessageService.deleteBatch(deleteBatchParam);
+        return ResponseEntity.ok(ApiResult.success());
+    }
+
+    /**
+     * 批量删除用户消息
+     *
+     * @param deleteBatchUserParam
+     * @return
+     */
+    @DeleteMapping(value = "/delete/batch/user", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "批量删除用户消息",  notes = "批量删除用户消息")
+    public ResponseEntity<ApiResult<Void>> deleteBatchUser(@Validated @RequestBody AlertMessageDeleteBatchUserParam
+                                                                       deleteBatchUserParam) {
+        alertMessageService.deleteBatchUser(deleteBatchUserParam);
         return ResponseEntity.ok(ApiResult.success());
     }
 

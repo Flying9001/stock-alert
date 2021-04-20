@@ -1,11 +1,11 @@
 package com.ljq.stock.alert.model.param.message;
 
+import com.ljq.stock.alert.model.BaseInfoParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import javax.validation.constraints.Min;
 
 /**
  * 预警消息删除(单条)
@@ -15,16 +15,15 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "预警消息删除(单条)", description = "预警消息删除(单条)")
-public class AlertMessageDeleteParam implements Serializable {
+public class AlertMessageDeleteParam extends BaseInfoParam {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     **/
-    @NotNull(message = "id 不能为空")
-    @ApiModelProperty(value = "id不能为空", name = "id")
-    private Long id;
-
+     * 用户 id
+     * */
+    @Min(value = 1, message = "用户 id 至少为 1")
+    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", example = "0")
+    private Long userId;
 
 }
