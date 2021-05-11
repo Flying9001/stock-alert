@@ -10,4 +10,15 @@ public class MessageConst {
     private MessageConst() {
     }
 
+    /**
+     * 消息发送状态
+     * 1: 发送成功
+     * 2: 发送失败
+     * 3: 未发送
+     */
+    public static final int MESSAGE_SEND_SUCCESS = 1;
+    public static final int MESSAGE_SEND_FAIL = 2;
+    public static final int MESSAGE_SEND_NOT = 3;
+
+
 }

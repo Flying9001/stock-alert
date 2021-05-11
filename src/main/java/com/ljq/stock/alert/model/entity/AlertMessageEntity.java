@@ -27,11 +27,23 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "用户信息", name = "userId")
     private Long userId;
     /**
+     * 手机号
+     **/
+    @TableField(exist = false)
+    @ApiModelProperty(value = "手机号", name = "mobilePhone")
+    private String mobilePhone;
+    /**
      * 手机发送,1-发送成功,2-发送失败,3-未发送
      **/
     @TableField(value = "PHONE_SEND")
     @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送", name = "phoneSend")
     private Integer phoneSend;
+    /**
+     * 邮箱
+     **/
+    @TableField(exist = false)
+    @ApiModelProperty(value = "邮箱", name = "email")
+    private String email;
     /**
      * 邮箱发送,1-发送成功,2-发送失败,3-未发送
      **/

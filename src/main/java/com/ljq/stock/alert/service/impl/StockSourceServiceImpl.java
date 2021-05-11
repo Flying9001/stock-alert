@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.exception.CommonException;
@@ -33,7 +34,8 @@ import java.util.Objects;
 @Service("stockSourceService")
 @Transactional(rollbackFor = {Exception.class})
 @Slf4j
-public class StockSourceServiceImpl implements StockSourceService {
+public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSourceEntity>
+		implements StockSourceService {
 
 	@Autowired
 	private StockSourceDao stockSourceDao;

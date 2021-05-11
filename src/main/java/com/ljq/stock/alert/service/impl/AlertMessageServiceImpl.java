@@ -1,13 +1,12 @@
 package com.ljq.stock.alert.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.dao.AlertMessageDao;
@@ -32,7 +31,8 @@ import java.util.Objects;
 @Service("alertMessageService")
 @Transactional(rollbackFor = {Exception.class})
 @Slf4j
-public class AlertMessageServiceImpl implements AlertMessageService {
+public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertMessageEntity>
+		implements AlertMessageService {
 
 	@Autowired
 	private AlertMessageDao alertMessageDao;
@@ -46,12 +46,7 @@ public class AlertMessageServiceImpl implements AlertMessageService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public AlertMessageEntity save(AlertMessageSaveParam saveParam) {
-		// 请求参数获取
-		AlertMessageEntity alertMessageParam = new AlertMessageEntity();
-		BeanUtil.copyProperties(saveParam, alertMessageParam, CopyOptions.create().ignoreNullValue());
-		// 保存
-		alertMessageDao.insert(alertMessageParam);
-		return alertMessageParam;
+		return new AlertMessageEntity();
 	}
 
 	/**

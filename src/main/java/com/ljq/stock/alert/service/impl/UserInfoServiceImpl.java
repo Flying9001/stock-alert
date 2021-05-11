@@ -98,7 +98,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 			throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 		}
 		// TODO 密码校验
-		if (Objects.equals(loginParam.getPasscode(), userInfoDB.getPasscode())) {
+		if (!Objects.equals(loginParam.getPasscode(), userInfoDB.getPasscode())) {
 			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ERROR);
 		}
 		// TODO 过滤密码,返回Token

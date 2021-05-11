@@ -12,17 +12,61 @@
         <result property="minPrice" column="MIN_PRICE"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updateTime" column="UPDATE_TIME"/>
+        <association property="stockSource" javaType="com.ljq.stock.alert.model.entity.StockSourceEntity">
+            <id property="id" column="S_ID" />
+            <result property="marketType" column="S_MARKET_TYPE"/>
+            <result property="stockCode" column="S_STOCK_CODE"/>
+            <result property="companyName" column="S_COMPANY_NAME"/>
+            <result property="currentPrice" column="S_CURRENT_PRICE"/>
+            <result property="date" column="S_DATE"/>
+            <result property="time" column="S_TIME"/>
+        </association>
+        <association property="userInfo" javaType="com.ljq.stock.alert.model.entity.UserInfoEntity">
+            <id property="id" column="U_ID" />
+            <result property="account" column="U_ACCOUNT"/>
+            <result property="nickName" column="U_NICK_NAME"/>
+            <result property="mobilePhone" column="U_MOBILE_PHONE"/>
+            <result property="email" column="U_EMAIL"/>
+        </association>
     </resultMap>
 
    <!-- 用户股票-基础字段 -->
 	<sql id="user_stock_base_field">
-        `ID`,
-        `STOCK_ID`,
-        `USER_ID`,
-        `MAX_PRICE`,
-        `MIN_PRICE`,
-        `CREATE_TIME`,
-        `UPDATE_TIME`
+        us.`ID`,
+        us.`STOCK_ID`,
+        us.`USER_ID`,
+        us.`MAX_PRICE`,
+        us.`MIN_PRICE`,
+        us.`CREATE_TIME`,
+        us.`UPDATE_TIME`
 	</sql>
+
+    <!-- 用户股票-列表字段 -->
+    <sql id="user_stock_list_field">
+        <include refid="user_stock_base_field" />
+        ,
+        s.`ID` AS S_ID,
+        s.`MARKET_TYPE` AS S_MARKET_TYPE,
+        s.`STOCK_CODE` AS S_STOCK_CODE,
+        s.`COMPANY_NAME` AS S_COMPANY_NAME,
+        s.`CURRENT_PRICE` AS S_CURRENT_PRICE,
+        s.`DATE` AS S_DATE,
+        s.`TIME` AS S_TIME,
+        u.`ID` AS U_ID,
+        u.`ACCOUNT` AS U_ACCOUNT,
+        u.`NICK_NAME` AS U_NICK_NAME,
+        u.`MOBILE_PHONE` AS U_MOBILE_PHONE,
+        u.`EMAIL` AS U_EMAIL
+    </sql>
+
+    <!-- 查询用户关注股票数据列表 -->
+    <select id="queryList" parameterType="java.util.Map" resultMap="userStockMap">
+        SELECT
+        <include refid="user_stock_list_field" />
+        FROM `USER_STOCK` us
+        LEFT JOIN `STOCK_SOURCE` s ON s.ID = us.STOCK_ID
+        LEFT JOIN `USER_INFO` u ON u.ID = us.USER_ID
+    </select>
+
 
 </mapper>

@@ -52,5 +52,12 @@ public class UserStockEntity extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "股票信息", name = "stockSource")
     private StockSourceEntity stockSource;
+    /**
+     * 用户信息
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户信息", name = "userInfo")
+    private UserInfoEntity userInfo;
+
 
 }

@@ -1,6 +1,7 @@
 package com.ljq.stock.alert.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.param.message.*;
 
@@ -10,7 +11,7 @@ import com.ljq.stock.alert.model.param.message.*;
  * @author junqiang.lu
  * @date 2021-03-22 17:17:06
  */
-public interface AlertMessageService {
+public interface AlertMessageService extends IService<AlertMessageEntity> {
 
 	/**
      * 新增(单条)

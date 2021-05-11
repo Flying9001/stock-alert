@@ -27,4 +27,13 @@
         `UPDATE_TIME`
 	</sql>
 
+    <!-- 校验重复性 -->
+    <select id="validateRepeat" parameterType="com.ljq.stock.alert.model.entity.AlertMessageEntity" resultType="int">
+        SELECT COUNT(*)
+        FROM `ALERT_MESSAGE` m
+        WHERE m.user_id = #{userId}
+            AND m.stock_id = #{stockId}
+            AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
+    </select>
+
 </mapper>

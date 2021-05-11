@@ -12,5 +12,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AlertMessageDao extends BaseMapper<AlertMessageEntity> {
+
+    /**
+     * 校验重复性
+     *
+     * @param alertMessage
+     * @return
+     */
+    int validateRepeat(AlertMessageEntity alertMessage);
 	
 }

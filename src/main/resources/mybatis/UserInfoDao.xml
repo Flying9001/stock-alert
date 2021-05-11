@@ -33,7 +33,7 @@
         <include refid="user_info_base_field" />
         FROM `user_info` u
         WHERE 1 = 1
-        AND (u.ACCOUNT = #{ACCOUNT} OR u.MOBILE_PHONE = #{accuunt} OR u.EMAIL = #{account})
+        AND (u.ACCOUNT = #{account} OR u.MOBILE_PHONE = #{account} OR u.EMAIL = #{account})
     </select>
 
 </mapper>

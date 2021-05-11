@@ -13,6 +13,26 @@ spring:
       &nullCatalogMeansCurrent=true"
     username: root
     password: "Qwert12345!"
+  mail:
+    host: smtp.sina.com
+    port: 465
+    username: xxx@sina.com
+    password: xxx
+    protocol: smtps
+    properties:
+      mail:
+        stmp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          tls: true
+  # rabbitmq
+  rabbitmq:
+    host: 172.16.140.10
+    port: 5672
+    username: rabbitmqadmin
+    password: rootpass100
 
 ## 股票数据接口
 stockApi:
