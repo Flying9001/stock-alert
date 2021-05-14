@@ -68,5 +68,11 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "CONTENT")
     @ApiModelProperty(value = "消息内容", name = "content")
     private String content;
+    /**
+     * 发件人邮箱
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "发件人邮箱", name = "senderEmail")
+    private String senderEmail;
 
 }

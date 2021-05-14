@@ -28,7 +28,6 @@ public class AlertMessageMqSender {
      * @param alertMessageList
      */
     public void sendBatch(List<AlertMessageEntity> alertMessageList) {
-        log.info("批量推送,{}", alertMessageList);
         rabbitTemplate.convertAndSend(RabbitMqConfig.QUEUE_ALERT_MESSAGE, alertMessageList);
     }
 

@@ -14,6 +14,7 @@
 - JDK 1.8+  
 - MySQL 5.7+  
 - Maven 3+  
+- RabbitMQ 
 
 ​    
 
@@ -22,6 +23,9 @@
 - Spring boot 2.4.2  
 - Mybatis plus 3.4.2  
 - Swagger 3.0 / OpenApi 3.0  
+- RabbitMQ  
+
+
 
 ​    
 
