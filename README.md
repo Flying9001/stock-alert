@@ -1,11 +1,11 @@
-## 股票预警系统(Stock alert system)  
+## 股票预警助手(Stock alert helper)  
 
 
 ​    
 ​    
 ### 项目简介  
 
-股票预警系统(Stock alert system)致力于为个人投资者提供实时股票监控，当股价达到合理位置自动预警。  
+股票预警助手(Stock alerthelper)致力于为个人投资者提供实时股票监控，当股价达到合理位置自动预警。  
 
 ​     
 
@@ -14,7 +14,10 @@
 - JDK 1.8+  
 - MySQL 5.7+  
 - Maven 3+  
-- RabbitMQ 
+- RabbitMQ 3.7+  
+- Redis 5.0+  
+
+
 
 ​    
 
@@ -24,6 +27,7 @@
 - Mybatis plus 3.4.2  
 - Swagger 3.0 / OpenApi 3.0  
 - RabbitMQ  
+- Redis  
 
 
 
