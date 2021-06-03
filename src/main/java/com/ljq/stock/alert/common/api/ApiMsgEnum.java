@@ -45,6 +45,8 @@ public enum ApiMsgEnum {
     USER_PASSCODE_ERROR("api.response.user.passcodeError", "密码错误"),
     CHECK_CODE_MAIL_SEND_ERROR("api.response.user.checkCodeMailSendError","邮件验证码发送失败,请稍后重试"),
     CHECK_CODE_VALIDATE_ERROR("api.response.user.checkCodeValidateError", "验证码错误"),
+    USER_PASSCODE_ENCRYPT_ERROR("api.response.user.passcodeEncryptError", "密码加密错误," +
+            "请输入字母、数字与下划线的组合"),
 
     /**
      * 用户股票

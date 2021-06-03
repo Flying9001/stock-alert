@@ -15,6 +15,7 @@ import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.CheckCodeUtil;
+import com.ljq.stock.alert.common.util.Md5Util;
 import com.ljq.stock.alert.common.util.MessageHelper;
 import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
@@ -76,9 +77,17 @@ public class UserInfoServiceImpl implements UserInfoService {
 		BeanUtil.copyProperties(saveParam, userInfoParam, CopyOptions.create().ignoreNullValue().ignoreError());
 		// 生成账号
 		userInfoParam.setAccount(IdUtil.objectId());
-		// TODO 密码加密
+		// 密码加密
+		try {
+			userInfoParam.setPasscode(Md5Util.getEncryptedPwd(userInfoParam.getPasscode()));
+		} catch (Exception e) {
+			log.error("密码加密失败", e);
+			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ENCRYPT_ERROR);
+		}
 		// 保存
 		userInfoDao.insert(userInfoParam);
+		// 过滤密码
+		userInfoParam.setPasscode(null);
 		return userInfoParam;
 	}
 
@@ -150,6 +159,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 		redisUtil.remove(cacheKey);
 		UserInfoSaveParam saveParam = new UserInfoSaveParam();
 		BeanUtil.copyProperties(registerParam, saveParam);
+		// 密码加密
+		try {
+			saveParam.setPasscode(Md5Util.getEncryptedPwd(saveParam.getPasscode()));
+		} catch (Exception e) {
+			log.error("密码加密失败", e);
+			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ENCRYPT_ERROR);
+		}
 		UserInfoEntity userInfoDB = save(saveParam);
 		userInfoDB.setPasscode(null);
 		// TODO 生成 Token
@@ -168,11 +184,20 @@ public class UserInfoServiceImpl implements UserInfoService {
 		if (Objects.isNull(userInfoDB)) {
 			throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 		}
-		// TODO 密码校验
-		if (!Objects.equals(loginParam.getPasscode(), userInfoDB.getPasscode())) {
+		// 密码校验
+		boolean validateResult = false;
+		try {
+			validateResult = Md5Util.validPassword(loginParam.getPasscode(), userInfoDB.getPasscode());
+		} catch (Exception e) {
+			log.error("密码加密失败", e);
+			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ENCRYPT_ERROR);
+		}
+		if (!validateResult) {
 			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ERROR);
 		}
-		// TODO 过滤密码,返回Token
+		// 过滤密码
+		userInfoDB.setPasscode(null);
+		// TODO 生成 Token
 
 		return userInfoDB;
 	}
