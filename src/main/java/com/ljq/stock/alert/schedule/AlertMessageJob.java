@@ -49,7 +49,7 @@ public class AlertMessageJob {
      * 刷新股票数据
      * 1 分钟 1 次
      */
-    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 10 * 1000)
+    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 1 * 1000)
     public void flashStockData() {
         // 查询所有股票
         List<StockSourceEntity> stockDBList = stockSourceService.list();
@@ -63,7 +63,7 @@ public class AlertMessageJob {
      * 比对股票数据
      * 1 分钟 1 次
      */
-    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 5 * 1000)
+    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 60 * 1000)
     public void compareStockPrice() {
         // 查询所有用户关注的股票
         int countAll = userStockDao.selectCount(Wrappers.emptyWrapper());

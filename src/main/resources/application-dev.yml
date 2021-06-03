@@ -33,6 +33,20 @@ spring:
     port: 5672
     username: rabbitmqadmin
     password: rootpass100
+  ## redis
+  redis:
+    database: 1
+    host: 172.16.140.10
+    port: 7749
+    password: 21cde022-a5da-626e-c8f4-04c99ed3a181
+    connect-timeout: 60s
+    timeout: 120s
+    lettuce:
+      pool:
+        max-wait: 60s
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
 
 ## 股票数据接口
 stockApi:

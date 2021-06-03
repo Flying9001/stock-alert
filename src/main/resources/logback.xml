@@ -116,6 +116,9 @@
     <logger name="io.springfox" level="info" />
     <logger name="io.swagger" level="info" />
 
+    <logger name="io.lettuce" level="info" />
+    <logger name="io.netty" level="info" />
+
     <!-- 根日志,所有日志appender都必须包含在root/logger中,否则不会起作用 -->
     <root level="debug">
         <appender-ref ref="STDOUT" />

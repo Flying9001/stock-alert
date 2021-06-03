@@ -42,6 +42,19 @@ public class UserInfoController {
     }
 
     /**
+     * 获取验证码
+     *
+     * @param getCheckCodeParam
+     * @return
+     */
+    @PostMapping(value = "/checkCode", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "获取验证码",  notes = "获取验证码")
+    public ResponseEntity<ApiResult<Void>> getCheckCode(@Validated @RequestBody UserGetCheckCodeParam getCheckCodeParam) {
+        userInfoService.getCheckCode(getCheckCodeParam);
+        return ResponseEntity.ok(ApiResult.success());
+    }
+
+    /**
      * 用户注册
      *
      * @param registerParam

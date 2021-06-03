@@ -43,6 +43,8 @@ public enum ApiMsgEnum {
     USER_MOBILE_PHONE_REGISTERED("api.response.user.mobilePhoneRegistered","手机号已注册"),
     USER_ACCOUNT_NOT_EXIST("api.response.user.accountAccountNotExist","账户不存在"),
     USER_PASSCODE_ERROR("api.response.user.passcodeError", "密码错误"),
+    CHECK_CODE_MAIL_SEND_ERROR("api.response.user.checkCodeMailSendError","邮件验证码发送失败,请稍后重试"),
+    CHECK_CODE_VALIDATE_ERROR("api.response.user.checkCodeValidateError", "验证码错误"),
 
     /**
      * 用户股票

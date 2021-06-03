@@ -39,7 +39,7 @@ public class UserInfoSaveParam implements Serializable {
      * 手机号
      * */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
-    @ApiModelProperty(value = "手机号", name = "mobilePhone", required = true)
+    @ApiModelProperty(value = "手机号", name = "mobilePhone")
     private String mobilePhone;
     /**
      * 邮箱

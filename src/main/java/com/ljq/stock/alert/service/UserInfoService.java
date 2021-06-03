@@ -21,6 +21,13 @@ public interface UserInfoService {
 	UserInfoEntity save(UserInfoSaveParam saveParam);
 
 	/**
+	 * 获取验证码
+	 *
+	 * @param checkCodeParam
+	 */
+	void getCheckCode(UserGetCheckCodeParam checkCodeParam);
+
+	/**
 	 * 用户注册
 	 *
 	 * @param registerParam

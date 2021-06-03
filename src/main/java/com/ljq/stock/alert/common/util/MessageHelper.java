@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.common.util;
 
+import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
@@ -39,7 +40,7 @@ public class MessageHelper {
         message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
         message.setStockId(userStock.getStockSource().getId());
         String highOrLow = priceCompareResult == 1 ? "高" : "低";
-        String title = "股票预警-【" + userStock.getStockSource().getCompanyName() + "】最" + highOrLow + "股价提醒";
+        String title = "股价提醒小助手-【" + userStock.getStockSource().getCompanyName() + "】最" + highOrLow + "股价提醒";
         message.setTitle(title);
         StringBuilder contentBuilder = new StringBuilder("尊敬的用户");
         contentBuilder.append(userStock.getUserInfo().getNickName()).append(",</br>")
@@ -70,6 +71,42 @@ public class MessageHelper {
         return alertMessageList;
     }
 
+    /**
+     * 创建验证消息
+     *
+     * @param mobilePhone
+     * @param email
+     * @param checkCodeType
+     * @param checkCode
+     * @return
+     */
+    public static AlertMessageEntity createCheckMessage(String mobilePhone, String email,
+                                                        CheckCodeTypeEnum checkCodeType, String checkCode) {
+        AlertMessageEntity message = new AlertMessageEntity();
+        message.setMobilePhone(mobilePhone);
+        message.setEmail(email);
+        StringBuilder contentBuilder = new StringBuilder("尊敬的用户,<br />");
+        switch (checkCodeType) {
+            case REGISTER:
+                message.setTitle("【股价提醒小助手】注册验证");
+                contentBuilder.append("【股价提醒小助手】欢迎你的加入,你的注册验证码为: ");
+                break;
+            case SIGN_IN:
+                message.setTitle("【股价预警小助手】登录验证");
+                contentBuilder.append("【股价提醒小助手】欢迎你回来,你的登录验证码为: ");
+                break;
+            case UPDATE_PASSWORD:
+                message.setTitle("【股价预警小助手】修改密码验证");
+                contentBuilder.append("【股价提醒小助手】为你的账户安全保驾护航,你正在进行修改密码操作,验证码为: ");
+                break;
+            default:
+                break;
+        }
+        contentBuilder.append(checkCode)
+                .append(",验证码有效时间为 10 分钟.安心炒股,从这里开始");
+        message.setContent(contentBuilder.toString());
+        return message;
+    }
 
     /**
      * 股票价格比对

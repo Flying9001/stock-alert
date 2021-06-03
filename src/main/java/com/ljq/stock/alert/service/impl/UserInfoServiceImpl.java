@@ -9,8 +9,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.component.AlertMessageMqSender;
+import com.ljq.stock.alert.common.component.RedisUtil;
+import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
+import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
+import com.ljq.stock.alert.common.util.CheckCodeUtil;
+import com.ljq.stock.alert.common.util.MessageHelper;
 import com.ljq.stock.alert.dao.UserInfoDao;
+import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.service.UserInfoService;
@@ -20,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -35,6 +43,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Autowired
 	private UserInfoDao userInfoDao;
+	@Autowired
+	private RedisUtil redisUtil;
+	@Autowired
+	private AlertMessageMqSender messageMqSender;
 
 	/**
 	 * 保存(单条)
@@ -71,6 +83,56 @@ public class UserInfoServiceImpl implements UserInfoService {
 	}
 
 	/**
+	 * 获取验证码
+	 *
+	 * @param checkCodeParam
+	 */
+	@Override
+	public void getCheckCode(UserGetCheckCodeParam checkCodeParam) {
+		// 校验邮箱是否已注册
+		boolean emailExist = validateExist(checkCodeParam.getEmail());
+		//  防止验证码盗刷
+		CheckCodeTypeEnum checkCodeType = CheckCodeTypeEnum.getType(checkCodeParam.getCheckCodeType());
+		String redisKey = CheckCodeUtil.generateCacheKey(checkCodeParam.getEmail(), checkCodeType);
+		boolean checkCodeSend = redisUtil.exists(redisKey);
+		if (checkCodeSend) {
+			return;
+		}
+		// 生成验证消息
+		AlertMessageEntity message;
+		String checkCode = CheckCodeUtil.generateCheckCode();
+		switch (checkCodeType) {
+			case REGISTER:
+				if (emailExist) {
+					throw new CommonException(ApiMsgEnum.USER_EMAIL_REGISTERED);
+				}
+				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
+						CheckCodeTypeEnum.REGISTER, checkCode);
+				break;
+			case SIGN_IN:
+				if (!emailExist) {
+					throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+				}
+				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
+						CheckCodeTypeEnum.SIGN_IN, checkCode);
+				break;
+			case UPDATE_PASSWORD:
+				if (!emailExist) {
+					throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+				}
+				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
+						CheckCodeTypeEnum.UPDATE_PASSWORD, checkCode);
+				break;
+			default:
+				return;
+		}
+		// 发送验证码
+		messageMqSender.sendBatch(Collections.singletonList(message));
+		// 缓存验证码
+		redisUtil.set(redisKey, checkCode, UserConst.CHECK_CODE_EXPIRE_TIME_SECOND);
+	}
+
+	/**
 	 * 用户注册
 	 *
 	 * @param registerParam
@@ -78,9 +140,18 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 */
 	@Override
 	public UserInfoEntity register(UserRegisterParam registerParam) {
+		// 校验验证码
+		String cacheKey = CheckCodeUtil.generateCacheKey(registerParam.getEmail(),CheckCodeTypeEnum.REGISTER);
+		boolean checkCodeFlag = CheckCodeUtil.validateCheckCodeValidity(registerParam.getCheckCode(),
+				cacheKey, redisUtil);
+		if (!checkCodeFlag) {
+			throw new CommonException(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR);
+		}
+		redisUtil.remove(cacheKey);
 		UserInfoSaveParam saveParam = new UserInfoSaveParam();
 		BeanUtil.copyProperties(registerParam, saveParam);
 		UserInfoEntity userInfoDB = save(saveParam);
+		userInfoDB.setPasscode(null);
 		// TODO 生成 Token
 		return userInfoDB;
 	}
@@ -189,6 +260,20 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 		// 更新对象
 
+	}
+
+	/**
+	 * 校验账户是否存在
+	 *
+	 * @param account
+	 * @return
+	 */
+	private boolean validateExist(String account) {
+		UserInfoEntity userInfoDB = userInfoDao.login(account);
+		if (Objects.isNull(userInfoDB)) {
+			return false;
+		}
+		return true;
 	}
 
 
