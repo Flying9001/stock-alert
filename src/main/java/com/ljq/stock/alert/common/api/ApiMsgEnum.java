@@ -47,6 +47,8 @@ public enum ApiMsgEnum {
     CHECK_CODE_VALIDATE_ERROR("api.response.user.checkCodeValidateError", "验证码错误"),
     USER_PASSCODE_ENCRYPT_ERROR("api.response.user.passcodeEncryptError", "密码加密错误," +
             "请输入字母、数字与下划线的组合"),
+    USER_TOKEN_NULL_ERROR("api.response.user.tokenNullError", "用户登录凭证不能为空"),
+    USER_TOKEN_ERROR("api.response.user.tokenError", "用户登录信息已失效"),
 
     /**
      * 用户股票

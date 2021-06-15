@@ -8,15 +8,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.component.AlertMessageMqSender;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
-import com.ljq.stock.alert.common.util.CheckCodeUtil;
-import com.ljq.stock.alert.common.util.Md5Util;
-import com.ljq.stock.alert.common.util.MessageHelper;
+import com.ljq.stock.alert.common.util.*;
 import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
@@ -28,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -146,29 +147,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 *
 	 * @param registerParam
 	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws JsonProcessingException
 	 */
 	@Override
-	public UserInfoEntity register(UserRegisterParam registerParam) {
-		// 校验验证码
-		String cacheKey = CheckCodeUtil.generateCacheKey(registerParam.getEmail(),CheckCodeTypeEnum.REGISTER);
-		boolean checkCodeFlag = CheckCodeUtil.validateCheckCodeValidity(registerParam.getCheckCode(),
-				cacheKey, redisUtil);
-		if (!checkCodeFlag) {
-			throw new CommonException(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR);
-		}
-		redisUtil.remove(cacheKey);
+	public UserInfoEntity register(UserRegisterParam registerParam) throws UnsupportedEncodingException,
+			NoSuchAlgorithmException, JsonProcessingException {
 		UserInfoSaveParam saveParam = new UserInfoSaveParam();
 		BeanUtil.copyProperties(registerParam, saveParam);
 		// 密码加密
-		try {
-			saveParam.setPasscode(Md5Util.getEncryptedPwd(saveParam.getPasscode()));
-		} catch (Exception e) {
-			log.error("密码加密失败", e);
-			throw new CommonException(ApiMsgEnum.USER_PASSCODE_ENCRYPT_ERROR);
-		}
+		saveParam.setPasscode(Md5Util.getEncryptedPwd(saveParam.getPasscode()));
 		UserInfoEntity userInfoDB = save(saveParam);
 		userInfoDB.setPasscode(null);
-		// TODO 生成 Token
+		// 生成 Token
+		userInfoDB.setToken(TokenUtil.createToken(userInfoDB));
 		return userInfoDB;
 	}
 
@@ -177,9 +170,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 *
 	 * @param loginParam
 	 * @return
+	 * @throws JsonProcessingException
 	 */
 	@Override
-	public UserInfoEntity login(UserLoginParam loginParam) {
+	public UserInfoEntity login(UserLoginParam loginParam) throws JsonProcessingException {
 		UserInfoEntity userInfoDB = userInfoDao.login(loginParam.getAccount());
 		if (Objects.isNull(userInfoDB)) {
 			throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
@@ -197,8 +191,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 		}
 		// 过滤密码
 		userInfoDB.setPasscode(null);
-		// TODO 生成 Token
-
+		// 生成 Token
+		userInfoDB.setToken(TokenUtil.createToken(userInfoDB));
 		return userInfoDB;
 	}
 
@@ -210,7 +204,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 */
 	@Override
 	public UserInfoEntity info(UserInfoInfoParam infoParam) {
-		return userInfoDao.selectById(infoParam.getId());
+		UserInfoEntity userInfoDB = userInfoDao.selectById(infoParam.getId());
+		if (Objects.isNull(userInfoDB)) {
+			throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		// 过滤密码
+		userInfoDB.setPasscode(null);
+		return userInfoDB;
 	}
 
 	/**

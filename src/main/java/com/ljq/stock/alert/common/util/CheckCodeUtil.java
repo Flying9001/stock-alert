@@ -52,6 +52,7 @@ public class CheckCodeUtil {
         }
         String checkCodeCache = String.valueOf(data);
         if (Objects.equals(checkCode, checkCodeCache)) {
+            redisUtil.remove(cacheKey);
             return true;
         }
         return false;

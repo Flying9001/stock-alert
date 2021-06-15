@@ -16,7 +16,8 @@ public class MebConfig implements WebMvcConfigurer {
     /**
      * 无需 token 的接口路径
      */
-    private static String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**"};
+    private static String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**", "/api/user/info/checkCode",
+            "/api/user/info/register", "/api/user/info/login"};
 
     @Bean
     WebInterceptor webInterceptor() {

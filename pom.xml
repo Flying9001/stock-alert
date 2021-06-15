@@ -27,6 +27,7 @@
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <hutool.version>5.6.1</hutool.version>
         <springfox-swagger3.version>3.0.0</springfox-swagger3.version>
+        <auth.jwt.version>3.16.0</auth.jwt.version>
     </properties>
 
     <dependencies>
@@ -102,6 +103,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!-- JWT -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${auth.jwt.version}</version>
         </dependency>
         <!-- lombok -->
         <dependency>

@@ -1,7 +1,11 @@
 package com.ljq.stock.alert.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiResult;
+import com.ljq.stock.alert.common.component.RedisUtil;
+import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
+import com.ljq.stock.alert.common.util.CheckCodeUtil;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.service.UserInfoService;
@@ -13,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 用户信息
@@ -28,6 +35,8 @@ public class UserInfoController {
 
 	@Autowired
 	private UserInfoService userInfoService;
+	@Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 新增(单条)
@@ -59,11 +68,17 @@ public class UserInfoController {
      *
      * @param registerParam
      * @return
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     * @throws JsonProcessingException
      */
     @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "用户注册",  notes = "用户注册")
-    public ResponseEntity<ApiResult<UserInfoEntity>> register(@Validated @RequestBody UserRegisterParam registerParam) {
-        // TODO 验证码校验
+    public ResponseEntity<ApiResult<UserInfoEntity>> register(@Validated @RequestBody UserRegisterParam registerParam)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException, JsonProcessingException {
+        // 验证码校验
+        CheckCodeUtil.validateCheckCodeValidity(registerParam.getCheckCode(),
+                CheckCodeUtil.generateCacheKey(registerParam.getEmail(), CheckCodeTypeEnum.REGISTER), redisUtil);
         return ResponseEntity.ok(ApiResult.success(userInfoService.register(registerParam)));
     }
 
@@ -72,10 +87,12 @@ public class UserInfoController {
      *
      * @param loginParam
      * @return
+     * @throws JsonProcessingException
      */
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "用户登录",  notes = "用户登录")
-    public ResponseEntity<ApiResult<UserInfoEntity>> login(@Validated @RequestBody UserLoginParam loginParam) {
+    public ResponseEntity<ApiResult<UserInfoEntity>> login(@Validated @RequestBody UserLoginParam loginParam)
+            throws JsonProcessingException {
         return ResponseEntity.ok(ApiResult.success(userInfoService.login(loginParam)));
     }
 

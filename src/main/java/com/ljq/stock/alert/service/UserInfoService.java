@@ -1,8 +1,12 @@
 package com.ljq.stock.alert.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 用户信息业务层接口
@@ -32,16 +36,21 @@ public interface UserInfoService {
 	 *
 	 * @param registerParam
 	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws JsonProcessingException
 	 */
-	UserInfoEntity register(UserRegisterParam registerParam);
+	UserInfoEntity register(UserRegisterParam registerParam) throws UnsupportedEncodingException,
+			NoSuchAlgorithmException, JsonProcessingException;
 
 	/**
 	 * 用户登录
 	 *
 	 * @param loginParam
 	 * @return
+	 * @throws JsonProcessingException
 	 */
-	UserInfoEntity login(UserLoginParam loginParam);
+	UserInfoEntity login(UserLoginParam loginParam) throws JsonProcessingException;
 
 	/**
      * 查询详情(单条)
