@@ -1,0 +1,33 @@
+## config
+
+## spring config
+spring:
+  profiles:
+    active: dev
+  application:
+    name: stock-alert
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+## mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:mybatis/*.xml
+  type-aliases-package: com.ljq.stock.alert.model.entity
+
+## log
+logging:
+  level:
+    com.ljq.demo.springboot.mybatisplus.dao: debug
+    com.ljq.demo.springboot.mybatisplus: debug
+
+## 异常日志栈深度
+exceptionLogStackDepth: 5
+
+## Swagger3
+swagger3:
+  enable: true
+  title: Swagger3 demo
+  description: Swagger3 demo api document
+  authHeaderKey: token
+
