@@ -7,6 +7,10 @@
 
 股票预警助手(Stock alert helper)致力于为个人投资者提供实时股票监控，当股价达到合理位置自动预警。  
 
+### 项目架构图  
+
+![StockAlert架构图](https://cdn.jsdelivr.net/gh/Flying9001/images/pic/20210707112248.jpg)
+
 ​     
 
 ### 项目运行环境  
@@ -79,7 +83,9 @@ maven 打包
 
 [需求分析](./doc/requirement_analysis.md)  
 
-  
+[接口文档使用说明](./doc/api_docs.md "./doc/api_docs.md")  
+
+
 
 
 

@@ -24,10 +24,4 @@ logging:
 ## 异常日志栈深度
 exceptionLogStackDepth: 5
 
-## Swagger3
-swagger3:
-  enable: true
-  title: Swagger3 demo
-  description: Swagger3 demo api document
-  authHeaderKey: token
 
