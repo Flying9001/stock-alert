@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
                 apiResult = ApiResult.fail(ApiMsgEnum.UNKNOWN_ERROR);
                 break;
         }
-        log.warn("key:{},\n\t msg:{},\n\t trace:{}",apiResult.getKey(), e.getMessage(),
+        log.error("key:{},\n\t msg:{},\n\t trace:{}",apiResult.getKey(), e.getMessage(),
                 getStackTraceInfo(e.getStackTrace(), exceptionLogStackDepth));
         return new ResponseEntity<>(apiResult,
                 headers, HttpStatus.BAD_REQUEST);

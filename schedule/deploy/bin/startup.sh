@@ -25,10 +25,6 @@ CONFIG_DIR=${BASE_PATH}"/conf/"
 
 # 项目日志输出绝对路径
 LOG_DIR=${BASE_PATH}"/logs"
-LOG_FILE="${APPLICATION}.log"
-LOG_PATH="${LOG_DIR}/${LOG_FILE}"
-# 日志备份目录
-LOG_BACK_DIR="${LOG_DIR}/back/"
 
 # 项目启动日志输出绝对路径
 LOG_STARTUP_PATH="${LOG_DIR}/startup.log"
@@ -44,22 +40,6 @@ STARTUP_LOG="================================================ ${NOW_PRETTY} ====
 if [[ ! -d "${LOG_DIR}" ]]; then
   mkdir "${LOG_DIR}"
 fi
-
-# 如果logs/back文件夹不存在,则创建文件夹
-if [[ ! -d "${LOG_BACK_DIR}" ]]; then
-  mkdir "${LOG_BACK_DIR}"
-fi
-
-# 如果项目运行日志存在,则重命名备份
-if [[ -f "${LOG_PATH}" ]]; then
-	mv ${LOG_PATH} "${LOG_BACK_DIR}/${APPLICATION}_back_${NOW}.log"
-fi
-
-# 创建新的项目运行日志
-echo "" > ${LOG_PATH}
-
-# 如果项目启动日志不存在,则创建,否则追加
-#echo "${STARTUP_LOG}" >> ${LOG_STARTUP_PATH}
 
 #==========================================================================================
 # JVM Configuration
@@ -90,20 +70,18 @@ STARTUP_LOG="${STARTUP_LOG}application root path: ${BASE_PATH}\n"
 STARTUP_LOG="${STARTUP_LOG}application bin  path: ${BIN_PATH}\n"
 # 输出项目config路径
 STARTUP_LOG="${STARTUP_LOG}application config path: ${CONFIG_DIR}\n"
-# 打印日志路径
-STARTUP_LOG="${STARTUP_LOG}application log  path: ${LOG_PATH}\n"
 # 打印JVM配置
 STARTUP_LOG="${STARTUP_LOG}application JAVA_OPT : ${JAVA_OPT}\n"
 
 
 # 打印启动命令
-STARTUP_LOG="${STARTUP_LOG}application startup command: nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > ${LOG_PATH} 2>&1 &\n"
+STARTUP_LOG="${STARTUP_LOG}application startup command: nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > /dev/null 2>&1 &\n"
 
 
 #======================================================================
 # 执行启动命令：后台启动项目,并将日志输出到项目根目录下的logs文件夹下
 #======================================================================
-nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > ${LOG_PATH} 2>&1 &
+nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > /dev/null 2>&1 &
 
 
 # 进程ID
@@ -115,5 +93,3 @@ echo -e ${STARTUP_LOG} >> ${LOG_STARTUP_PATH}
 # 打印启动日志
 echo -e ${STARTUP_LOG}
 
-# 打印项目日志
-tail -f ${LOG_PATH}
