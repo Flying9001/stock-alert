@@ -14,7 +14,7 @@ import lombok.Data;
  * @date 2021-03-22 17:17:06
  */
 @Data
-@TableName(value = "user_info", resultMap = "userInfoMap")
+@TableName(value = "USER_INFO", resultMap = "userInfoMap")
 @ApiModel(value = "用户信息", description = "用户信息")
 public class UserInfoEntity extends BaseEntity {
 

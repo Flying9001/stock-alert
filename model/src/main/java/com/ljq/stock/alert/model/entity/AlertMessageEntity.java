@@ -14,7 +14,7 @@ import lombok.Data;
  * @date 2021-03-22 17:17:06
  */
 @Data
-@TableName(value = "alert_message", resultMap = "alertMessageMap")
+@TableName(value = "ALERT_MESSAGE", resultMap = "alertMessageMap")
 @ApiModel(value = "预警消息", description = "预警消息")
 public class AlertMessageEntity extends BaseEntity {
 

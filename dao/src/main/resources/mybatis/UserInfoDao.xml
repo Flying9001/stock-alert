@@ -31,7 +31,7 @@
     <select id="login" parameterType="java.lang.String" resultMap="userInfoMap" >
         SELECT
         <include refid="user_info_base_field" />
-        FROM `user_info` u
+        FROM `USER_INFO` u
         WHERE 1 = 1
         AND (u.ACCOUNT = #{account} OR u.MOBILE_PHONE = #{account} OR u.EMAIL = #{account})
     </select>

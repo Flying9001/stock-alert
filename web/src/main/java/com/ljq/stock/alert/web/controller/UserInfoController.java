@@ -2,9 +2,11 @@ package com.ljq.stock.alert.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
+import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.service.UserInfoService;
@@ -68,17 +70,18 @@ public class UserInfoController {
      *
      * @param registerParam
      * @return
-     * @throws UnsupportedEncodingException
-     * @throws NoSuchAlgorithmException
      * @throws JsonProcessingException
      */
     @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "用户注册",  notes = "用户注册")
     public ResponseEntity<ApiResult<UserInfoEntity>> register(@Validated @RequestBody UserRegisterParam registerParam)
-            throws UnsupportedEncodingException, NoSuchAlgorithmException, JsonProcessingException {
+            throws JsonProcessingException {
         // 验证码校验
-        CheckCodeUtil.validateCheckCodeValidity(registerParam.getCheckCode(),
+        boolean checkResult = CheckCodeUtil.validateCheckCodeValidity(registerParam.getCheckCode(),
                 CheckCodeUtil.generateCacheKey(registerParam.getEmail(), CheckCodeTypeEnum.REGISTER), redisUtil);
+        if (!checkResult) {
+            throw new CommonException(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR);
+        }
         return ResponseEntity.ok(ApiResult.success(userInfoService.register(registerParam)));
     }
 

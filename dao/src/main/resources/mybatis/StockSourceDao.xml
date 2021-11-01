@@ -49,8 +49,8 @@
     <select id="queryPageByUser" parameterType="java.util.Map" resultMap="stockSourceMap" >
         SELECT
         <include refid="stock_source_base_field" />
-        FROM `stock_source` s
-        LEFT JOIN `user_stock` us ON us.STOCK_ID = s.ID
+        FROM `STOCK_SOURCE` s
+        LEFT JOIN `USER_STOCK` us ON us.STOCK_ID = s.ID
         <where>
             <if test="param.userId != null" >
                 AND us.USER_ID = #{param.userId}

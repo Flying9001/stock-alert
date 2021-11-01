@@ -107,6 +107,7 @@ public class AlertMessageJob {
         // 保存预警消息
         alertMessageService.saveBatch(messageSendList);
         // 推送预警消息
+        log.info("预警消息推送: {}", messageSendList);
         alertMessageMqSender.sendBatch(messageSendList);
     }
 

@@ -6,6 +6,9 @@ APPLICATION="stock-alert-schedule"
 # 项目启动jar包名称
 APPLICATION_JAR="stock-alert-schedule.jar"
 
+# 部署环境
+APPLICATION_ENV="test"
+
 # bin目录绝对路径
 BIN_PATH=$(cd `dirname $0`; pwd)
 # 进入bin目录
@@ -79,6 +82,8 @@ JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow"
 STARTUP_LOG="${STARTUP_LOG}application name: ${APPLICATION}\n"
 # 输出jar包名称
 STARTUP_LOG="${STARTUP_LOG}application jar name: ${APPLICATION_JAR}\n"
+# 部署环境
+STARTUP_LOG="${STARTUP_LOG}application env: ${APPLICATION_ENV}\n"
 # 输出项目根目录
 STARTUP_LOG="${STARTUP_LOG}application root path: ${BASE_PATH}\n"
 # 输出项目bin路径
@@ -92,13 +97,13 @@ STARTUP_LOG="${STARTUP_LOG}application JAVA_OPT : ${JAVA_OPT}\n"
 
 
 # 打印启动命令
-STARTUP_LOG="${STARTUP_LOG}application startup command: nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} > ${LOG_PATH} 2>&1 &\n"
+STARTUP_LOG="${STARTUP_LOG}application startup command: nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > ${LOG_PATH} 2>&1 &\n"
 
 
 #======================================================================
 # 执行启动命令：后台启动项目,并将日志输出到项目根目录下的logs文件夹下
 #======================================================================
-nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} > ${LOG_PATH} 2>&1 &
+nohup java ${JAVA_OPT} -jar ${BASE_PATH}/target/${APPLICATION_JAR} --spring.config.location=${CONFIG_DIR} --spring.profiles.active=${APPLICATION_ENV} > ${LOG_PATH} 2>&1 &
 
 
 # 进程ID

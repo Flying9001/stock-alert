@@ -2,7 +2,7 @@
 
 ## server
 server:
-  port: 8089
+  port: 8090
 
 ## spring config
 spring:
@@ -51,11 +51,3 @@ spring:
 ## 股票数据接口
 stockApi:
   apiAddress: http://hq.sinajs.cn/list=
-
-## Swagger3
-swagger3:
-  enable: true
-  title: Stock Alert
-  description: Stock Alert api document
-  authHeaderKey: Authorization
-

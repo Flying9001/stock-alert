@@ -36,12 +36,9 @@ public interface UserInfoService {
 	 *
 	 * @param registerParam
 	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws NoSuchAlgorithmException
 	 * @throws JsonProcessingException
 	 */
-	UserInfoEntity register(UserRegisterParam registerParam) throws UnsupportedEncodingException,
-			NoSuchAlgorithmException, JsonProcessingException;
+	UserInfoEntity register(UserRegisterParam registerParam) throws JsonProcessingException;
 
 	/**
 	 * 用户登录

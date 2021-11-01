@@ -150,17 +150,12 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 *
 	 * @param registerParam
 	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws NoSuchAlgorithmException
 	 * @throws JsonProcessingException
 	 */
 	@Override
-	public UserInfoEntity register(UserRegisterParam registerParam) throws UnsupportedEncodingException,
-			NoSuchAlgorithmException, JsonProcessingException {
+	public UserInfoEntity register(UserRegisterParam registerParam) throws JsonProcessingException {
 		UserInfoSaveParam saveParam = new UserInfoSaveParam();
 		BeanUtil.copyProperties(registerParam, saveParam);
-		// 密码加密
-		saveParam.setPasscode(Md5Util.getEncryptedPwd(saveParam.getPasscode()));
 		UserInfoEntity userInfoDB = save(saveParam);
 		userInfoDB.setPasscode(null);
 		// 生成 Token

@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  * @date 2021-03-22 17:17:06
  */
 @Data
-@TableName(value = "user_stock", resultMap = "userStockMap")
+@TableName(value = "USER_STOCK", resultMap = "userStockMap")
 @ApiModel(value = "用户股票", description = "用户股票")
 public class UserStockEntity extends BaseEntity {
 
