@@ -54,7 +54,7 @@ stockApi:
 
 ## Swagger3
 swagger3:
-  enable: true
+  enable: false
   title: Stock Alert
   description: Stock Alert api document
   authHeaderKey: Authorization
