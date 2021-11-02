@@ -3,7 +3,6 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!-- 属性定义 -->
     <property name="LOG_HOME" value="../../logs/stock-alert-schedule" />
-    <property name="appName" value="stock-alert-schedule" />
     <property name="maxHistory" value="90" />
     <property name="CONSOLE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger{100} %L\)| %msg%n"/>
@@ -18,27 +17,11 @@
         </encoder>
     </appender>
 
-    <!-- DEBUG日志 -->
-    <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
-    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 过滤器，记录「所有」级别的日志 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>DEBUG</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>ACCEPT</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
-
     <!-- INFO级别日志 -->
     <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 过滤器，只记录「INFO」级别的日志 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <!-- 过滤器，记录「INFO」及以上级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/info/infoLog-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
@@ -46,19 +29,6 @@
             <maxHistory>${maxHistory}</maxHistory>
             <totalSizeCap>20GB</totalSizeCap>
         </rollingPolicy>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
-
-    <!-- WARN级别日志 -->
-    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 过滤器，只记录「WARN」级别的日志 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
         <encoder>
             <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
@@ -91,13 +61,12 @@
     <logger name="org.mybatis.spring" level="info" />
     <logger name="com.baomidou.mybatisplus.core.MybatisConfiguration" level="info" />
     <logger name="com.baomidou.mybatisplus.extension" level="info" />
-
-    <logger name="org.springframework" level="info" />
-    <logger name="_org.springframework" level="info" />
-
     <logger name="org.hibernate.validator" level="info" />
     <logger name="org.apache.http" level="warn" />
     <logger name="com.zaxxer.hikari" level="info" />
+
+    <logger name="org.springframework" level="info" />
+    <logger name="_org.springframework" level="info" />
 
     <logger name="springfox" level="info" />
     <logger name="io.springfox" level="info" />
@@ -109,9 +78,7 @@
     <!-- 根日志,所有日志appender都必须包含在root/logger中,否则不会起作用 -->
     <root level="debug">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="DEBUG" />
         <appender-ref ref="INFO" />
-        <appender-ref ref="WARN" />
         <appender-ref ref="ERROR" />
     </root>
 </configuration>
