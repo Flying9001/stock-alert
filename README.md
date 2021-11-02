@@ -78,7 +78,8 @@ maven 打包
 项目数据库脚本  
 
 ```
-./doc/sql/stock_alert_init.sql
+./doc/sql/stock_alert_create.sql
+./doc/sql/stock_source_init_data.sql
 ```
 
 [需求分析](./doc/requirement_analysis.md)  
