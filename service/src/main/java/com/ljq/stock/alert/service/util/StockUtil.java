@@ -89,7 +89,7 @@ public class StockUtil {
             List<StockSourceEntity> resultStockList = new ArrayList<>();
             for (int i = 0; i < stockList.size(); i++) {
                 resultStockList.add(createStock(stockDataArr[i], stockList.get(i).getMarketType(),
-                        stockList.get(i).getStockCode()));
+                        stockList.get(i).getStockCode(), stockList.get(i).getId()));
             }
             return resultStockList;
         } catch (IOException e) {
@@ -107,11 +107,25 @@ public class StockUtil {
      * @return
      */
     public static StockSourceEntity createStock(String stockData, int marketType, String stockCode){
+        return createStock(stockData, marketType, stockCode, 0);
+    }
+
+    /**
+     * 创建股票对象
+     *
+     * @param stockData 股票数据
+     * @param marketType 市场类型
+     * @param stockCode 股票编码
+     * @param id 股票 id
+     * @return
+     */
+    public static StockSourceEntity createStock(String stockData, int marketType, String stockCode, long id) {
         String stockInfo = stockData;
         stockInfo = stockInfo.substring(stockInfo.indexOf("\"") + 1);
         stockInfo = stockInfo.substring(0,stockInfo.lastIndexOf("\""));
         String[] stockDataArr = stockInfo.split(",");
         StockSourceEntity stockSource = new StockSourceEntity();
+        stockSource.setId(id);
         stockSource.setMarketType(marketType);
         stockSource.setStockCode(stockCode);
         stockSource.setCompanyName(stockDataArr[0]);

@@ -6,6 +6,7 @@ import com.ljq.stock.alert.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * 预警消息实体类
@@ -14,6 +15,7 @@ import lombok.Data;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @TableName(value = "ALERT_MESSAGE", resultMap = "alertMessageMap")
 @ApiModel(value = "预警消息", description = "预警消息")
 public class AlertMessageEntity extends BaseEntity {

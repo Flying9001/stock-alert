@@ -6,6 +6,7 @@ import com.ljq.stock.alert.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @TableName(value = "USER_STOCK", resultMap = "userStockMap")
 @ApiModel(value = "用户股票", description = "用户股票")
 public class UserStockEntity extends BaseEntity {
