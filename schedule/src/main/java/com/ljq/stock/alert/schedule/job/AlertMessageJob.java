@@ -51,12 +51,23 @@ public class AlertMessageJob {
      */
     @Scheduled(fixedDelay = 60 * 1000, initialDelay = 1 * 1000)
     public void flashStockData() {
-        // 查询所有股票
-        List<StockSourceEntity> stockDBList = stockSourceService.list();
-        // 批量查询股票数据
-        List<StockSourceEntity> stockLiveList = StockUtil.getStocksFromSina(stockApiConfig, stockDBList);
-        // 批量更新股票数据
-        stockSourceService.updateBatchById(stockLiveList);
+        // 统计所有股票数量
+        int countAll = stockSourceService.count();
+        int pageSize = 1000;
+        int times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
+        IPage<StockSourceEntity> page = new Page<>(1, pageSize);
+        // 分批次更新股票价格
+        for (int i = 0; i < times; i++) {
+            page.setCurrent(i);
+            page = stockSourceService.page(page, Wrappers.emptyWrapper());
+            if (CollUtil.isEmpty(page.getRecords())) {
+                continue;
+            }
+            // 批量查询股票数据
+            List<StockSourceEntity> stockLiveList = StockUtil.getStocksFromSina(stockApiConfig, page.getRecords());
+            // 批量更新股票数据
+            stockSourceService.updateBatchById(stockLiveList);
+        }
     }
 
     /**
