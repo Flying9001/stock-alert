@@ -120,6 +120,9 @@ public class MessageHelper {
      * @return
      */
     public static int compareStockPrice(BigDecimal currentPrice, BigDecimal userMaxPrice, BigDecimal userMinPrice) {
+        if (currentPrice.compareTo(BigDecimal.ZERO) == 0) {
+            return 0;
+        }
         if (currentPrice.compareTo(userMaxPrice) > -1) {
             return 1;
         }
