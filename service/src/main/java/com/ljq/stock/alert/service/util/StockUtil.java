@@ -107,7 +107,7 @@ public class StockUtil {
      * @return
      */
     public static StockSourceEntity createStock(String stockData, int marketType, String stockCode){
-        return createStock(stockData, marketType, stockCode, 0);
+        return createStock(stockData, marketType, stockCode, null);
     }
 
     /**
@@ -119,7 +119,7 @@ public class StockUtil {
      * @param id 股票 id
      * @return
      */
-    public static StockSourceEntity createStock(String stockData, int marketType, String stockCode, long id) {
+    public static StockSourceEntity createStock(String stockData, int marketType, String stockCode, Long id) {
         String stockInfo = stockData;
         stockInfo = stockInfo.substring(stockInfo.indexOf("\"") + 1);
         stockInfo = stockInfo.substring(0,stockInfo.lastIndexOf("\""));

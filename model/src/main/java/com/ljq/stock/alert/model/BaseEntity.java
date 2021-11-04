@@ -22,7 +22,7 @@ public class BaseEntity implements Serializable {
     /**
      * id
      **/
-    @TableId(value = "ID", type = IdType.NONE)
+    @TableId(value = "ID", type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "id", name = "id")
     private Long id;
     /**
