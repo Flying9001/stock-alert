@@ -2,7 +2,6 @@ package com.ljq.stock.alert.common.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -10,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Description: redis 工具类
@@ -32,16 +32,8 @@ public class RedisUtil implements Serializable {
      * @param value
      * @return
      */
-    public boolean set(final String key, Object value) {
-        boolean result = false;
-        try {
-            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
-            operations.set(key, value);
-            result = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+    public void set(String key, Object value) {
+        redisTemplate.opsForValue().set(key, value);
     }
 
     /**
@@ -53,17 +45,8 @@ public class RedisUtil implements Serializable {
      * @param expireTime
      * @return
      */
-    public boolean set(final String key, Object value, Long expireTime) {
-        boolean result = false;
-        try {
-            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
-            operations.set(key, value);
-            redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
-            result = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+    public void set(String key, Object value, Long expireTime) {
+        redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
     }
 
     /**
@@ -72,8 +55,8 @@ public class RedisUtil implements Serializable {
      * @param key
      * @return
      */
-    public boolean exists(final String key) {
-        return redisTemplate.hasKey(key);
+    public boolean exists(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     /**
@@ -82,21 +65,18 @@ public class RedisUtil implements Serializable {
      * @param key
      * @return
      */
-    public Object get(final String key) {
-        ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
-        Object result = operations.get(key);
-        return result;
+    public Object get(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
     /**
      * 删除一条记录
      *
      * @param key
+     * @return
      */
-    public void remove(final String key) {
-        if (exists(key)) {
-            redisTemplate.delete(key);
-        }
+    public boolean remove(String key) {
+        return Boolean.TRUE.equals(redisTemplate.delete(key));
     }
 
     /**
@@ -104,11 +84,66 @@ public class RedisUtil implements Serializable {
      *
      * @param keyList
      */
-    public void removeBatch(final List<String> keyList) {
+    public void removeBatch(List<String> keyList) {
         Set<Serializable> keys = new HashSet<>(keyList);
         if (keys.size() > 0){
             redisTemplate.delete(keys);
         }
     }
+
+    /**
+     * 向 map 集合插入一条数据
+     *
+     * @param key 集合 key
+     * @param hashKey 元素 key
+     * @param value 元素值
+     */
+    public void mapPut(String key, String hashKey, Object value) {
+        redisTemplate.opsForHash().put(key, hashKey, value);
+    }
+
+    /**
+     * 从 map 集合中获取一个元素
+     *
+     * @param key 集合 key
+     * @param hashKey 元素 key
+     * @param clazz 元素值类
+     * @return
+     */
+    public <V> V mapGet(String key, String hashKey, Class<V> clazz) {
+        return (V) redisTemplate.opsForHash().get(key, hashKey);
+    }
+
+    /**
+     * 从 map 集合中读取所有元素
+     *
+     * @param key 集合 key
+     * @param clazz 元素值类
+     * @return
+     */
+    public <V> List<V> mapGetAll(String key, Class<V> clazz) {
+        return redisTemplate.opsForHash().values(key).stream().map(o -> (V)o).collect(Collectors.toList());
+    }
+
+    /**
+     * 删除 map 集合中一个元素
+     *
+     * @param key 集合 key
+     * @param hashKey 元素 key
+     */
+    public void mapRemove(String key, String hashKey) {
+        redisTemplate.opsForHash().delete(key, hashKey);
+    }
+
+    /**
+     * 批量删除 map 集合元素
+     *
+     * @param key 集合 key
+     * @param hashKeyList 元素 key 列表
+     */
+    public void mapRemoveBatch(String key, List<String> hashKeyList) {
+        redisTemplate.opsForHash().delete(key, hashKeyList.toArray());
+    }
+
 
 }

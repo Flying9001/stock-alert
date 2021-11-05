@@ -2,6 +2,7 @@ package com.ljq.stock.alert.model.param.stocksource;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @Description: 查询某一支股票实时数据
@@ -9,6 +10,7 @@ import lombok.Data;
  * @Date: 2021/3/26
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "查询某一支股票实时数据",description = "查询某一支实时数据")
 public class StockSourceInfoRealTimeParam extends StockSourceInfoParam {
 

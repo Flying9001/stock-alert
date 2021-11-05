@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -7,8 +8,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
+import com.ljq.stock.alert.common.constant.CacheConst;
 import com.ljq.stock.alert.common.exception.CommonException;
+import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
 import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
@@ -23,6 +27,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,6 +50,8 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	private UserStockDao userStockDao;
 	@Autowired
 	private StockApiConfig stockApiConfig;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	/**
 	 * 保存(单条)
@@ -65,6 +74,10 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 				saveParam.getMarketType());
 		// 保存
 		stockSourceDao.insert(stockSourceParam);
+		// 存入缓存
+		redisUtil.mapPut(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSourceParam
+						.getMarketType(), stockSourceParam.getStockCode()),
+				stockSourceParam);
 		return stockSourceParam;
 	}
 
@@ -76,9 +89,23 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	 */
 	@Override
 	public StockSourceEntity info(StockSourceInfoParam infoParam) {
-		return stockSourceDao.selectOne(Wrappers.lambdaQuery(new StockSourceEntity())
+		// 从缓存中读取数据
+		StockSourceEntity stockSource = redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+				CacheKeyUtil.createStockSourceKey(infoParam.getMarketType(), infoParam.getStockCode()),
+				StockSourceEntity.class);
+		if (Objects.nonNull(stockSource)) {
+			return stockSource;
+		}
+		// 从数据库读取数据
+		stockSource = stockSourceDao.selectOne(Wrappers.lambdaQuery(new StockSourceEntity())
 				.eq(StockSourceEntity::getMarketType, infoParam.getMarketType())
 				.eq(StockSourceEntity::getStockCode, infoParam.getStockCode()));
+		// 存入缓存
+		if (Objects.nonNull(stockSource)) {
+			redisUtil.mapPut(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(
+					stockSource.getMarketType(), stockSource.getStockCode()), stockSource);
+		}
+		return stockSource;
 	}
 
 	/**
@@ -143,9 +170,9 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void delete(StockSourceDeleteParam deleteParam) {
 		// 判断-是否存在
-		int countStock = stockSourceDao.selectCount(Wrappers.lambdaQuery(new StockSourceEntity())
+		StockSourceEntity stockSource = stockSourceDao.selectOne(Wrappers.lambdaQuery(new StockSourceEntity())
 				.eq(StockSourceEntity::getId, deleteParam.getId()));
-		if (countStock < 1) {
+		if (Objects.isNull(stockSource)) {
 			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		// 判断是否有用户添加关注
@@ -154,8 +181,12 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		if (countUserStock > 0) {
 			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
-		// 删除
+		// 缓存删除
+		redisUtil.mapRemove(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSource
+				.getMarketType(), stockSource.getStockCode()));
+		// 数据库删除
 		stockSourceDao.deleteById(deleteParam.getId());
+
 	}
 
 	/**
@@ -167,9 +198,9 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void deleteBatch(StockSourceDeleteBatchParam deleteBatchParam) {
-		int countStock = stockSourceDao.selectCount(Wrappers.lambdaQuery(new StockSourceEntity())
+		List<StockSourceEntity> stockSourceList = stockSourceDao.selectList(Wrappers.lambdaQuery(new StockSourceEntity())
 				.in(StockSourceEntity::getId, deleteBatchParam.getIdList()));
-		if (countStock < deleteBatchParam.getIdList().size()) {
+		if (CollUtil.isEmpty(stockSourceList) || stockSourceList.size() < deleteBatchParam.getIdList().size()) {
 			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		int countUserStock = userStockDao.selectCount(Wrappers.lambdaQuery(new UserStockEntity())
@@ -177,8 +208,28 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		if (countUserStock > 0) {
 			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
-		// 删除对象
+		// 缓存删除
+		redisUtil.mapRemoveBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, createStockCacheKeyList(stockSourceList));
+		// 数据库删除
 		stockSourceDao.deleteBatchIds(deleteBatchParam.getIdList());
+	}
+
+
+	/**
+	 * 批量创建股票缓存 key
+	 *
+	 * @param stockSourceList
+	 * @return
+	 */
+	private List<String> createStockCacheKeyList(List<StockSourceEntity> stockSourceList) {
+		if (CollUtil.isEmpty(stockSourceList)) {
+			return Collections.emptyList();
+		}
+		List<String> cacheKeyList = new ArrayList<>();
+		stockSourceList.stream().forEach(stockSource ->
+			cacheKeyList.add(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(), stockSource.getStockCode()))
+		);
+		return cacheKeyList;
 	}
 
 

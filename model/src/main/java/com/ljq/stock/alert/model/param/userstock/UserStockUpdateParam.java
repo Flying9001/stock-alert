@@ -3,6 +3,7 @@ package com.ljq.stock.alert.model.param.userstock;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "用户股票修改(单条)", description = "用户股票修改(单条)")
 public class UserStockUpdateParam extends UserStockInfoParam {
 

@@ -3,6 +3,7 @@ package com.ljq.stock.alert.model.param.user;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
  * @Date: 2021/4/1
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "用户注册", description = "用户注册")
 public class UserRegisterParam extends UserInfoSaveParam {
 

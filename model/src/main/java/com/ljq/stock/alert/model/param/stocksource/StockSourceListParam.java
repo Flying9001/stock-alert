@@ -4,6 +4,7 @@ import com.ljq.stock.alert.model.BasePageParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Pattern;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "股票源分页查询", description = "股票源分页查询")
 public class StockSourceListParam extends BasePageParam {
 

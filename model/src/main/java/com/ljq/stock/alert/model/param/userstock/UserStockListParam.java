@@ -4,6 +4,7 @@ import com.ljq.stock.alert.model.param.stocksource.StockSourceListParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "用户股票分页查询", description = "用户股票分页查询")
 public class UserStockListParam extends StockSourceListParam {
 

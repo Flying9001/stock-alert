@@ -4,6 +4,7 @@ import com.ljq.stock.alert.model.BaseInfoParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Min;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.Min;
  * @date 2021-03-22 17:17:06
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "预警消息查询详情(单条)", description = "预警消息查询详情(单条)")
 public class AlertMessageInfoParam extends BaseInfoParam {
 

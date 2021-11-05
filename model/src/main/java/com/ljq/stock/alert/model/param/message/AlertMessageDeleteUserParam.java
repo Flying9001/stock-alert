@@ -3,6 +3,7 @@ package com.ljq.stock.alert.model.param.message;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
  * @Date: 2021/4/15
  */
 @Data
+@ToString(callSuper = true)
 @ApiModel(value = "删除用户单条消息", description = "删除用户单条消息")
 public class AlertMessageDeleteUserParam extends AlertMessageDeleteParam {
 
