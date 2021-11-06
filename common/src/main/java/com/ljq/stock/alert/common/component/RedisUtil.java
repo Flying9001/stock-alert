@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -100,6 +101,16 @@ public class RedisUtil implements Serializable {
      */
     public void mapPut(String key, String hashKey, Object value) {
         redisTemplate.opsForHash().put(key, hashKey, value);
+    }
+
+    /**
+     * 向 map 集合插入多条数据
+     *
+     * @param key 集合 key
+     * @param elementMap 元素 map 集合
+     */
+    public void mapPutBatch(String key, Map<String, Object> elementMap) {
+        redisTemplate.opsForHash().putAll(key, elementMap);
     }
 
     /**

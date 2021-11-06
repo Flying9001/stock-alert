@@ -2,6 +2,7 @@ package com.ljq.stock.alert.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.param.stocksource.*;
 
@@ -69,6 +70,19 @@ public interface StockSourceService extends IService<StockSourceEntity> {
      */
 	void deleteBatch(StockSourceDeleteBatchParam deleteBatchParam);
 
+	/**
+	 * 将所有数据库中的股票添加到缓存
+	 *
+	 * @return
+	 */
+	ApiResult<Void> allDbToCache();
+
+	/**
+	 * 将缓存中的所有股票数据同步更新到数据库
+	 *
+	 * @return
+	 */
+	ApiResult<Void> allCacheToDb();
 
 
 }

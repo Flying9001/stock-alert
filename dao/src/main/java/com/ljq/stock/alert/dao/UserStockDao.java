@@ -6,6 +6,7 @@ import com.ljq.stock.alert.model.entity.UserStockEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -18,12 +19,13 @@ import java.util.Map;
 public interface UserStockDao extends BaseMapper<UserStockEntity> {
 
     /**
-     * 查询列表
+     * 分页查询
      *
      * @param queryMap
      * @param page
      * @return
      */
-    IPage<UserStockEntity> queryList(@Param("queryMap") Map<String, Object> queryMap, IPage<UserStockEntity> page);
+    IPage<UserStockEntity> queryPage(@NotNull @Param("queryMap") Map<String, Object> queryMap,
+                                     IPage<UserStockEntity> page);
 	
 }

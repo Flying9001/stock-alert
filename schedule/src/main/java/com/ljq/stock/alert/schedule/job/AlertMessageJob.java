@@ -4,14 +4,16 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
+import com.ljq.stock.alert.common.constant.CacheConst;
+import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.AlertMessageDao;
 import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.service.AlertMessageService;
-import com.ljq.stock.alert.service.StockSourceService;
 import com.ljq.stock.alert.service.component.AlertMessageMqSender;
 import com.ljq.stock.alert.service.util.MessageHelper;
 import com.ljq.stock.alert.service.util.StockUtil;
@@ -20,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Description: 预警消息推送
@@ -37,44 +38,42 @@ public class AlertMessageJob {
     @Autowired
     private AlertMessageDao alertMessageDao;
     @Autowired
-    private StockSourceService stockSourceService;
-    @Autowired
     private StockApiConfig stockApiConfig;
     @Autowired
     private UserStockDao userStockDao;
     @Autowired
     private AlertMessageMqSender alertMessageMqSender;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 刷新股票数据
-     * 1 分钟 1 次
+     * 30 秒 1 次
      */
-    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 1 * 1000)
+    @Scheduled(fixedDelay = 30 * 1000L, initialDelay = 5 * 1000L)
     public void flashStockData() {
-        // 统计所有股票数量
-        int countAll = stockSourceService.count();
-        int pageSize = 1000;
-        int times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
-        IPage<StockSourceEntity> page = new Page<>(1, pageSize);
-        // 分批次更新股票价格
-        for (int i = 0; i < times; i++) {
-            page.setCurrent(i);
-            page = stockSourceService.page(page, Wrappers.emptyWrapper());
-            if (CollUtil.isEmpty(page.getRecords())) {
-                continue;
-            }
-            // 批量查询股票数据
-            List<StockSourceEntity> stockLiveList = StockUtil.getStocksFromSina(stockApiConfig, page.getRecords());
-            // 批量更新股票数据
-            stockSourceService.updateBatchById(stockLiveList);
+        // 从缓存中读取所有股票数据
+        List<StockSourceEntity> stockCacheList = redisUtil.mapGetAll(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+                StockSourceEntity.class);
+        if (CollUtil.isEmpty(stockCacheList)) {
+            return;
         }
+        // 查询股票数据
+        List<StockSourceEntity> stockLiveList = StockUtil.getStocksFromSina(stockApiConfig, stockCacheList);
+        // 更新缓存中股票数据
+        Map<String, Object> stockSourceMap = new HashMap<>(16);
+        stockLiveList.stream().forEach(stockSource ->
+                stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
+                        stockSource.getStockCode()), stockSource)
+        );
+        redisUtil.mapPutBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
     }
 
     /**
      * 比对股票数据
-     * 1 分钟 1 次
+     * 30 秒 1 次
      */
-    @Scheduled(fixedDelay = 60 * 1000, initialDelay = 60 * 1000)
+    @Scheduled(fixedDelay = 30 * 1000L, initialDelay = 30 * 1000L)
     public void compareStockPrice() {
         // 查询所有用户关注的股票
         int countAll = userStockDao.selectCount(Wrappers.emptyWrapper());
@@ -83,11 +82,17 @@ public class AlertMessageJob {
         IPage<UserStockEntity> page = new Page<>(1,pageSize);
         for (int i = 1; i < times + 1; i++) {
            page.setCurrent(i);
-           page = userStockDao.queryList(null, page);
+           page = userStockDao.queryPage(Collections.emptyMap(), page);
             // 创建预警消息
             if (CollUtil.isEmpty(page.getRecords())) {
                 continue;
             }
+            // 获取用户关注股票的实时价格
+            page.getRecords().stream().forEach(userStock ->
+                userStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+                        CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
+                                userStock.getStockSource().getStockCode()), StockSourceEntity.class))
+            );
             createAndSendMessageBatch(page.getRecords());
         }
 

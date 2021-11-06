@@ -117,6 +117,27 @@ public class StockSourceController {
         return ResponseEntity.ok(ApiResult.success());
     }
 
+    /**
+     * 将所有数据库中的股票添加到缓存
+     *
+     * @return
+     */
+    @PutMapping(value = "/db/to/cache", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "将所有数据库中的股票添加到缓存",  notes = "将所有数据库中的股票添加到缓存")
+    public ResponseEntity<ApiResult<Void>> allDbToCache() {
+        return ResponseEntity.ok(stockSourceService.allDbToCache());
+    }
+
+    /**
+     * 将缓存中的所有股票数据同步更新到数据库
+     *
+     * @return
+     */
+    @PutMapping(value = "/cache/to/db", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "将缓存中的所有股票数据同步更新到数据库",  notes = "将缓存中的所有股票数据同步更新到数据库")
+    public ResponseEntity<ApiResult<Void>> allCacheToDb() {
+        return ResponseEntity.ok(stockSourceService.allCacheToDb());
+    }
 
 
 

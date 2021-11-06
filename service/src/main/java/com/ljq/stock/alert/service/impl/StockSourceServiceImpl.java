@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.constant.CacheConst;
@@ -27,10 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 股票源业务层具体实现类
@@ -212,6 +210,44 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		redisUtil.mapRemoveBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, createStockCacheKeyList(stockSourceList));
 		// 数据库删除
 		stockSourceDao.deleteBatchIds(deleteBatchParam.getIdList());
+	}
+
+	/**
+	 * 将所有数据库中的股票添加到缓存
+	 *
+	 * @return
+	 */
+	@Override
+	public ApiResult<Void> allDbToCache() {
+		List<StockSourceEntity> stockSourceDBList = stockSourceDao.selectList(Wrappers.emptyWrapper());
+		if (CollUtil.isEmpty(stockSourceDBList)) {
+			log.info("{}", "股票源中没有数据");
+			return ApiResult.success();
+		}
+		Map<String, Object> stockSourceMap = new HashMap<>(16);
+		stockSourceDBList.stream().forEach(stockSource ->
+			stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
+					stockSource.getStockCode()), stockSource)
+		);
+		redisUtil.mapPutBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
+		return ApiResult.success();
+	}
+
+	/**
+	 * 将缓存中的所有股票数据同步更新到数据库
+	 *
+	 * @return
+	 */
+	@Override
+	public ApiResult<Void> allCacheToDb() {
+		List<StockSourceEntity> stockSourceCacheList = redisUtil.mapGetAll(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+				StockSourceEntity.class);
+		if (CollUtil.isEmpty(stockSourceCacheList)) {
+			log.info("{}", "缓存中没有股票源数据");
+			return ApiResult.success();
+		}
+		super.updateBatchById(stockSourceCacheList);
+		return ApiResult.success();
 	}
 
 

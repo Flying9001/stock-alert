@@ -59,13 +59,27 @@
         u.`EMAIL` AS U_EMAIL
     </sql>
 
-    <!-- 查询用户关注股票数据列表 -->
-    <select id="queryList" parameterType="java.util.Map" resultMap="userStockMap">
+    <!-- 分页查询用户关注股票数据列表 -->
+    <select id="queryPage" parameterType="java.util.Map" resultMap="userStockMap">
         SELECT
         <include refid="user_stock_list_field" />
         FROM `USER_STOCK` us
         LEFT JOIN `STOCK_SOURCE` s ON s.ID = us.STOCK_ID
         LEFT JOIN `USER_INFO` u ON u.ID = us.USER_ID
+        <where>
+            <if test="queryMap.userId != null" >
+                AND us.USER_ID = #{queryMap.userId}
+            </if>
+            <if test="queryMap.marketType != null" >
+                AND s.MARKET_TYPE = #{queryMap.marketType}
+            </if>
+            <if test="queryMap.stockCode != null and '' != queryMap.stockCode" >
+                AND s.STOCK_CODE LIKE CONCAT(CONCAT('%', #{queryMap.stockCode}), '%')
+            </if>
+            <if test="queryMap.companyName != null and '' != queryMap.companyName" >
+                AND s.COMPANY_NAME = #{queryMap.companyName}
+            </if>
+        </where>
     </select>
 
 
