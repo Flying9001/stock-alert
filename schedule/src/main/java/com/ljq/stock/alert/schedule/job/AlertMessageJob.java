@@ -64,8 +64,7 @@ public class AlertMessageJob {
         Map<String, Object> stockSourceMap = new HashMap<>(16);
         stockLiveList.stream().forEach(stockSource ->
                 stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
-                        stockSource.getStockCode()), stockSource)
-        );
+                        stockSource.getStockCode()), stockSource));
         redisUtil.mapPutBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
     }
 
@@ -91,8 +90,7 @@ public class AlertMessageJob {
             page.getRecords().stream().forEach(userStock ->
                 userStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
                         CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
-                                userStock.getStockSource().getStockCode()), StockSourceEntity.class))
-            );
+                                userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
             createAndSendMessageBatch(page.getRecords());
         }
 

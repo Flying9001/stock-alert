@@ -74,10 +74,10 @@
                 AND s.MARKET_TYPE = #{queryMap.marketType}
             </if>
             <if test="queryMap.stockCode != null and '' != queryMap.stockCode" >
-                AND s.STOCK_CODE LIKE CONCAT(CONCAT('%', #{queryMap.stockCode}), '%')
+                AND s.STOCK_CODE = #{queryMap.stockCode}
             </if>
             <if test="queryMap.companyName != null and '' != queryMap.companyName" >
-                AND s.COMPANY_NAME = #{queryMap.companyName}
+                AND s.COMPANY_NAME LIKE CONCAT(CONCAT('%', #{queryMap.companyName}), '%')
             </if>
         </where>
     </select>

@@ -45,27 +45,5 @@
         s.`UPDATE_TIME`
 	</sql>
 
-    <!-- 分页查询用户关注的股票 -->
-    <select id="queryPageByUser" parameterType="java.util.Map" resultMap="stockSourceMap" >
-        SELECT
-        <include refid="stock_source_base_field" />
-        FROM `STOCK_SOURCE` s
-        LEFT JOIN `USER_STOCK` us ON us.STOCK_ID = s.ID
-        <where>
-            <if test="param.userId != null" >
-                AND us.USER_ID = #{param.userId}
-            </if>
-            <if test="param.marketType != null" >
-                AND s.MARKET_TYPE = #{param.marketType}
-            </if>
-            <if test="param.stockCode != null and '' != param.stockCode" >
-                AND s.STOCK_CODE LIKE CONCAT(CONCAT('%', #{param.stockCode}), '%')
-            </if>
-            <if test="param.companyName != null and '' != param.companyName" >
-                AND s.COMPANY_NAME = #{param.companyName}
-            </if>
-        </where>
-    </select>
-
 
 </mapper>

@@ -2,14 +2,17 @@ package com.ljq.stock.alert.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
-import com.ljq.stock.alert.common.config.StockApiConfig;
+import com.ljq.stock.alert.common.component.RedisUtil;
+import com.ljq.stock.alert.common.constant.CacheConst;
 import com.ljq.stock.alert.common.exception.CommonException;
+import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
 import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserStockDao;
@@ -18,16 +21,13 @@ import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.param.userstock.*;
 import com.ljq.stock.alert.service.UserStockService;
-import com.ljq.stock.alert.service.util.StockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -48,7 +48,7 @@ public class UserStockServiceImpl implements UserStockService {
 	@Autowired
 	private UserInfoDao userInfoDao;
 	@Autowired
-	private StockApiConfig stockApiConfig;
+	private RedisUtil redisUtil;
 
 
 	/**
@@ -107,8 +107,9 @@ public class UserStockServiceImpl implements UserStockService {
 		// 查询股票信息
 		StockSourceEntity stockDB = stockSourceDao.selectById(userStockDB.getStockId());
 		// 查询实时股价
-		userStockDB.setStockSource(StockUtil.getStockFromSina(stockApiConfig, stockDB.getStockCode(),
-				stockDB.getMarketType()));
+		userStockDB.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+				CacheKeyUtil.createStockSourceKey(stockDB.getMarketType(), stockDB.getStockCode()),
+				StockSourceEntity.class));
 		return userStockDB;
 	}
 
@@ -120,24 +121,17 @@ public class UserStockServiceImpl implements UserStockService {
 	 */
 	@Override
 	public IPage<UserStockEntity> page(UserStockListParam listParam) {
-		IPage<StockSourceEntity> stockPage = new Page<>(listParam.getCurrentPage(), listParam.getPageSize());
-		Map<String, Object> paramMap = BeanUtil.beanToMap(listParam);
-		stockPage = stockSourceDao.queryPageByUser(stockPage, paramMap);
-		IPage<UserStockEntity> userStockPage = new Page<>(listParam.getCurrentPage(), listParam.getPageSize());
-		if (stockPage.getTotal() < 1) {
-			return userStockPage;
+		IPage<UserStockEntity> page = userStockDao.queryPage(BeanUtil.beanToMap(listParam),
+				new Page<>(listParam.getCurrentPage(), listParam.getPageSize()));
+		if (CollUtil.isEmpty(page.getRecords())) {
+			return page;
 		}
-		List<Long> stockIdList = new ArrayList<>();
-		stockPage.getRecords().stream().forEach(stock -> stockIdList.add(stock.getId()));
-		stockPage.setRecords(StockUtil.getStocksFromSina(stockApiConfig, stockPage.getRecords()));
-		BeanUtil.copyProperties(stockPage, userStockPage, CopyOptions.create().ignoreNullValue().ignoreError());
-		List<UserStockEntity> userStockList = userStockDao.selectList(Wrappers.lambdaQuery(new UserStockEntity())
-				.in(UserStockEntity::getStockId, stockIdList));
-		for (int i = 0; i < userStockList.size(); i++) {
-			userStockList.get(i).setStockSource(stockPage.getRecords().get(i));
-		}
-		userStockPage.setRecords(userStockList);
-		return userStockPage;
+        // 获取用户关注股票的实时价格
+		page.getRecords().stream().forEach(userStock ->
+				userStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+						CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
+								userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
+		return page;
 	}
 
 	/**
