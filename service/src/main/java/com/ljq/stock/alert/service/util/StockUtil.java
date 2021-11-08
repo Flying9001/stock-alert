@@ -14,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,10 +133,16 @@ public class StockUtil {
         stockSource.setTodayStartPrice(new BigDecimal(stockDataArr[1]));
         stockSource.setYesterdayEndPrice(new BigDecimal(stockDataArr[2]));
         stockSource.setCurrentPrice(new BigDecimal(stockDataArr[3]));
-        stockSource.setIncrease(new BigDecimal(stockDataArr[4]));
-        stockSource.setIncreasePer(new BigDecimal(stockDataArr[5]));
-        stockSource.setTodayMaxPrice(new BigDecimal(stockDataArr[6]));
-        stockSource.setTodayMinPrice(new BigDecimal(stockDataArr[7]));
+        stockSource.setTodayMaxPrice(new BigDecimal(stockDataArr[4]));
+        stockSource.setTodayMinPrice(new BigDecimal(stockDataArr[5]));
+        BigDecimal increase = new BigDecimal(stockDataArr[3]).subtract(new BigDecimal(stockDataArr[2]));
+        stockSource.setIncrease(increase);
+        if (increase.compareTo(BigDecimal.ZERO) == 0) {
+            stockSource.setIncreasePer(BigDecimal.ZERO);
+        } else {
+            stockSource.setIncreasePer(increase.divide(stockSource.getYesterdayEndPrice(), 4, RoundingMode.HALF_DOWN)
+                    .multiply(BigDecimal.valueOf(100)));
+        }
         stockSource.setTradeNumber(Integer.parseInt(stockDataArr[8]));
         stockSource.setTradeAmount(new BigDecimal(stockDataArr[9]));
         stockSource.setDate(stockDataArr[30]);
