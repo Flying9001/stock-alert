@@ -1,8 +1,10 @@
 package com.ljq.stock.alert.common.api;
 
+import com.ljq.stock.alert.common.constant.RequestConst;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.slf4j.MDC;
 
 import java.util.Map;
 
@@ -57,6 +59,11 @@ public class ApiResult<T> {
      */
     @ApiModelProperty(value = "系统当前时间(精确到毫秒)", name = "系统当前时间(精确到毫秒)")
     private Long timestamp = System.currentTimeMillis();
+    /**
+     * 请求 id
+     */
+    @ApiModelProperty(value = "请求 id", name = "requestId")
+    private String requestId = MDC.get(RequestConst.REQUEST_ID);
 
     protected ApiResult(){
     }

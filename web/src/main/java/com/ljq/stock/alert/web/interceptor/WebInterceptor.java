@@ -3,8 +3,10 @@ package com.ljq.stock.alert.web.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
+import com.ljq.stock.alert.common.constant.RequestConst;
 import com.ljq.stock.alert.service.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @Description: 自定义拦截器
@@ -23,8 +26,9 @@ public class WebInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // Token 校验
         log.info("requestPath: {}", request.getRequestURI());
+        MDC.put(RequestConst.REQUEST_ID, UUID.randomUUID().toString());
+        // Token 校验
         ApiMsgEnum apiMsgEnum = TokenUtil.validateToken(request, response);
         if (!Objects.equals(ApiMsgEnum.SUCCESS, apiMsgEnum)) {
             log.warn("{}", apiMsgEnum.getDefaultMsg());

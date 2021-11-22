@@ -7,12 +7,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ljq.stock.alert.common.config.AopLogConfig;
+import com.ljq.stock.alert.common.constant.RequestConst;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * @Description: Controller 出入参日志记录
@@ -56,7 +57,6 @@ public class AopLog {
      */
     @Around(value = "controllerPointcut()")
     public Object controllerLogAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        String uuid = UUID.randomUUID().toString();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         // 获取切点请求参数(class,method)
@@ -68,27 +68,27 @@ public class AopLog {
         if (Objects.isNull(logConfig)) {
             // 入参日志
             log.info("[AOP-LOG-START]\n\trequestID: {}\n\tIP: {}\n\tcontentType:{}\n\turl: {}\n\t" +
-                            "method: {}\n\tparams: {}\n\ttargetClassAndMethod: {}#{}", uuid, getIpAddress(request),
-                    request.getHeader(HttpHeaders.CONTENT_TYPE), request.getRequestURL(), request.getMethod(), params,
-                    method.getDeclaringClass().getName(), method.getName());
+                            "method: {}\n\tparams: {}\n\ttargetClassAndMethod: {}#{}", MDC.get(RequestConst.REQUEST_ID),
+                    getIpAddress(request),request.getHeader(HttpHeaders.CONTENT_TYPE), request.getRequestURL(),
+                    request.getMethod(), params, method.getDeclaringClass().getName(), method.getName());
             // 出参日志
             Object result = joinPoint.proceed();
             log.info("[AOP-LOG-END]\n\trequestID: {}\n\turl: {}\n\tresponse: {}",
-                    uuid, request.getRequestURL(), result);
+                    MDC.get(RequestConst.REQUEST_ID), request.getRequestURL(), result);
             return result;
         }
         if (!logConfig.ignoreInput()) {
             // 入参日志
             log.info("[AOP-LOG-START]\n\trequestID: {}\n\tIP: {}\n\tcontentType:{}\n\turl: {}\n\t" +
-                            "method: {}\n\tparams: {}\n\ttargetClassAndMethod: {}#{}", uuid, getIpAddress(request),
-                    request.getHeader(HttpHeaders.CONTENT_TYPE), request.getRequestURL(), request.getMethod(), params,
-                    method.getDeclaringClass().getName(), method.getName());
+                            "method: {}\n\tparams: {}\n\ttargetClassAndMethod: {}#{}", MDC.get(RequestConst.REQUEST_ID),
+                    getIpAddress(request), request.getHeader(HttpHeaders.CONTENT_TYPE), request.getRequestURL(),
+                    request.getMethod(), params, method.getDeclaringClass().getName(), method.getName());
         }
         Object result = joinPoint.proceed();
         if (!logConfig.ignoreOutput()) {
             // 出参日志
             log.info("[AOP-LOG-END]\n\trequestID: {}\n\turl: {}\n\tresponse: {}",
-                    uuid, request.getRequestURL(), result);
+                    MDC.get(RequestConst.REQUEST_ID), request.getRequestURL(), result);
             return result;
         }
         return result;
@@ -101,7 +101,8 @@ public class AopLog {
      * @param joinPoint
      * @return
      */
-    private String getRequestParams(HttpServletRequest request, ProceedingJoinPoint joinPoint) throws JsonProcessingException {
+    private String getRequestParams(HttpServletRequest request, ProceedingJoinPoint joinPoint)
+            throws JsonProcessingException {
         StringBuilder params = new StringBuilder();
         // 获取 request parameter 中的参数
         Map<String, String[]> parameterMap = request.getParameterMap();
