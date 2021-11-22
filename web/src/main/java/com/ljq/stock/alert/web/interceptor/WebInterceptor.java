@@ -24,9 +24,10 @@ public class WebInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // Token 校验
+        log.info("requestPath: {}", request.getRequestURI());
         ApiMsgEnum apiMsgEnum = TokenUtil.validateToken(request, response);
         if (!Objects.equals(ApiMsgEnum.SUCCESS, apiMsgEnum)) {
-            log.warn("{}", apiMsgEnum);
+            log.warn("{}", apiMsgEnum.getDefaultMsg());
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType("application/json; charset=utf-8");
             response.setCharacterEncoding("utf-8");
