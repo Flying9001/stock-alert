@@ -143,7 +143,7 @@ public class StockUtil {
             stockSource.setIncreasePer(increase.divide(stockSource.getYesterdayEndPrice(), 4, RoundingMode.HALF_DOWN)
                     .multiply(BigDecimal.valueOf(100)));
         }
-        stockSource.setTradeNumber(Integer.parseInt(stockDataArr[8]));
+        stockSource.setTradeNumber(Long.parseLong(stockDataArr[8]));
         stockSource.setTradeAmount(new BigDecimal(stockDataArr[9]));
         stockSource.setDate(stockDataArr[30]);
         stockSource.setTime(stockDataArr[31]);

@@ -95,7 +95,7 @@ public class StockSourceEntity extends BaseEntity {
      **/
     @TableField(value = "TRADE_NUMBER")
     @ApiModelProperty(value = "交易量", name = "tradeNumber")
-    private Integer tradeNumber;
+    private Long tradeNumber;
     /**
      * 交易金额
      **/
