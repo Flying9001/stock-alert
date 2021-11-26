@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.service.util;
 
+import cn.hutool.core.date.DateUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
@@ -7,6 +8,7 @@ import com.ljq.stock.alert.model.entity.UserStockEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +29,10 @@ public class MessageHelper {
      * @return
      */
     public static AlertMessageEntity createMessage(UserStockEntity userStock) {
-        int priceCompareResult = compareStockPrice(userStock.getStockSource().getCurrentPrice(), userStock.getMaxPrice(),
-                userStock.getMinPrice());
+        Date stockDate = DateUtil.parse(userStock.getStockSource().getDate() + " " +
+                userStock.getStockSource().getTime(), "yyyy-MM-dd HH:mm:ss");
+        int priceCompareResult = compareStockPrice(userStock.getStockSource().getCurrentPrice(),
+                userStock.getMaxPrice(), userStock.getMinPrice(), stockDate.getTime());
         if (priceCompareResult == 0) {
             return null;
         }
@@ -117,9 +121,17 @@ public class MessageHelper {
      * @param currentPrice 当前股价
      * @param userMaxPrice 用户设定最高股价
      * @param userMinPrice 用户设定最低股价
+     * @param stockTimestamp 股票时间戳
      * @return
      */
-    public static int compareStockPrice(BigDecimal currentPrice, BigDecimal userMaxPrice, BigDecimal userMinPrice) {
+    public static int compareStockPrice(BigDecimal currentPrice, BigDecimal userMaxPrice, BigDecimal userMinPrice,
+                                        long stockTimestamp) {
+        // 当前时间超出股价时间 5 分钟,即为失效,过滤收盘后的股价对比数据
+        long timeLimit = 300000L;
+        if ((System.currentTimeMillis() - stockTimestamp) > timeLimit) {
+            return 0;
+        }
+        // 股价为 0 时失效,过滤开盘前无股价的数据
         if (currentPrice.compareTo(BigDecimal.ZERO) == 0) {
             return 0;
         }
