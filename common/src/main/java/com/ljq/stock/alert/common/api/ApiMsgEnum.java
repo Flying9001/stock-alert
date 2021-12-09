@@ -55,6 +55,8 @@ public enum ApiMsgEnum {
      */
     USER_STOCK_EXISTED("api.response.userStock.existed","用户已经添加关注,请勿重复操作"),
     USER_STOCK_NOT_EXIST("api.response.userStock.notExist", "没有查询到用户关注的股票信息"),
+    USER_STOCK_MAX_PRICE_LESS_THAN_MIN_PRICE("api.response.userStock.maxPriceLessThanMinPrice",
+            "股价区间设置不合理,最高股价小于最低股价"),
 
     /**
      * 消息提醒

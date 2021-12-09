@@ -48,9 +48,9 @@ public class AlertMessageJob {
 
     /**
      * 刷新股票数据
-     * 30 秒 1 次
+     * 5 秒 1 次
      */
-    @Scheduled(fixedDelay = 30 * 1000L, initialDelay = 5 * 1000L)
+    @Scheduled(fixedDelay = 5 * 1000L, initialDelay = 5 * 1000L)
     public void flashStockData() {
         // 从缓存中读取所有股票数据
         List<StockSourceEntity> stockCacheList = redisUtil.mapGetAll(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,

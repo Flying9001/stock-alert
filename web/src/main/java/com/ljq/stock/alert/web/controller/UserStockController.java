@@ -1,6 +1,7 @@
 package com.ljq.stock.alert.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.param.userstock.*;
@@ -38,6 +39,9 @@ public class UserStockController {
     @PostMapping(value = "/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "用户股票新增(单条)",  notes = "用户股票新增(单条)")
     public ResponseEntity<ApiResult<UserStockEntity>> save(@Validated @RequestBody UserStockSaveParam saveParam) {
+        if (saveParam.getMaxPrice().compareTo(saveParam.getMinPrice()) < 0) {
+            return ResponseEntity.ok(ApiResult.fail(ApiMsgEnum.USER_STOCK_MAX_PRICE_LESS_THAN_MIN_PRICE));
+        }
         return ResponseEntity.ok(ApiResult.success(userStockService.save(saveParam)));
     }
 
