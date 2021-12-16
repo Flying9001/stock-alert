@@ -1,5 +1,7 @@
 package com.ljq.stock.alert.common.constant;
 
+import java.math.BigDecimal;
+
 /**
  * @Description: 股票相关常量
  * @Author: junqiang.lu
@@ -21,5 +23,15 @@ public class StockConst {
     public static final int MARKET_TYPE_SHENZHEN = 2;
     public static final int MARKET_TYPE_HK = 3;
     public static final int MARKET_TYPE_USA = 4;
+
+    /**
+     * (A股)默认最大涨跌停限制
+     */
+    public static final BigDecimal DEFAULT_MAX_INCREASE_PER = BigDecimal.valueOf(9.9);
+
+    /**
+     * 默认涨跌幅限制值
+     */
+    public static final int DEFAULT_INCREASE_PER_VALUE = -1;
 
 }

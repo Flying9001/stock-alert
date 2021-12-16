@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -44,6 +45,21 @@ public class UserStockSaveParam extends StockSourceCommonParam {
     @Min(value = 0, message = "股价预警最低价不能未负")
     @ApiModelProperty(value = "股价预警最低价", name = "minPrice", required = true)
     private BigDecimal minPrice;
+    /**
+     * 单日最大涨幅限制
+     */
+    @Min(value = 1, message = "单日最大涨幅最少为 1%")
+    @Max(value = 10, message = "单日最大涨幅不超过 10%")
+    @ApiModelProperty(value = "单日最大涨幅限制(%),最低为 1%,最高为 10%", name = "maxIncreasePer")
+    private Integer maxIncreasePer;
+    /**
+     * 单日最大跌幅限制
+     */
+    @Min(value = 1, message = "单日最大跌幅最少为 1%")
+    @Max(value = 10, message = "单日最大跌幅不超过 10%")
+    @ApiModelProperty(value = "单日最大跌幅限制(%),最低为 1%,最高为 10%", name = "maxDecreasePer")
+    private Integer maxDecreasePer;
+
 
 
 }

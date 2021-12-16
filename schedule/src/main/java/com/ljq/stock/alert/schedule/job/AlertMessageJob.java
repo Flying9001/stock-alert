@@ -70,9 +70,9 @@ public class AlertMessageJob {
 
     /**
      * 比对股票数据
-     * 30 秒 1 次
+     * 10 秒 1 次
      */
-    @Scheduled(fixedDelay = 30 * 1000L, initialDelay = 30 * 1000L)
+    @Scheduled(fixedDelay = 10 * 1000L, initialDelay = 30 * 1000L)
     public void compareStockPrice() {
         // 查询所有用户关注的股票
         int countAll = userStockDao.selectCount(Wrappers.emptyWrapper());
@@ -102,7 +102,7 @@ public class AlertMessageJob {
      * @param userStockList
      */
     public void createAndSendMessageBatch(List<UserStockEntity> userStockList) {
-        List<AlertMessageEntity> alertMessageList = MessageHelper.createMessageBatch(userStockList);
+        List<AlertMessageEntity> alertMessageList = MessageHelper.createAlertMessageBatch(userStockList);
         if (CollUtil.isEmpty(alertMessageList)) {
             return;
         }

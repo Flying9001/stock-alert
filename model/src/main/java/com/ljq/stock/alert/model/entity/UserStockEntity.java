@@ -49,6 +49,18 @@ public class UserStockEntity extends BaseEntity {
     @ApiModelProperty(value = "股价预警最低价", name = "minPrice")
     private BigDecimal minPrice;
     /**
+     * 单日股价最大涨幅(值为正,最少为1,即1%),默认-1(A股标准涨停)
+     */
+    @TableField(value = "MAX_INCREASE_PER")
+    @ApiModelProperty(value = "单日股价最大涨幅(%)", name = "maxIncreasePer")
+    private Integer maxIncreasePer;
+    /**
+     * 单日股价最大跌幅(值为正,最少为1,即1%),默认-1(A股标准跌停)
+     */
+    @TableField(value = "MAX_DECREASE_PER")
+    @ApiModelProperty(value = "单日股价最大跌幅(%)", name = "maxDecreasePer")
+    private Integer maxDecreasePer;
+    /**
      * 股票信息
      */
     @TableField(exist = false)
