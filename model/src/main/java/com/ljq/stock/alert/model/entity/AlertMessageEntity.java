@@ -53,6 +53,12 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "邮箱发送,1-发送成功,2-发送失败,3-未发送", name = "emailSend")
     private Integer emailSend;
     /**
+     * 提醒类型,1-股价提醒;2-单日涨跌幅提醒
+     */
+    @TableField(value = "ALERT_TYPE")
+    @ApiModelProperty(value = "提醒类型,1-股价提醒;2-单日涨跌幅提醒", name = "alertType")
+    private Integer alertType;
+    /**
      * 股票 id
      **/
     @TableField(value = "STOCK_ID")

@@ -10,6 +10,8 @@
         <result property="userId" column="USER_ID"/>
         <result property="maxPrice" column="MAX_PRICE"/>
         <result property="minPrice" column="MIN_PRICE"/>
+        <result property="maxIncreasePer" column="MAX_INCREASE_PER"/>
+        <result property="maxDecreasePer" column="MAX_DECREASE_PER"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updateTime" column="UPDATE_TIME"/>
         <association property="stockSource" javaType="com.ljq.stock.alert.model.entity.StockSourceEntity">
@@ -37,6 +39,8 @@
         us.`USER_ID`,
         us.`MAX_PRICE`,
         us.`MIN_PRICE`,
+        us.`MAX_INCREASE_PER`,
+        us.`MAX_DECREASE_PER`,
         us.`CREATE_TIME`,
         us.`UPDATE_TIME`
 	</sql>

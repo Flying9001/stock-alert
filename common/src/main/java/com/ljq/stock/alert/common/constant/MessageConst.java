@@ -20,5 +20,13 @@ public class MessageConst {
     public static final int MESSAGE_SEND_FAIL = 2;
     public static final int MESSAGE_SEND_NOT = 3;
 
+    /**
+     * 消息提醒类型
+     * 1: 股价提醒
+     * 2: 涨跌幅提醒
+     */
+    public static final int ALERT_TYPE_PRICE = 1;
+    public static final int ALERT_TYPE_INCREASE_PER = 2;
+
 
 }

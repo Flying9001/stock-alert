@@ -9,6 +9,7 @@
         <result property="userId" column="USER_ID"/>
         <result property="phoneSend" column="PHONE_SEND"/>
         <result property="emailSend" column="EMAIL_SEND"/>
+        <result property="alertType" column="ALERT_TYPE"/>
         <result property="stockId" column="STOCK_ID"/>
         <result property="content" column="CONTENT"/>
         <result property="createTime" column="CREATE_TIME"/>
@@ -21,6 +22,7 @@
         `USER_ID`,
         `PHONE_SEND`,
         `EMAIL_SEND`,
+        `ALERT_TYPE`,
         `STOCK_ID`,
         `CONTENT`,
         `CREATE_TIME`,
@@ -31,8 +33,9 @@
     <select id="validateRepeat" parameterType="com.ljq.stock.alert.model.entity.AlertMessageEntity" resultType="int">
         SELECT COUNT(*)
         FROM `ALERT_MESSAGE` m
-        WHERE m.user_id = #{userId}
-            AND m.stock_id = #{stockId}
+        WHERE m.USER_ID = #{userId}
+            AND m.STOCK_ID = #{stockId}
+            AND m.ALERT_TYPE = #{alertType}
             AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
     </select>
 

@@ -152,20 +152,26 @@ public class MessageHelper {
         if ((System.currentTimeMillis() - stockTimestamp) > timeLimit) {
             return 0;
         }
+        // 过滤开盘前无效数据
+        if (increasePer.abs().compareTo(BigDecimal.valueOf(100)) > -1) {
+            return 0;
+        }
+        // 默认值
+        if (StockConst.DEFAULT_INCREASE_PER_VALUE == maxIncreasePer
+                || StockConst.DEFAULT_INCREASE_PER_VALUE == maxDecreasePer) {
+            if (increasePer.compareTo(StockConst.DEFAULT_MAX_INCREASE_PER) > -1) {
+                return 1;
+            }
+            if (increasePer.abs().compareTo(StockConst.DEFAULT_MAX_INCREASE_PER) > -1) {
+                return 2;
+            }
+            return 0;
+        }
         if (increasePer.compareTo(BigDecimal.valueOf(maxIncreasePer)) > -1) {
             return 1;
         }
         if (increasePer.compareTo(BigDecimal.ZERO) < 0
                 && increasePer.abs().compareTo(BigDecimal.valueOf(maxDecreasePer)) > -1) {
-            return 2;
-        }
-        // 默认值
-        if (StockConst.DEFAULT_INCREASE_PER_VALUE == maxIncreasePer
-                && increasePer.compareTo(StockConst.DEFAULT_MAX_INCREASE_PER) > -1) {
-            return 1;
-        }
-        if (StockConst.DEFAULT_INCREASE_PER_VALUE == maxDecreasePer
-                && increasePer.abs().compareTo(StockConst.DEFAULT_MAX_INCREASE_PER) > -1) {
             return 2;
         }
         return 0;
@@ -185,6 +191,7 @@ public class MessageHelper {
         message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
         message.setEmail(userStock.getUserInfo().getEmail());
         message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
+        message.setAlertType(MessageConst.ALERT_TYPE_PRICE);
         message.setStockId(userStock.getStockSource().getId());
         String highOrLow = compareResult == 1 ? "高" : "低";
         String title = "股价提醒小助手-【" + userStock.getStockSource().getCompanyName() + "】最" + highOrLow + "股价提醒";
@@ -215,6 +222,7 @@ public class MessageHelper {
         message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
         message.setEmail(userStock.getUserInfo().getEmail());
         message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
+        message.setAlertType(MessageConst.ALERT_TYPE_INCREASE_PER);
         message.setStockId(userStock.getStockSource().getId());
         String highOrLow = compareResult == 1 ? "涨" : "跌";
         String title = "股价提醒小助手-【" + userStock.getStockSource().getCompanyName() + "】单日最大" + highOrLow + "幅提醒";
@@ -224,8 +232,12 @@ public class MessageHelper {
                 .append("你好!").append("你所关注的股票[").append(userStock.getStockSource().getCompanyName())
                 .append("](").append(userStock.getStockSource().getStockCode()).append(")")
                 .append("当前涨跌幅为: ").append(userStock.getStockSource().getIncreasePer()).append("%,")
-                .append("你为该股票设定的单日最大涨幅: ").append(userStock.getMaxPrice())
-                .append(",最大跌幅: ").append(userStock.getMinPrice()).append(",")
+                .append("你为该股票设定的单日最大涨幅: ")
+                .append(userStock.getMaxIncreasePer() == StockConst.DEFAULT_INCREASE_PER_VALUE ?
+                        StockConst.DEFAULT_MAX_INCREASE_PER + "%" : userStock.getMaxIncreasePer()).append("%,")
+                .append("最大跌幅: ")
+                .append(userStock.getMaxDecreasePer() == StockConst.DEFAULT_INCREASE_PER_VALUE ?
+                        StockConst.DEFAULT_MAX_INCREASE_PER + "%" : userStock.getMaxDecreasePer()).append("%,")
                 .append("当前股价达到了最大").append(highOrLow).append("幅预警值,请及时关注股价波动");
         message.setContent(contentBuilder.toString());
         return message;
