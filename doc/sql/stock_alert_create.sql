@@ -21,6 +21,7 @@ CREATE TABLE ALERT_MESSAGE
    USER_ID              BIGINT COMMENT '用户信息',
    PHONE_SEND           TINYINT COMMENT '手机发送,1-发送成功,2-发送失败,3-未发送',
    EMAIL_SEND           TINYINT COMMENT '邮箱发送,1-发送成功,2-发送失败,3-未发送',
+   ALERT_TYPE           TINYINT COMMENT '提醒类型,1-股价提醒;2-单日涨跌幅提醒',
    STOCK_ID             BIGINT COMMENT '股票 id',
    TITLE                VARCHAR(64) COMMENT '消息标题',
    CONTENT              VARCHAR(256) COMMENT '消息内容',
@@ -94,7 +95,6 @@ CREATE TABLE USER_STOCK
    MIN_PRICE            DECIMAL(10,2) COMMENT '股价预警最低价',
    MAX_INCREASE_PER     INT DEFAULT -1 COMMENT '单日股价最大涨幅(值为正,最少为1,即1%),默认-1(A股标准涨停)',
    MAX_DECREASE_PER     INT DEFAULT -1 COMMENT '单日股价最大跌幅(值为正,最少为1,即1%),默认-1(A股标准跌停)',
-   ALERT_TYPE           TINYINT COMMENT '提醒类型,1-股价提醒;2-单日涨跌幅提醒',
    CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
    UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
    PRIMARY KEY (ID)
