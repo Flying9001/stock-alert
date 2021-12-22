@@ -59,6 +59,17 @@ public enum ApiMsgEnum {
             "股价区间设置不合理,最高股价小于最低股价"),
 
     /**
+     * 用户股票分组
+     */
+    USER_STOCK_GROUP_NOT_EXIST("api.response.userStockGroup.notExist", "用户股票分组不存在"),
+
+    /**
+     * 用户股票分组关联股票
+     */
+    STOCK_GROUP_STOCK_EXISTED("api.response.stockGroupStock.existed", "用户关注股票已经添加,请勿重复操作"),
+    STOCK_GROUP_STOCK_NOT_EXIST("api.response.stockGroupStock.notExist", "股票分组中不存在当前股票"),
+
+    /**
      * 消息提醒
      */
     ALERT_MESSAGE_NOT_EXIST("api.response.alterMessage.notExist", "提醒消息不存在"),

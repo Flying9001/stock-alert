@@ -12,6 +12,10 @@ DROP TABLE IF EXISTS USER_INFO;
 
 DROP TABLE IF EXISTS USER_STOCK;
 
+DROP TABLE IF EXISTS STOCK_GROUP_STOCK;
+
+DROP TABLE IF EXISTS USER_STOCK_GROUP;
+
 /*==============================================================*/
 /* Table: ALERT_MESSAGE                                         */
 /*==============================================================*/
@@ -103,4 +107,38 @@ ENGINE = INNODB DEFAULT
 CHARSET = UTF8;
 
 ALTER TABLE USER_STOCK COMMENT '用户股票';
+
+/*==============================================================*/
+/* Table: STOCK_GROUP_STOCK                                     */
+/*==============================================================*/
+CREATE TABLE STOCK_GROUP_STOCK
+(
+   ID                   BIGINT NOT NULL COMMENT 'id,主键',
+   STOCK_GROUP_ID       BIGINT COMMENT '分组 id',
+   STOCK_ID             BIGINT COMMENT '股票 id',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE STOCK_GROUP_STOCK COMMENT '用户股票分组关联股票';
+
+/*==============================================================*/
+/* Table: USER_STOCK_GROUP                                      */
+/*==============================================================*/
+CREATE TABLE USER_STOCK_GROUP
+(
+   ID                   BIGINT NOT NULL COMMENT 'id,主键',
+   GROUP_NAME           VARCHAR(32) COMMENT '分组名称',
+   USER_ID              BIGINT COMMENT '用户 id',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE USER_STOCK_GROUP COMMENT '用户股票分组';
 

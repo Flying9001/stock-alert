@@ -18,6 +18,11 @@ public class UserTokenVo implements Serializable {
     private static final long serialVersionUID = 8686083446544822320L;
 
     /**
+     * 用户 id
+     */
+    @ApiModelProperty(value = "用户 id", name = "id")
+    private Long id;
+    /**
      * 账户
      **/
     @ApiModelProperty(value = "账户", name = "account")

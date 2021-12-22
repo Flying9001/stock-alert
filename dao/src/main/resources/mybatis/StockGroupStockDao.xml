@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljq.stock.alert.dao.StockGroupStockDao">
+
+	<!-- 用户股票分组关联股票结果集resultMap -->
+    <resultMap type="com.ljq.stock.alert.model.entity.StockGroupStockEntity" id="stockGroupStockMap">
+        <result property="id" column="ID"/>
+        <result property="stockGroupId" column="STOCK_GROUP_ID"/>
+        <result property="stockId" column="STOCK_ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+		<result property="userStockGroupName" column="USG_GROUP_NAME" />
+		<association property="stockSource" javaType="com.ljq.stock.alert.model.entity.StockSourceEntity" >
+			<id property="id" column="S_ID" />
+			<result property="marketType" column="S_MARKET_TYPE"/>
+			<result property="stockCode" column="S_STOCK_CODE"/>
+			<result property="companyName" column="S_COMPANY_NAME"/>
+			<result property="currentPrice" column="S_CURRENT_PRICE"/>
+			<result property="date" column="S_DATE"/>
+			<result property="time" column="S_TIME"/>
+		</association>
+    </resultMap>
+
+   <!-- 用户股票分组关联股票-基础字段 -->
+	<sql id="stock_group_stock_base_field">
+        sgs.`ID`,
+        sgs.`STOCK_GROUP_ID`,
+        sgs.`STOCK_ID`,
+        sgs.`CREATE_TIME`,
+        sgs.`UPDATE_TIME`
+	</sql>
+
+	<!-- 用户股票分组关联股票-列表字段 -->
+	<sql id="stock_group_stock_list_field" >
+		<include refid="stock_group_stock_base_field" />
+		,
+		s.`ID` AS S_ID,
+		s.`MARKET_TYPE` AS S_MARKET_TYPE,
+		s.`STOCK_CODE` AS S_STOCK_CODE,
+		s.`COMPANY_NAME` AS S_COMPANY_NAME,
+		s.`CURRENT_PRICE` AS S_CURRENT_PRICE,
+		s.`DATE` AS S_DATE,
+		s.`TIME` AS S_TIME,
+        usg.`ID` AS USG_ID,
+        usg.`GROUP_NAME` AS USG_GROUP_NAME
+	</sql>
+
+    <!-- 查询详情 -->
+	<select id="queryObject"  parameterType="java.lang.Long" resultMap="stockGroupStockMap">
+		SELECT
+            <include refid="stock_group_stock_list_field" />
+        FROM STOCK_GROUP_STOCK sgs
+        LEFT JOIN USER_STOCK_GROUP usg ON usg.ID = sgs.STOCK_GROUP_ID
+		LEFT JOIN STOCK_SOURCE s ON s.ID = sgs.STOCK_ID
+        WHERE sgs.ID = #{id}
+	</select>
+
+    <!-- 列表查询 -->
+	<select id="queryPage" parameterType="java.util.Map" resultMap="stockGroupStockMap">
+		SELECT
+		    <include refid="stock_group_stock_list_field" />
+		FROM STOCK_GROUP_STOCK sgs
+		LEFT JOIN USER_STOCK_GROUP usg ON usg.ID = sgs.STOCK_GROUP_ID
+		LEFT JOIN STOCK_SOURCE s ON s.ID = sgs.STOCK_ID
+        <where>
+            <if test="queryMap.stockGroupId != null" >
+				AND sgs.STOCK_GROUP_ID = #{queryMap.stockGroupId}
+			</if>
+		</where>
+	</select>
+
+
+
+</mapper>

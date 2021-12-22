@@ -41,7 +41,7 @@ public class StockSourceListParam extends BasePageParam {
      * 公司名称
      * */
     @Length(max = 20, message = "公司名称不能超过20字符")
-    @ApiModelProperty(value = "公司名称", name = "companyName", required = true)
+    @ApiModelProperty(value = "公司名称", name = "companyName")
     private String companyName;
 
 
