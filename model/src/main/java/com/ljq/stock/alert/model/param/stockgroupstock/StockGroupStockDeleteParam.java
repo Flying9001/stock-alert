@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -21,11 +20,10 @@ public class StockGroupStockDeleteParam implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id,主键
-     * */
-    @NotNull(message = "ID不能为空")
-    @Min(value = 1, message = "ID至少为 1")
-    @ApiModelProperty(value = "id,主键 不能为空,至少为 1", name = "id", required = true, example = "0")
+     * id
+     **/
+    @NotNull(message = "请选择需要删除的对象")
+    @ApiModelProperty(value = "id", name = "id", required = true)
     private Long id;
 
 }

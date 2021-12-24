@@ -1,6 +1,5 @@
 package com.ljq.stock.alert.model.param.userstock;
 
-import com.ljq.stock.alert.model.param.stocksource.StockSourceCommonParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.ToString;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -20,17 +20,17 @@ import java.math.BigDecimal;
 @Data
 @ToString(callSuper = true)
 @ApiModel(value = "用户股票新增(单条)", description = "用户股票新增(单条)")
-public class UserStockSaveParam extends StockSourceCommonParam {
+public class UserStockSaveParam implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 用户 id
-     * */
-    @NotNull(message = "用户 id 不能为空")
-    @Min(value = 1, message = "用户 id 至少为 1")
-    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", required = true, example = "0")
-    private Long userId;
+     * 股票 id
+     */
+    @NotNull(message = "请选择需要关注的股票")
+    @Min(value = 1, message = "股票信息输入错误")
+    @ApiModelProperty(value = "股票ID", name = "stockId", required = true)
+    private Long stockId;
     /**
      * 股价预警最高价
      * */

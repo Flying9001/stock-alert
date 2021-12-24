@@ -5,8 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description: 批量删除用户消息
@@ -16,15 +17,15 @@ import javax.validation.constraints.NotNull;
 @Data
 @ToString(callSuper = true)
 @ApiModel(value = "批量删除用户消息", description = "批量删除用户消息")
-public class AlertMessageDeleteBatchUserParam extends AlertMessageDeleteBatchParam{
+public class AlertMessageDeleteBatchUserParam implements Serializable {
 
     private static final long serialVersionUID = -2876946836959375841L;
 
     /**
-     * 用户信息
-     * */
-    @NotNull(message = "请选择接收通知的用户")
-    @Min(value = 1, message = "用户 ID 至少为 1")
-    @ApiModelProperty(value = "用户信息 不能为空,至少为 1", name = "userId", required = true, example = "0")
-    private Long userId;
+     * id 列表
+     **/
+    @NotEmpty(message = "id 不能为空")
+    @ApiModelProperty(value = "id不能为空", name = "idList")
+    private List<Long> idList;
+
 }

@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.model.param.userstock;
 
+import com.ljq.stock.alert.model.BaseInfoParam;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 @Data
 @ToString(callSuper = true)
 @ApiModel(value = "用户股票修改(单条)", description = "用户股票修改(单条)")
-public class UserStockUpdateParam extends UserStockInfoParam {
+public class UserStockUpdateParam extends BaseInfoParam {
 
     private static final long serialVersionUID = 1L;
 

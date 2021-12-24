@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * @Description: 删除用户单条消息
@@ -16,17 +17,16 @@ import javax.validation.constraints.NotNull;
 @Data
 @ToString(callSuper = true)
 @ApiModel(value = "删除用户单条消息", description = "删除用户单条消息")
-public class AlertMessageDeleteUserParam extends AlertMessageDeleteParam {
+public class AlertMessageDeleteUserParam implements Serializable {
 
     private static final long serialVersionUID = 2942442447249979434L;
 
     /**
-     * 用户 id
-     * */
-    @NotNull(message = "用户 id 不能为空")
-    @Min(value = 1, message = "用户 id 至少为 1")
-    @ApiModelProperty(value = "用户 id 不能为空,至少为 1", name = "userId", required = true, example = "0")
-    private Long userId;
-
+     * id
+     **/
+    @NotNull(message = "请选择需要删除的对象")
+    @Min(value = 1, message = "请求参数不合理")
+    @ApiModelProperty(value = "id", name = "id", required = true)
+    private Long id;
 
 }

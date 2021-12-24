@@ -12,7 +12,9 @@ import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.dao.AlertMessageDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.param.message.*;
+import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.AlertMessageService;
+import com.ljq.stock.alert.service.util.SessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,8 +72,11 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 	 */
 	@Override
 	public AlertMessageEntity infoUser(AlertMessageInfoUserParam infoUserParam) {
-		// TODO 通过 token 获取用户 Id
-		return info(infoUserParam);
+		AlertMessageInfoParam infoParam = new AlertMessageInfoParam();
+		infoParam.setId(infoUserParam.getId());
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+		infoParam.setUserId(userTokenVo.getId());
+		return info(infoParam);
 	}
 
 	/**
@@ -103,8 +108,10 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 	 */
 	@Override
 	public IPage<AlertMessageEntity> pageUser(AlertMessageListUserParam listUserParam) {
-		// TODO 通过 token 获取用户 Id
-		return page(listUserParam);
+		AlertMessageListParam listParam =  (AlertMessageListParam) listUserParam;
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+		listParam.setUserId(userTokenVo.getId());
+		return page(listParam);
 	}
 
 	/**
@@ -135,8 +142,11 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 	 */
 	@Override
 	public void deleteUser(AlertMessageDeleteUserParam deleteUserParam) {
-		// TODO 通过 token 获取用户 id
-		delete(deleteUserParam);
+		AlertMessageDeleteParam deleteParam = new AlertMessageDeleteParam();
+		deleteParam.setId(deleteUserParam.getId());
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+		deleteParam.setUserId(userTokenVo.getId());
+		delete(deleteParam);
 	}
 
 	/**
@@ -168,8 +178,11 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 	 */
 	@Override
 	public void deleteBatchUser(AlertMessageDeleteBatchUserParam deleteBatchUserParam) {
-		// TODO 通过 token 获取用户 id
-		deleteBatch(deleteBatchUserParam);
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+		AlertMessageDeleteBatchParam deleteBatchParam = new AlertMessageDeleteBatchParam();
+		deleteBatchParam.setUserId(userTokenVo.getId());
+		deleteBatchParam.setIdList(deleteBatchUserParam.getIdList());
+		deleteBatch(deleteBatchParam);
 	}
 
 

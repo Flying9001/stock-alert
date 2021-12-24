@@ -17,10 +17,11 @@ import com.ljq.stock.alert.dao.StockSourceDao;
 import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
-import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.param.userstock.*;
+import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserStockService;
+import com.ljq.stock.alert.service.util.SessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -61,29 +63,22 @@ public class UserStockServiceImpl implements UserStockService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public UserStockEntity save(UserStockSaveParam saveParam) {
 		// 校验-股票是否存在
-		StockSourceEntity stockDB = stockSourceDao.selectOne(Wrappers.lambdaQuery(new StockSourceEntity())
-				.eq(StockSourceEntity::getStockCode, saveParam.getStockCode())
-				.eq(StockSourceEntity::getMarketType, saveParam.getMarketType()));
-		if (Objects.isNull(stockDB)) {
+		int countStock = stockSourceDao.selectCount(Wrappers.lambdaQuery(new StockSourceEntity())
+				.eq(StockSourceEntity::getId, saveParam.getStockId()));
+		if (countStock < 1) {
 			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
-		// 校验-用户是否存在
-		int countUser = userInfoDao.selectCount(Wrappers.lambdaQuery(new UserInfoEntity())
-				.eq(UserInfoEntity::getId, saveParam.getUserId()));
-		if (countUser < 1) {
-			throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
-		}
 		// 校验-是否重复添加
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		int countUserStock = userStockDao.selectCount(Wrappers.lambdaQuery(new UserStockEntity())
-				.eq(UserStockEntity::getStockId, stockDB.getId())
-				.eq(UserStockEntity::getUserId, saveParam.getUserId()));
+				.eq(UserStockEntity::getStockId, saveParam.getStockId())
+				.eq(UserStockEntity::getUserId, userTokenVo.getId()));
 		if (countUserStock > 0) {
 			throw new CommonException(ApiMsgEnum.USER_STOCK_EXISTED);
 		}
 		// 请求参数获取
 		UserStockEntity userStockParam = new UserStockEntity();
 		BeanUtil.copyProperties(saveParam, userStockParam, CopyOptions.create().ignoreNullValue());
-		userStockParam.setStockId(stockDB.getId());
 		// 保存
 		userStockDao.insert(userStockParam);
 		return userStockParam;
@@ -98,9 +93,10 @@ public class UserStockServiceImpl implements UserStockService {
 	@Override
 	public UserStockEntity info(UserStockInfoParam infoParam) {
 		// 校验-用户股票是否存在
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		UserStockEntity userStockDB = userStockDao.selectOne(Wrappers.lambdaQuery(new UserStockEntity())
 				.eq(UserStockEntity::getId, infoParam.getId())
-				.eq(UserStockEntity::getUserId, infoParam.getUserId()));
+				.eq(UserStockEntity::getUserId, userTokenVo.getId()));
 		if (Objects.isNull(userStockDB)) {
 			return new UserStockEntity();
 		}
@@ -121,7 +117,10 @@ public class UserStockServiceImpl implements UserStockService {
 	 */
 	@Override
 	public IPage<UserStockEntity> page(UserStockListParam listParam) {
-		IPage<UserStockEntity> page = userStockDao.queryPage(BeanUtil.beanToMap(listParam),
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+		Map<String, Object> queryMap = BeanUtil.beanToMap(listParam);
+		queryMap.put("userId", userTokenVo.getId());
+		IPage<UserStockEntity> page = userStockDao.queryPage(queryMap,
 				new Page<>(listParam.getCurrentPage(), listParam.getPageSize()));
 		if (CollUtil.isEmpty(page.getRecords())) {
 			return page;
@@ -144,9 +143,10 @@ public class UserStockServiceImpl implements UserStockService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void update(UserStockUpdateParam updateParam) {
 		// 校验-是否存在
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		int count = userStockDao.selectCount(Wrappers.lambdaQuery(new UserStockEntity())
 				.eq(UserStockEntity::getId, updateParam.getId())
-				.eq(UserStockEntity::getUserId, updateParam.getUserId()));
+				.eq(UserStockEntity::getUserId, userTokenVo.getId()));
 		if (count < 1) {
 			throw new CommonException(ApiMsgEnum.USER_STOCK_NOT_EXIST);
 		}
@@ -167,9 +167,10 @@ public class UserStockServiceImpl implements UserStockService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void delete(UserStockDeleteParam deleteParam) {
 		// 判断对象是否存在
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		LambdaQueryWrapper<UserStockEntity> queryWrapper = Wrappers.lambdaQuery();
 		queryWrapper.eq(UserStockEntity::getId, deleteParam.getId())
-				.eq(UserStockEntity::getUserId, deleteParam.getUserId());
+				.eq(UserStockEntity::getUserId, userTokenVo.getId());
 		UserStockEntity userStockParam = userStockDao.selectOne(queryWrapper);
 		if (Objects.isNull(userStockParam)) {
 			throw new CommonException(ApiMsgEnum.USER_STOCK_NOT_EXIST);
@@ -188,8 +189,9 @@ public class UserStockServiceImpl implements UserStockService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void deleteBatch(UserStockDeleteBatchParam deleteBatchParam) {
 		// 判断对象是否存在
+		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		LambdaQueryWrapper<UserStockEntity> queryWrapper = Wrappers.lambdaQuery();
-		queryWrapper.eq(UserStockEntity::getUserId, deleteBatchParam.getUserId())
+		queryWrapper.eq(UserStockEntity::getUserId, userTokenVo.getId())
 				.in(UserStockEntity::getId, deleteBatchParam.getIdList());
 		List<UserStockEntity> userStockDBList = userStockDao.selectList(queryWrapper);
 		if (CollectionUtil.isEmpty(userStockDBList) || userStockDBList.size() < deleteBatchParam.getIdList().size()) {

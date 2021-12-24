@@ -21,11 +21,11 @@ public class UserStockGroupDeleteParam implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id,主键
-     * */
-    @NotNull(message = "id,主键 不能为空")
-    @Min(value = 1, message = "id,主键 至少为 1")
-    @ApiModelProperty(value = "id,主键 不能为空,至少为 1", name = "id", required = true, example = "0")
+     * id
+     **/
+    @NotNull(message = "请选择需要删除的对象")
+    @Min(value = 1, message = "请求参数不合理")
+    @ApiModelProperty(value = "id", name = "id", required = true)
     private Long id;
 
 
