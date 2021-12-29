@@ -108,8 +108,8 @@ public class UserStockGroupServiceImpl implements UserStockGroupService {
 		// 请求参数获取
 		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		UserStockGroupEntity userStockGroupParam = new UserStockGroupEntity();
-		userStockGroupParam.setUserId(userTokenVo.getId());
 		BeanUtil.copyProperties(userStockGroupUpdateParam, userStockGroupParam, CopyOptions.create().ignoreNullValue());
+		userStockGroupParam.setUserId(userTokenVo.getId());
 		int count = userStockGroupDao.updateById(userStockGroupParam);
 		if (count < 1) {
 			return ApiResult.fail(ApiMsgEnum.USER_STOCK_GROUP_NOT_EXIST);

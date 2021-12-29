@@ -14,7 +14,6 @@ import com.ljq.stock.alert.common.constant.CacheConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
-import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
@@ -48,8 +47,6 @@ public class UserStockServiceImpl implements UserStockService {
 	@Autowired
 	private StockSourceDao stockSourceDao;
 	@Autowired
-	private UserInfoDao userInfoDao;
-	@Autowired
 	private RedisUtil redisUtil;
 
 
@@ -79,6 +76,7 @@ public class UserStockServiceImpl implements UserStockService {
 		// 请求参数获取
 		UserStockEntity userStockParam = new UserStockEntity();
 		BeanUtil.copyProperties(saveParam, userStockParam, CopyOptions.create().ignoreNullValue());
+		userStockParam.setUserId(userTokenVo.getId());
 		// 保存
 		userStockDao.insert(userStockParam);
 		return userStockParam;
@@ -153,6 +151,7 @@ public class UserStockServiceImpl implements UserStockService {
 		// 请求参数获取
 		UserStockEntity userStockParam = new UserStockEntity();
 		BeanUtil.copyProperties(updateParam, userStockParam, CopyOptions.create().ignoreNullValue());
+		userStockParam.setUserId(userTokenVo.getId());
 		// 更新对象
 		userStockDao.updateById(userStockParam);
 	}
