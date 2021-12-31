@@ -22,11 +22,15 @@ public class MessageConst {
 
     /**
      * 消息提醒类型
-     * 1: 股价提醒
-     * 2: 涨跌幅提醒
+     * 11: 最低股价提醒
+     * 12: 最高股价提醒
+     * 21: 最大跌幅提醒
+     * 22: 最大涨幅提醒
      */
-    public static final int ALERT_TYPE_PRICE = 1;
-    public static final int ALERT_TYPE_INCREASE_PER = 2;
+    public static final int ALERT_TYPE_PRICE_MIN = 11;
+    public static final int ALERT_TYPE_PRICE_MAX = 12;
+    public static final int ALERT_TYPE_INCREASE_PER_MIN = 21;
+    public static final int ALERT_TYPE_INCREASE_PER_MAX = 22;
 
 
 }
