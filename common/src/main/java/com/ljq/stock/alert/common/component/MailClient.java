@@ -1,11 +1,11 @@
 package com.ljq.stock.alert.common.component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class MailClient {
 
-    @Autowired
+    @Resource
     private JavaMailSender mailSender;
     /**
      * 发件人邮箱

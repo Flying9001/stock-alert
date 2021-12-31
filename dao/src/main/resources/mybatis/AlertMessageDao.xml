@@ -10,24 +10,38 @@
         <result property="phoneSend" column="PHONE_SEND"/>
         <result property="emailSend" column="EMAIL_SEND"/>
         <result property="alertType" column="ALERT_TYPE"/>
+        <result property="retryTime" column="RETRY_TIME" />
         <result property="stockId" column="STOCK_ID"/>
+        <result property="title" column="TITLE"/>
         <result property="content" column="CONTENT"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="mobilePhone" column="MOBILE_PHONE" />
+        <result property="email" column="EMAIL" />
     </resultMap>
 
    <!-- 预警消息-基础字段 -->
 	<sql id="alert_message_base_field">
-        `ID`,
-        `USER_ID`,
-        `PHONE_SEND`,
-        `EMAIL_SEND`,
-        `ALERT_TYPE`,
-        `STOCK_ID`,
-        `CONTENT`,
-        `CREATE_TIME`,
-        `UPDATE_TIME`
+        m.`ID`,
+        m.`USER_ID`,
+        m.`PHONE_SEND`,
+        m.`EMAIL_SEND`,
+        m.`ALERT_TYPE`,
+        m.`RETRY_TIME`,
+        m.`STOCK_ID`,
+        m.`TITLE`,
+        m.`CONTENT`,
+        m.`CREATE_TIME`,
+        m.`UPDATE_TIME`
 	</sql>
+
+    <!-- 预警消息-列表字段 -->
+    <sql id="alert_message_list_field" >
+        <include refid="alert_message_base_field" />
+        ,
+        u.`MOBILE_PHONE` AS `MOBILE_PHONE`,
+        u.`EMAIL` AS EMAIL
+    </sql>
 
     <!-- 校验重复性 -->
     <select id="validateRepeat" parameterType="com.ljq.stock.alert.model.entity.AlertMessageEntity" resultType="int">
@@ -37,6 +51,18 @@
             AND m.STOCK_ID = #{stockId}
             AND m.ALERT_TYPE = #{alertType}
             AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
+    </select>
+
+    <!-- 分页查询当天发送失败的消息 -->
+    <select id="queryPageFailMessage" resultMap="alertMessageMap" >
+        SELECT
+        <include refid="alert_message_list_field" />
+        FROM `ALERT_MESSAGE` m
+        LEFT JOIN `USER_INFO` u ON u.ID = m.USER_ID
+        WHERE m.PHONE_SEND != 1
+            AND m.EMAIL_SEND != 1
+            AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
+            AND m.RETRY_TIME &lt; 5
     </select>
 
 </mapper>

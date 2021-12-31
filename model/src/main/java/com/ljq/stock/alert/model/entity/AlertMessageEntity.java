@@ -29,23 +29,11 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "用户信息", name = "userId")
     private Long userId;
     /**
-     * 手机号
-     **/
-    @TableField(exist = false)
-    @ApiModelProperty(value = "手机号", name = "mobilePhone")
-    private String mobilePhone;
-    /**
      * 手机发送,1-发送成功,2-发送失败,3-未发送
      **/
     @TableField(value = "PHONE_SEND")
     @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送", name = "phoneSend")
     private Integer phoneSend;
-    /**
-     * 邮箱
-     **/
-    @TableField(exist = false)
-    @ApiModelProperty(value = "邮箱", name = "email")
-    private String email;
     /**
      * 邮箱发送,1-发送成功,2-发送失败,3-未发送
      **/
@@ -58,6 +46,12 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "ALERT_TYPE")
     @ApiModelProperty(value = "提醒类型,1-股价提醒;2-单日涨跌幅提醒", name = "alertType")
     private Integer alertType;
+    /**
+     * 消息推送失败重试次数
+     */
+    @TableField(value = "RETRY_TIME")
+    @ApiModelProperty(value = "消息推送失败重试次数", name = "retryTime")
+    private Integer retryTime;
     /**
      * 股票 id
      **/
@@ -76,6 +70,18 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "CONTENT")
     @ApiModelProperty(value = "消息内容", name = "content")
     private String content;
+    /**
+     * 手机号
+     **/
+    @TableField(value = "MOBILE_PHONE", exist = false)
+    @ApiModelProperty(value = "手机号", name = "mobilePhone")
+    private String mobilePhone;
+    /**
+     * 邮箱
+     **/
+    @TableField(value = "EMAIL",exist = false)
+    @ApiModelProperty(value = "邮箱", name = "email")
+    private String email;
     /**
      * 发件人邮箱
      */

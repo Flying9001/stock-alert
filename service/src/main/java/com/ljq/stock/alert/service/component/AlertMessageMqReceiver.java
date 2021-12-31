@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ public class AlertMessageMqReceiver {
     private AlertMessageService alertMessageService;
     @Autowired
     private MailClient mailClient;
-    @Autowired
+    @Resource
     private JavaMailSender mailSender;
     /**
      * 发件人邮箱
@@ -58,11 +58,13 @@ public class AlertMessageMqReceiver {
     private void sendAndUpdateMessage(AlertMessageEntity alertMessage) {
         try {
             mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
-        } catch (MessagingException e) {
-            log.error("Mail send error,{}", e);
+        } catch (Exception e) {
+            log.error("Mail send error", e);
             // 更新消息状态
             alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
+            alertMessage.setRetryTime(alertMessage.getRetryTime() + 1);
             alertMessageService.updateById(alertMessage);
+            return;
         }
         // 更新消息状态
         alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_SUCCESS);

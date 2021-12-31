@@ -26,6 +26,7 @@ CREATE TABLE ALERT_MESSAGE
    PHONE_SEND           TINYINT COMMENT '手机发送,1-发送成功,2-发送失败,3-未发送',
    EMAIL_SEND           TINYINT COMMENT '邮箱发送,1-发送成功,2-发送失败,3-未发送',
    ALERT_TYPE           TINYINT COMMENT '提醒类型,1-股价提醒;2-单日涨跌幅提醒',
+   RETRY_TIME           TINYINT DEFAULT 0 COMMENT '消息发送失败重试次数',
    STOCK_ID             BIGINT COMMENT '股票 id',
    TITLE                VARCHAR(64) COMMENT '消息标题',
    CONTENT              VARCHAR(256) COMMENT '消息内容',

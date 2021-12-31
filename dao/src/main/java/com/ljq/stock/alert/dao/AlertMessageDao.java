@@ -1,6 +1,7 @@
 package com.ljq.stock.alert.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,13 @@ public interface AlertMessageDao extends BaseMapper<AlertMessageEntity> {
      * @return
      */
     int validateRepeat(AlertMessageEntity alertMessage);
+
+    /**
+     * 分页查询当天发送失败消息
+     *
+     * @param page
+     * @return
+     */
+    IPage<AlertMessageEntity> queryPageFailMessage(IPage<AlertMessageEntity> page);
 	
 }

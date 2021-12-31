@@ -97,6 +97,32 @@ public class AlertMessageJob {
     }
 
     /**
+     * 消息重试,最多重试 5 次
+     * 120 秒 1 次
+     */
+    @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
+    public void messageReTry() {
+        // 统计所有当天发送失败的消息
+        int pageSize = 1000;
+        IPage<AlertMessageEntity> pageParam = new Page<>(1, pageSize);
+        IPage<AlertMessageEntity> pageResult = alertMessageDao.queryPageFailMessage(pageParam);
+        if (pageResult.getTotal() < 1) {
+            return;
+        }
+        long countAll = pageResult.getTotal();
+        long times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
+        alertMessageMqSender.sendBatch(pageResult.getRecords());
+        for (int i = 2; i < times + 1; i++) {
+            pageParam.setCurrent(i);
+            pageResult = alertMessageDao.queryPageFailMessage(pageParam);
+            if (CollUtil.isEmpty(pageResult.getRecords())) {
+                continue;
+            }
+            alertMessageMqSender.sendBatch(pageResult.getRecords());
+        }
+    }
+
+    /**
      * 批量创建并发送消息
      *
      * @param userStockList
