@@ -30,9 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -140,7 +137,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 				return;
 		}
 		// 发送验证码
-		messageMqSender.sendBatch(Collections.singletonList(message));
+		messageMqSender.sendUserOperate(message);
 		// 缓存验证码
 		redisUtil.set(redisKey, checkCode, UserConst.CHECK_CODE_EXPIRE_TIME_SECOND);
 	}

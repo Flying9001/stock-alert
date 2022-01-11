@@ -23,12 +23,22 @@ public class AlertMessageMqSender {
     private AmqpTemplate rabbitTemplate;
 
     /**
-     * 批量发送队列消息
+     * 批量发送预警消息队列消息
      *
      * @param alertMessageList
      */
-    public void sendBatch(List<AlertMessageEntity> alertMessageList) {
-        rabbitTemplate.convertAndSend(RabbitMqConfig.QUEUE_ALERT_MESSAGE, alertMessageList);
+    public void sendBatchAlertMessage(List<AlertMessageEntity> alertMessageList) {
+        rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE_DIRECT,RabbitMqConfig.QUEUE_ALERT_MESSAGE,
+                alertMessageList);
+    }
+
+    /**
+     * 发送用户操作队列消息
+     *
+     * @param alertMessage
+     */
+    public void sendUserOperate(AlertMessageEntity alertMessage) {
+        rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE_DIRECT, RabbitMqConfig.QUEUE_USER_OPERATE, alertMessage);
     }
 
 

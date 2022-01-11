@@ -111,14 +111,14 @@ public class AlertMessageJob {
         }
         long countAll = pageResult.getTotal();
         long times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
-        alertMessageMqSender.sendBatch(pageResult.getRecords());
+        alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         for (int i = 2; i < times + 1; i++) {
             pageParam.setCurrent(i);
             pageResult = alertMessageDao.queryPageFailMessage(pageParam);
             if (CollUtil.isEmpty(pageResult.getRecords())) {
                 continue;
             }
-            alertMessageMqSender.sendBatch(pageResult.getRecords());
+            alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         }
     }
 
@@ -148,7 +148,7 @@ public class AlertMessageJob {
         alertMessageService.saveBatch(messageSendList);
         // 推送预警消息
         log.info("预警消息推送: {}", messageSendList);
-        alertMessageMqSender.sendBatch(messageSendList);
+        alertMessageMqSender.sendBatchAlertMessage(messageSendList);
     }
 
 

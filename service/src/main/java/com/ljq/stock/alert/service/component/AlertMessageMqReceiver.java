@@ -2,8 +2,11 @@ package com.ljq.stock.alert.service.component;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.ljq.stock.alert.common.component.MailClient;
+import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.RabbitMqConfig;
+import com.ljq.stock.alert.common.constant.CacheConst;
 import com.ljq.stock.alert.common.constant.MessageConst;
+import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.service.AlertMessageService;
 import com.ljq.stock.alert.service.task.MessageMailTask;
@@ -32,6 +35,9 @@ public class AlertMessageMqReceiver {
     private MailClient mailClient;
     @Resource
     private JavaMailSender mailSender;
+    @Autowired
+    private RedisUtil redisUtil;
+
     /**
      * 发件人邮箱
      */
@@ -41,13 +47,35 @@ public class AlertMessageMqReceiver {
 
 
     /**
-     * 接收队列消息
+     * 接收预警消息队列消息
      *
      * @param alertMessageList
      */
     @RabbitListener(queues = RabbitMqConfig.QUEUE_ALERT_MESSAGE)
-    public void receive(List<AlertMessageEntity> alertMessageList) {
-        alertMessageList.stream().forEach(this::sendAndUpdateMessage);
+    public void receiveAlertMessage(List<AlertMessageEntity> alertMessageList) {
+        alertMessageList.stream().forEach(message -> {
+            String cacheKey = CacheKeyUtil.create(CacheConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
+                    String.valueOf(message.getId()), null);
+            if (redisUtil.exists(cacheKey)) {
+                return;
+            }
+            sendAndUpdateMessage(message);
+            redisUtil.set(cacheKey, message.getId(), CacheConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
+        });
+    }
+
+    /**
+     * 接收用户操作队列消息
+     *
+     * @param alertMessage
+     */
+    @RabbitListener(queues = {RabbitMqConfig.QUEUE_USER_OPERATE})
+    public void receiveUserOperate(AlertMessageEntity alertMessage) {
+        try {
+            mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
+        } catch (Exception e) {
+            log.error("user operate email send error", e);
+        }
     }
 
     /**
@@ -59,7 +87,7 @@ public class AlertMessageMqReceiver {
         try {
             mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
         } catch (Exception e) {
-            log.error("Mail send error", e);
+            log.error("alert message email send error", e);
             // 更新消息状态
             alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
             alertMessage.setRetryTime(alertMessage.getRetryTime() + 1);
@@ -86,6 +114,7 @@ public class AlertMessageMqReceiver {
                 log.error("Mail send error,{}", e);
                 // 更新消息状态
                 alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
+                alertMessageList.get(i).setRetryTime(alertMessageList.get(i).getRetryTime() + 1);
             }
         }
         alertMessageService.updateBatchById(alertMessageList);
