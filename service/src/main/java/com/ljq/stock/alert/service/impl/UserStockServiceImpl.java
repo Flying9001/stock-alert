@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.component.RedisUtil;
-import com.ljq.stock.alert.common.constant.CacheConst;
+import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
@@ -101,7 +101,7 @@ public class UserStockServiceImpl implements UserStockService {
 		// 查询股票信息
 		StockSourceEntity stockDB = stockSourceDao.selectById(userStockDB.getStockId());
 		// 查询实时股价
-		userStockDB.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+		userStockDB.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 				CacheKeyUtil.createStockSourceKey(stockDB.getMarketType(), stockDB.getStockCode()),
 				StockSourceEntity.class));
 		return userStockDB;
@@ -125,7 +125,7 @@ public class UserStockServiceImpl implements UserStockService {
 		}
         // 获取用户关注股票的实时价格
 		page.getRecords().stream().forEach(userStock ->
-				userStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+				userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 						CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
 								userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
 		return page;

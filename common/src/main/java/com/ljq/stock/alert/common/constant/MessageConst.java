@@ -32,5 +32,15 @@ public class MessageConst {
     public static final int ALERT_TYPE_INCREASE_PER_MIN = 21;
     public static final int ALERT_TYPE_INCREASE_PER_MAX = 22;
 
+    /**
+     * 待发送预警消息缓存前缀
+     */
+    public static final String CACHE_KEY_ALERT_MESSAGE_TO_SEND = "ALERT_MESSAGE_TO_SEND_";
+
+    /**
+     * 默认待发送预警消息缓存时间
+     */
+    public static final long DEFAULT_TIME_ALERT_MESSAGE_MQ = 3600L;
+
 
 }

@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
-import com.ljq.stock.alert.common.constant.CacheConst;
+import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockGroupStockDao;
 import com.ljq.stock.alert.dao.StockSourceDao;
@@ -111,7 +111,7 @@ public class StockGroupStockServiceImpl implements StockGroupStockService {
 			return ApiResult.fail(ApiMsgEnum.STOCK_GROUP_STOCK_NOT_EXIST);
 		}
 		// 股票实时数据
-		stockGroupStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+		stockGroupStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 				CacheKeyUtil.createStockSourceKey(stockGroupStock.getStockSource().getMarketType(),
 						stockGroupStock.getStockSource().getStockCode()), StockSourceEntity.class));
 		return ApiResult.success(stockGroupStock);
@@ -132,7 +132,7 @@ public class StockGroupStockServiceImpl implements StockGroupStockService {
 		}
 		// 获取实时股票数据
 		page.getRecords().stream().forEach(stockGroupStock ->
-			stockGroupStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+			stockGroupStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 					CacheKeyUtil.createStockSourceKey(stockGroupStock.getStockSource().getMarketType(),
 							stockGroupStock.getStockSource().getStockCode()), StockSourceEntity.class))
 		);

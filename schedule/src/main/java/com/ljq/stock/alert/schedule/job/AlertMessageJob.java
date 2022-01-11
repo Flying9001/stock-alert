@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
-import com.ljq.stock.alert.common.constant.CacheConst;
+import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.AlertMessageDao;
 import com.ljq.stock.alert.dao.UserStockDao;
@@ -53,7 +53,7 @@ public class AlertMessageJob {
     @Scheduled(fixedDelay = 5 * 1000L, initialDelay = 5 * 1000L)
     public void flashStockData() {
         // 从缓存中读取所有股票数据
-        List<StockSourceEntity> stockCacheList = redisUtil.mapGetAll(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+        List<StockSourceEntity> stockCacheList = redisUtil.mapGetAll(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
                 StockSourceEntity.class);
         if (CollUtil.isEmpty(stockCacheList)) {
             return;
@@ -65,7 +65,7 @@ public class AlertMessageJob {
         stockLiveList.stream().forEach(stockSource ->
                 stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
                         stockSource.getStockCode()), stockSource));
-        redisUtil.mapPutBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
+        redisUtil.mapPutBatch(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
     }
 
     /**
@@ -88,7 +88,7 @@ public class AlertMessageJob {
             }
             // 获取用户关注股票的实时价格
             page.getRecords().stream().forEach(userStock ->
-                userStock.setStockSource(redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+                userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
                         CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
                                 userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
             createAndSendMessageBatch(page.getRecords());

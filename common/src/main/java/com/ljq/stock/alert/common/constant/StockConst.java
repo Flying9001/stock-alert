@@ -34,4 +34,10 @@ public class StockConst {
      */
     public static final int DEFAULT_INCREASE_PER_VALUE = -1;
 
+    /**
+     * 所有股票源数据缓存 key
+     */
+    public static final String CACHE_KEY_STOCK_SOURCE_ALL = "STOCK_SOURCE_ALL";
+
+
 }

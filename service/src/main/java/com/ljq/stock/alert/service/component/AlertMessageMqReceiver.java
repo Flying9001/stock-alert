@@ -4,7 +4,6 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.ljq.stock.alert.common.component.MailClient;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.RabbitMqConfig;
-import com.ljq.stock.alert.common.constant.CacheConst;
 import com.ljq.stock.alert.common.constant.MessageConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
@@ -54,13 +53,13 @@ public class AlertMessageMqReceiver {
     @RabbitListener(queues = RabbitMqConfig.QUEUE_ALERT_MESSAGE)
     public void receiveAlertMessage(List<AlertMessageEntity> alertMessageList) {
         alertMessageList.stream().forEach(message -> {
-            String cacheKey = CacheKeyUtil.create(CacheConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
+            String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
                     String.valueOf(message.getId()), null);
             if (redisUtil.exists(cacheKey)) {
                 return;
             }
             sendAndUpdateMessage(message);
-            redisUtil.set(cacheKey, message.getId(), CacheConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
+            redisUtil.set(cacheKey, message.getId(), MessageConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
         });
     }
 

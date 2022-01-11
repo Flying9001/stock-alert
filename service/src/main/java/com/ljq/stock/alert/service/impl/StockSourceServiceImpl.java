@@ -11,7 +11,7 @@ import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
-import com.ljq.stock.alert.common.constant.CacheConst;
+import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.StockSourceDao;
@@ -73,7 +73,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		// 保存
 		stockSourceDao.insert(stockSourceParam);
 		// 存入缓存
-		redisUtil.mapPut(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSourceParam
+		redisUtil.mapPut(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSourceParam
 						.getMarketType(), stockSourceParam.getStockCode()),
 				stockSourceParam);
 		return stockSourceParam;
@@ -88,7 +88,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	@Override
 	public StockSourceEntity info(StockSourceInfoParam infoParam) {
 		// 从缓存中读取数据
-		StockSourceEntity stockSource = redisUtil.mapGet(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+		StockSourceEntity stockSource = redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 				CacheKeyUtil.createStockSourceKey(infoParam.getMarketType(), infoParam.getStockCode()),
 				StockSourceEntity.class);
 		if (Objects.nonNull(stockSource)) {
@@ -100,7 +100,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 				.eq(StockSourceEntity::getStockCode, infoParam.getStockCode()));
 		// 存入缓存
 		if (Objects.nonNull(stockSource)) {
-			redisUtil.mapPut(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(
+			redisUtil.mapPut(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(
 					stockSource.getMarketType(), stockSource.getStockCode()), stockSource);
 		}
 		return stockSource;
@@ -180,7 +180,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
 		// 缓存删除
-		redisUtil.mapRemove(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSource
+		redisUtil.mapRemove(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, CacheKeyUtil.createStockSourceKey(stockSource
 				.getMarketType(), stockSource.getStockCode()));
 		// 数据库删除
 		stockSourceDao.deleteById(deleteParam.getId());
@@ -207,7 +207,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			throw new CommonException(ApiMsgEnum.STOCK_DELETE_ERROR_USER_HAS_FOLLOWED);
 		}
 		// 缓存删除
-		redisUtil.mapRemoveBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, createStockCacheKeyList(stockSourceList));
+		redisUtil.mapRemoveBatch(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, createStockCacheKeyList(stockSourceList));
 		// 数据库删除
 		stockSourceDao.deleteBatchIds(deleteBatchParam.getIdList());
 	}
@@ -229,7 +229,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
 					stockSource.getStockCode()), stockSource)
 		);
-		redisUtil.mapPutBatch(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
+		redisUtil.mapPutBatch(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
 		return ApiResult.success();
 	}
 
@@ -240,7 +240,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	 */
 	@Override
 	public ApiResult<Void> allCacheToDb() {
-		List<StockSourceEntity> stockSourceCacheList = redisUtil.mapGetAll(CacheConst.CACHE_KEY_STOCK_SOURCE_ALL,
+		List<StockSourceEntity> stockSourceCacheList = redisUtil.mapGetAll(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 				StockSourceEntity.class);
 		if (CollUtil.isEmpty(stockSourceCacheList)) {
 			log.info("{}", "缓存中没有股票源数据");
