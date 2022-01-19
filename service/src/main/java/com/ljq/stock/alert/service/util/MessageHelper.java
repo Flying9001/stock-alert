@@ -24,12 +24,12 @@ public class MessageHelper {
     }
 
     /**
-     * 创建预警消息
+     * 根据股价创建预警消息
      *
      * @param userStock
      * @return
      */
-    public static AlertMessageEntity createAlertMessage(UserStockEntity userStock) {
+    public static AlertMessageEntity createAlertMessageFromPrice(UserStockEntity userStock) {
         Date stockDate = DateUtil.parse(userStock.getStockSource().getDate() + " " +
                 userStock.getStockSource().getTime(), "yyyy-MM-dd HH:mm:ss");
         // 股价对比
@@ -38,6 +38,18 @@ public class MessageHelper {
         if (priceCompareResult != 0) {
             return getPriceLimitAlertMessage(userStock, priceCompareResult);
         }
+        return null;
+    }
+
+    /**
+     * 根据涨跌幅创建预警消息
+     *
+     * @param userStock
+     * @return
+     */
+    public static AlertMessageEntity createAlertMessageFromIncreasePer(UserStockEntity userStock) {
+        Date stockDate = DateUtil.parse(userStock.getStockSource().getDate() + " " +
+                userStock.getStockSource().getTime(), "yyyy-MM-dd HH:mm:ss");
         // 涨跌幅对比
         int increasePerCompareResult = compareIncreasePer(userStock.getStockSource().getIncreasePer(),
                 userStock.getMaxIncreasePer(), userStock.getMaxDecreasePer(), stockDate.getTime());
@@ -56,9 +68,13 @@ public class MessageHelper {
     public static List<AlertMessageEntity> createAlertMessageBatch(List<UserStockEntity> userStockList) {
         List<AlertMessageEntity> alertMessageList = new ArrayList<>();
         userStockList.stream().forEach(userStock -> {
-            AlertMessageEntity alertMessage = createAlertMessage(userStock);
-            if (Objects.nonNull(alertMessage)) {
-                alertMessageList.add(alertMessage);
+            AlertMessageEntity alertMessagePrice = createAlertMessageFromPrice(userStock);
+            if (Objects.nonNull(alertMessagePrice)) {
+                alertMessageList.add(alertMessagePrice);
+            }
+            AlertMessageEntity alertMessageIncreasePer = createAlertMessageFromIncreasePer(userStock);
+            if (Objects.nonNull(alertMessageIncreasePer)) {
+                alertMessageList.add(alertMessageIncreasePer);
             }
         });
         return alertMessageList;

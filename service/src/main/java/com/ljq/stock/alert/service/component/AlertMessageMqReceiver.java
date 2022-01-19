@@ -58,8 +58,8 @@ public class AlertMessageMqReceiver {
             if (redisUtil.exists(cacheKey)) {
                 return;
             }
-            sendAndUpdateMessage(message);
             redisUtil.set(cacheKey, message.getId(), MessageConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
+            sendAndUpdateMessage(message);
         });
     }
 
@@ -71,6 +71,7 @@ public class AlertMessageMqReceiver {
     @RabbitListener(queues = {RabbitMqConfig.QUEUE_USER_OPERATE})
     public void receiveUserOperate(AlertMessageEntity alertMessage) {
         try {
+            log.info("userOperateMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
             mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
         } catch (Exception e) {
             log.error("user operate email send error", e);
@@ -84,6 +85,7 @@ public class AlertMessageMqReceiver {
      */
     private void sendAndUpdateMessage(AlertMessageEntity alertMessage) {
         try {
+            log.info("alertMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
             mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
         } catch (Exception e) {
             log.error("alert message email send error", e);
@@ -91,6 +93,9 @@ public class AlertMessageMqReceiver {
             alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
             alertMessage.setRetryTime(alertMessage.getRetryTime() + 1);
             alertMessageService.updateById(alertMessage);
+            String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
+                    String.valueOf(alertMessage.getId()), null);
+            redisUtil.remove(cacheKey);
             return;
         }
         // 更新消息状态
@@ -114,6 +119,9 @@ public class AlertMessageMqReceiver {
                 // 更新消息状态
                 alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
                 alertMessageList.get(i).setRetryTime(alertMessageList.get(i).getRetryTime() + 1);
+                String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
+                        String.valueOf(alertMessageList.get(i).getId()), null);
+                redisUtil.remove(cacheKey);
             }
         }
         alertMessageService.updateBatchById(alertMessageList);

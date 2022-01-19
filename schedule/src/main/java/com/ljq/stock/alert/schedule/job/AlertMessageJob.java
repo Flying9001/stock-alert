@@ -1,6 +1,7 @@
 package com.ljq.stock.alert.schedule.job;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -111,6 +112,7 @@ public class AlertMessageJob {
         }
         long countAll = pageResult.getTotal();
         long times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
+        log.info("retry alert message: {}", JSONUtil.toJsonStr(pageResult.getRecords()));
         alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         for (int i = 2; i < times + 1; i++) {
             pageParam.setCurrent(i);
@@ -118,6 +120,7 @@ public class AlertMessageJob {
             if (CollUtil.isEmpty(pageResult.getRecords())) {
                 continue;
             }
+            log.info("retry alert message: {}", JSONUtil.toJsonStr(pageResult.getRecords()));
             alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         }
     }
@@ -147,7 +150,10 @@ public class AlertMessageJob {
         // 保存预警消息
         alertMessageService.saveBatch(messageSendList);
         // 推送预警消息
-        log.info("预警消息推送: {}", messageSendList);
+        StringBuilder messageBuilder = new StringBuilder("alert message: \n");
+        messageSendList.stream().forEach(alertMessage -> messageBuilder.append("id=").append(alertMessage.getId())
+                .append(",title=").append(alertMessage.getTitle()).append("\n"));
+        log.info("{}", messageBuilder);
         alertMessageMqSender.sendBatchAlertMessage(messageSendList);
     }
 
