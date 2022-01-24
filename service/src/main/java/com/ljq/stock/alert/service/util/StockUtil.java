@@ -415,7 +415,7 @@ public class StockUtil {
         stockSource.setCompanyName(jsonObject.getByPath( "name", String.class));
         stockSource.setTodayStartPrice(jsonObject.getByPath("open", BigDecimal.class));
         stockSource.setYesterdayEndPrice(jsonObject.getByPath("yestclose", BigDecimal.class));
-        stockSource.setCurrentPrice(jsonObject.getByPath("yestclose", BigDecimal.class));
+        stockSource.setCurrentPrice(jsonObject.getByPath("price", BigDecimal.class));
         stockSource.setTodayMaxPrice(jsonObject.getByPath("high", BigDecimal.class));
         stockSource.setTodayMinPrice(jsonObject.getByPath("low", BigDecimal.class));
         stockSource.setIncrease(jsonObject.getByPath("updown", BigDecimal.class));
