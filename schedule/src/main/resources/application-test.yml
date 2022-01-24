@@ -47,7 +47,3 @@ spring:
         max-active: 20
         max-idle: 10
         min-idle: 5
-
-## 股票数据接口
-stockApi:
-  apiAddress: http://hq.sinajs.cn/list=

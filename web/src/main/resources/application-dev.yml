@@ -48,10 +48,6 @@ spring:
         max-idle: 10
         min-idle: 5
 
-## 股票数据接口
-stockApi:
-  apiAddress: http://hq.sinajs.cn/list=
-
 ## Swagger3
 swagger3:
   enable: true

@@ -28,8 +28,8 @@ public class StockSourceListParam extends BasePageParam {
      * 市场类型,1-上海,2-深圳,3-香港,4-美国
      * */
     @Min(value = 1, message = "市场类型设置错误")
-    @Max(value = 4, message = "市场类型设置错误")
-    @ApiModelProperty(value = "市场类型,1-上海,2-深圳,3-香港,4-美国 不能为空,至少为 1", name = "marketType", example = "0")
+    @Max(value = 2, message = "市场类型设置错误")
+    @ApiModelProperty(value = "市场类型,1-上海,2-深圳", name = "marketType", example = "0")
     private Integer marketType;
     /**
      * 股票代码

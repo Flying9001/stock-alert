@@ -39,5 +39,15 @@ public class StockConst {
      */
     public static final String CACHE_KEY_STOCK_SOURCE_ALL = "STOCK_SOURCE_ALL";
 
+    /**
+     * 股票数据接口
+     * sina: 新浪
+     * tencent: 腾讯
+     * netease: 网易
+     */
+    public static final String STOCK_API_SINA = "sina";
+    public static final String STOCK_API_TENCENT = "tencent";
+    public static final String STOCK_API_NETEASE = "netease";
+
 
 }

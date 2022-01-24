@@ -60,7 +60,7 @@ public class AlertMessageJob {
             return;
         }
         // 查询股票数据
-        List<StockSourceEntity> stockLiveList = StockUtil.getStocksFromSina(stockApiConfig, stockCacheList);
+        List<StockSourceEntity> stockLiveList = StockUtil.getStocksLive(stockApiConfig, stockCacheList);
         // 更新缓存中股票数据
         Map<String, Object> stockSourceMap = new HashMap<>(16);
         stockLiveList.stream().forEach(stockSource ->

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -32,8 +33,9 @@ public class StockSourceUpdateParam implements Serializable {
      * 市场类型,1-上海,2-深圳,3-香港,4-美国
      * */
     @NotNull(message = "市场类型,1-上海,2-深圳,3-香港,4-美国 不能为空")
-    @Min(value = 1, message = "市场类型,1-上海,2-深圳,3-香港,4-美国 至少为 1")
-    @ApiModelProperty(value = "市场类型,1-上海,2-深圳,3-香港,4-美国 不能为空,至少为 1", name = "marketType", required = true, example = "0")
+    @Min(value = 1, message = "市场类型设置错误")
+    @Max(value = 2, message = "市场类型设置错误")
+    @ApiModelProperty(value = "市场类型,1-上海,2-深圳", name = "marketType", required = true, example = "0")
     private Integer marketType;
     /**
      * 股票代码

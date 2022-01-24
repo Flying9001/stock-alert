@@ -68,7 +68,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			return stockSourceDB;
 		}
 		// 获取股票信息
-		StockSourceEntity stockSourceParam = StockUtil.getStockFromSina(stockApiConfig, saveParam.getStockCode(),
+		StockSourceEntity stockSourceParam = StockUtil.getStockLive(stockApiConfig, saveParam.getStockCode(),
 				saveParam.getMarketType());
 		// 保存
 		stockSourceDao.insert(stockSourceParam);
@@ -121,7 +121,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
 		// 获取股票信息
-		return StockUtil.getStockFromSina(stockApiConfig, infoRealTimeParam.getStockCode(),
+		return StockUtil.getStockLive(stockApiConfig, infoRealTimeParam.getStockCode(),
 				infoRealTimeParam.getMarketType());
 	}
 
@@ -154,7 +154,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	@Override
 	public IPage<StockSourceEntity> pageRealTime(StockSourceListRealTimeParam listRealTimeParam) {
 		IPage<StockSourceEntity> page = page(listRealTimeParam);
-		page.setRecords(StockUtil.getStocksFromSina(stockApiConfig, page.getRecords()));
+		page.setRecords(StockUtil.getStocksLive(stockApiConfig, page.getRecords()));
 		return page;
 	}
 
