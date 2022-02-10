@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.param.stocksource.*;
+import com.ljq.stock.alert.model.vo.StockIndexVo;
+
+import java.util.List;
 
 /**
  * 股票源业务层接口
@@ -83,6 +86,13 @@ public interface StockSourceService extends IService<StockSourceEntity> {
 	 * @return
 	 */
 	ApiResult<Void> allCacheToDb();
+
+	/**
+	 * 查询指数列表
+	 *
+	 * @return
+	 */
+	ApiResult<List<StockIndexVo>> queryIndexList();
 
 
 }

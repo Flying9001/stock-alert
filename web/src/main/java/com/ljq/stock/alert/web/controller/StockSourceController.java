@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.param.stocksource.*;
+import com.ljq.stock.alert.model.vo.StockIndexVo;
 import com.ljq.stock.alert.service.StockSourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 股票源
@@ -137,6 +140,17 @@ public class StockSourceController {
     @ApiOperation(value = "将缓存中的所有股票数据同步更新到数据库",  notes = "将缓存中的所有股票数据同步更新到数据库")
     public ResponseEntity<ApiResult<Void>> allCacheToDb() {
         return ResponseEntity.ok(stockSourceService.allCacheToDb());
+    }
+
+    /**
+     * 查询股票指数实时行情
+     *
+     * @return
+     */
+    @GetMapping(value = "/index/list", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "查询股票指数实时行情",  notes = "查询股票指数实时行情")
+    public ResponseEntity<ApiResult<List<StockIndexVo>>> queryIndexList() {
+        return ResponseEntity.ok(stockSourceService.queryIndexList());
     }
 
 

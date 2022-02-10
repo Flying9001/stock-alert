@@ -19,6 +19,7 @@ import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.param.stocksource.*;
+import com.ljq.stock.alert.model.vo.StockIndexVo;
 import com.ljq.stock.alert.service.StockSourceService;
 import com.ljq.stock.alert.service.util.StockUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -250,6 +251,15 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		return ApiResult.success();
 	}
 
+	/**
+	 * 查询指数列表
+	 *
+	 * @return
+	 */
+	@Override
+	public ApiResult<List<StockIndexVo>> queryIndexList() {
+		return ApiResult.success(StockUtil.getStockIndexLive(stockApiConfig));
+	}
 
 	/**
 	 * 批量创建股票缓存 key

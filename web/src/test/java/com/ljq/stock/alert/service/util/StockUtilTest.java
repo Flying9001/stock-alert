@@ -3,7 +3,10 @@ package com.ljq.stock.alert.service.util;
 import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
+import com.ljq.stock.alert.model.vo.StockIndexVo;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class StockUtilTest {
 
@@ -46,4 +49,14 @@ class StockUtilTest {
     }
 
 
+    @Test
+    void getStockIndexLive() {
+        StockApiConfig apiConfig = new StockApiConfig();
+//        apiConfig.setApiSina("https://hq.sinajs.cn/list=");
+//        apiConfig.setActive("sina");
+        List<StockIndexVo> stockIndexVoList = StockUtil.getStockIndexLive(apiConfig);
+        System.out.println("------------------------------------------");
+        System.out.println(JSONUtil.toJsonStr(stockIndexVoList));
+
+    }
 }

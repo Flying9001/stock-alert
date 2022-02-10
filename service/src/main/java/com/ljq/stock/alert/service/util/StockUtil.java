@@ -1,15 +1,18 @@
 package com.ljq.stock.alert.service.util;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.constant.MarketEnum;
 import com.ljq.stock.alert.common.constant.StockConst;
+import com.ljq.stock.alert.common.constant.StockIndexEnum;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.SimpleHttpClientUtil;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
+import com.ljq.stock.alert.model.vo.StockIndexVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -30,6 +33,37 @@ import java.util.*;
 public class StockUtil {
 
     private StockUtil(){
+    }
+
+    /**
+     * 获取实时股票指数值(新浪接口)
+     *
+     * @param apiConfig
+     * @return
+     */
+    public static List<StockIndexVo> getStockIndexLive(StockApiConfig apiConfig) {
+        // 组装请求参数
+        StringBuilder pathParamBuilder = new StringBuilder();
+        for (StockIndexEnum indexEnum : StockIndexEnum.values()) {
+            pathParamBuilder.append(indexEnum.name()).append(",");
+        }
+        log.info(pathParamBuilder.toString());
+        Map<String, String> headersMap = new HashMap<>(8);
+        headersMap.put("Referer", "https://finance.sina.com.cn/");
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiSina(), pathParamBuilder.toString(),
+                    null, headersMap);
+            if (!Objects.equals(httpResponse.getStatusLine().getStatusCode(), HttpStatus.SC_OK)) {
+                throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
+            }
+            return createStockIndexList(EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            log.error("{}", e.getMessage());
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
+        } catch (ArrayIndexOutOfBoundsException e2) {
+            throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
+        }
     }
 
     /**
@@ -284,6 +318,32 @@ public class StockUtil {
         } catch (ArrayIndexOutOfBoundsException e2) {
             throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
         }
+    }
+
+    /**
+     * 创建股票展示对象列表
+     *
+     * @param stockIndexData
+     * @return
+     */
+    private static List<StockIndexVo> createStockIndexList(String stockIndexData) {
+        String[] indexRawArr = stockIndexData.split(";");
+        List<StockIndexVo> stockIndexVoList = new ArrayList<>();
+        StockIndexVo indexVo;
+        for (String indexRawData : indexRawArr) {
+            if (StrUtil.isBlank(indexRawData)) {
+                continue;
+            }
+            String[] indexData = indexRawData.substring(indexRawData.indexOf("=") + 2,
+                    indexRawData.lastIndexOf("\"")).split(",");
+            indexVo = new StockIndexVo();
+            indexVo.setIndexName(indexData[0]);
+            indexVo.setCurrentValue(new BigDecimal(indexData[1]));
+            indexVo.setIncrease(new BigDecimal(indexData[2]));
+            indexVo.setIncreasePer(new BigDecimal(indexData[3]));
+            stockIndexVoList.add(indexVo);
+        }
+        return stockIndexVoList;
     }
 
     /**
