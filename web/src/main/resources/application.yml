@@ -32,5 +32,5 @@ stockApi:
   apiSina: https://hq.sinajs.cn/list=
   apiTencent: https://sqt.gtimg.cn/q=
   apiNetease: https://api.money.126.net/data/feed/
-  active: netease
+  active: sina
 

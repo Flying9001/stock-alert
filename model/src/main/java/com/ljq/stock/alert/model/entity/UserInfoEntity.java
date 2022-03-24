@@ -53,6 +53,12 @@ public class UserInfoEntity extends BaseEntity {
     @ApiModelProperty(value = "邮箱", name = "email")
     private String email;
     /**
+     * 用户头像链接
+     */
+    @TableField(value = "HEAD_URL")
+    @ApiModelProperty(value = "用户头像链接", name = "headUrl")
+    private String headUrl;
+    /**
      * 用户 token
      */
     @TableField(exist = false)

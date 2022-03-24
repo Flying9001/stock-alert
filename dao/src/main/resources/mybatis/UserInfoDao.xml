@@ -11,6 +11,7 @@
         <result property="passcode" column="PASSCODE"/>
         <result property="mobilePhone" column="MOBILE_PHONE"/>
         <result property="email" column="EMAIL"/>
+        <result property="headUrl" column="HEAD_URL"/>
         <result property="createDate" column="CREATE_DATE"/>
         <result property="updateTime" column="UPDATE_TIME"/>
     </resultMap>
@@ -23,6 +24,7 @@
         u.`PASSCODE`,
         u.`MOBILE_PHONE`,
         u.`EMAIL`,
+        u.`HEAD_URL`,
         u.`CREATE_TIME`,
         u.`UPDATE_TIME`
 	</sql>
