@@ -35,13 +35,6 @@ public class UserInfoUpdateParam implements Serializable {
     @ApiModelProperty(value = "昵称", name = "nickName", required = true)
     private String nickName;
     /**
-     * 密码
-     * */
-    @Pattern(regexp = "^[\\S]{8,32}$", message = "密码不能包含空格、换行等")
-    @Length(min = 8, max = 32, message = "密码需要控制在 8-32 位字符,建议使用字母、数字、符号组合")
-    @ApiModelProperty(value = "密码", name = "passcode", required = true)
-    private String passcode;
-    /**
      * 手机号
      * */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")

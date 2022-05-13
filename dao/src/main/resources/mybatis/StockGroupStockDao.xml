@@ -70,6 +70,13 @@
 		</where>
 	</select>
 
+	<!-- 删除用户的所有分组内关联的股票 -->
+	<delete id="deleteByUser" parameterType="java.lang.Long" >
+		DELETE sgs FROM `STOCK_GROUP_STOCK` sgs
+        LEFT JOIN `USER_STOCK_GROUP` usg ON usg.ID = sgs.STOCK_GROUP_ID
+        WHERE usg.USER_ID = #{userId}
+	</delete>
+
 
 
 </mapper>

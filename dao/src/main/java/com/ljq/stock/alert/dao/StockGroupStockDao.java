@@ -34,5 +34,13 @@ public interface StockGroupStockDao extends BaseMapper<StockGroupStockEntity> {
      */
     IPage<StockGroupStockEntity> queryPage(@Param("queryMap") Map<String, Object> queryMap,
                                            IPage<StockGroupStockEntity> page);
+
+    /**
+     * 删除用户的所有分组内关联的股票
+     *
+     * @param userId
+     * @return
+     */
+    int deleteByUser(@Param("userId") Long userId);
 	
 }

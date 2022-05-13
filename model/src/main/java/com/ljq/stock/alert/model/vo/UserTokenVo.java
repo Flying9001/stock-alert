@@ -1,5 +1,7 @@
 package com.ljq.stock.alert.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class UserTokenVo implements Serializable {
     /**
      * 用户 id
      */
+    @JsonSerialize(using= ToStringSerializer.class)
     @ApiModelProperty(value = "用户 id", name = "id")
     private Long id;
     /**

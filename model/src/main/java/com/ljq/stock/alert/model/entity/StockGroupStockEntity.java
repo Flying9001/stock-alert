@@ -2,6 +2,8 @@ package com.ljq.stock.alert.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ljq.stock.alert.model.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,6 +27,7 @@ public class StockGroupStockEntity extends BaseEntity {
     /**
 	 * 分组 id
 	 * */
+	@JsonSerialize(using= ToStringSerializer.class)
     @TableField(value = "STOCK_GROUP_ID")
 	@ApiModelProperty(value = "分组 id", name = "stockGroupId")
 	private Long stockGroupId;

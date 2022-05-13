@@ -15,9 +15,11 @@ import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.Md5Util;
-import com.ljq.stock.alert.dao.UserInfoDao;
+import com.ljq.stock.alert.dao.*;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
+import com.ljq.stock.alert.model.entity.UserStockEntity;
+import com.ljq.stock.alert.model.entity.UserStockGroupEntity;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.service.UserInfoService;
 import com.ljq.stock.alert.service.component.AlertMessageMqSender;
@@ -45,6 +47,15 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Autowired
 	private UserInfoDao userInfoDao;
+	@Autowired
+	private AlertMessageDao alertMessageDao;
+	@Autowired
+	private UserStockDao userStockDao;
+	@Autowired
+	private UserStockGroupDao userStockGroupDao;
+	@Autowired
+	private StockGroupStockDao stockGroupStockDao;
+
 	@Autowired
 	private RedisUtil redisUtil;
 	@Autowired
@@ -238,12 +249,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	public void update(UserInfoUpdateParam updateParam) {
 		// 请求参数获取
 		UserInfoEntity userInfoParam = new UserInfoEntity();
-		userInfoParam.setId(updateParam.getId());
-
-		// 判断对象是否存在
-
-		// 更新对象
-
+		BeanUtil.copyProperties(updateParam, userInfoParam, CopyOptions.create().ignoreError().ignoreNullValue());
+		userInfoDao.updateById(userInfoParam);
 	}
 
 	/**
@@ -255,14 +262,18 @@ public class UserInfoServiceImpl implements UserInfoService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public void delete(UserInfoDeleteParam deleteParam) {
-		// 请求参数获取
-		UserInfoEntity userInfoParam = new UserInfoEntity();
-		// 判断对象是否存在
-
-		// 更新对象
-
-		// 删除关注股票
-
+		// 删除用户预警消息
+		alertMessageDao.delete(Wrappers.lambdaQuery(AlertMessageEntity.class)
+				.eq(AlertMessageEntity::getUserId,deleteParam.getId()));
+		// 删除用户股票
+		userStockDao.delete(Wrappers.lambdaQuery(UserStockEntity.class)
+				.eq(UserStockEntity::getUserId, deleteParam.getId()));
+		// 删除用户股票分组以及关联信息
+		stockGroupStockDao.deleteByUser(deleteParam.getId());
+		userStockGroupDao.delete(Wrappers.lambdaQuery(UserStockGroupEntity.class)
+				.eq(UserStockGroupEntity::getUserId, deleteParam.getId()));
+		// 删除用户信息
+		userInfoDao.deleteById(deleteParam.getId());
 	}
 
 	/**
