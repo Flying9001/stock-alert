@@ -108,6 +108,10 @@ public class MessageHelper {
                 message.setTitle("【股价预警小助手】修改密码验证");
                 contentBuilder.append("【股价提醒小助手】为你的账户安全保驾护航,你正在进行修改密码操作,验证码为: ");
                 break;
+            case UPDATE_EMAIL:
+                message.setTitle("【股价预警小助手】修改邮箱验证");
+                contentBuilder.append("【股价提醒小助手】为你的账户安全保驾护航,你正在进行修改邮箱操作,验证码为: ");
+                break;
             default:
                 break;
         }

@@ -87,6 +87,15 @@ public interface UserInfoService {
 			NoSuchAlgorithmException;
 
 	/**
+	 * 修改邮箱
+	 *
+	 * @param updateEmailParam
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	ApiResult updateEmail(UserUpdateEmailParam updateEmailParam) throws JsonProcessingException;
+
+	/**
      * 删除(单条)
      *
      * @param deleteParam

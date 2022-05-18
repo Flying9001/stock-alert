@@ -36,8 +36,9 @@ public class UserGetCheckCodeParam implements Serializable {
      */
     @NotNull(message = "请选择验证码类型")
     @Min(value = 1, message = "验证码类型选择错误")
-    @Max(value = 3, message = "验证码类型选择错误")
-    @ApiModelProperty(value = "验证码类型,1-注册,2-登录,3-修改密码", name = "checkCodeType", required = true)
+    @Max(value = 4, message = "验证码类型选择错误")
+    @ApiModelProperty(value = "验证码类型,1-注册,2-登录,3-修改密码,4-修改邮箱",
+            name = "checkCodeType", required = true)
     private Integer checkCodeType;
 
 

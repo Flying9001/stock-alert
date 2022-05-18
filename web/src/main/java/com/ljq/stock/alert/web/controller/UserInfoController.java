@@ -126,7 +126,7 @@ public class UserInfoController {
      */
     @PutMapping(value = "/update/passcode", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "修改密码",  notes = "修改密码")
-    public ResponseEntity<ApiResult> updatePasscode(@Validated @RequestBody UserUpdatePasscodeParam
+    public ResponseEntity<ApiResult<Void>> updatePasscode(@Validated @RequestBody UserUpdatePasscodeParam
                                      updatePasscodeParam) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         // 验证码校验
         UserTokenVo tokenVo = SessionUtil.currentSession().getUserToken();
@@ -136,6 +136,26 @@ public class UserInfoController {
             return ResponseEntity.ok(ApiResult.fail(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR));
         }
         return ResponseEntity.ok(userInfoService.updatePasscode(updatePasscodeParam));
+    }
+
+    /**
+     * 修改邮箱
+     *
+     * @param updateEmailParam
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PutMapping(value = "/update/email", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "修改邮箱",  notes = "修改邮箱")
+    public ResponseEntity<ApiResult<String>> updateEmail(@Validated @RequestBody UserUpdateEmailParam updateEmailParam)
+            throws JsonProcessingException {
+        // 验证码校验
+        boolean checkResult = CheckCodeUtil.validateCheckCodeValidity(updateEmailParam.getCheckCode(),
+                CheckCodeUtil.generateCacheKey(updateEmailParam.getEmail(), CheckCodeTypeEnum.UPDATE_EMAIL), redisUtil);
+        if (!checkResult) {
+            return ResponseEntity.ok(ApiResult.fail(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR));
+        }
+        return ResponseEntity.ok(userInfoService.updateEmail(updateEmailParam));
     }
 
 

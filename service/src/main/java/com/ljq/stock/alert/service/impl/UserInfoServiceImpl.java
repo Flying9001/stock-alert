@@ -149,6 +149,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
 						CheckCodeTypeEnum.UPDATE_PASSCODE, checkCode);
 				break;
+			case UPDATE_EMAIL:
+				if (emailExist) {
+					throw new CommonException(ApiMsgEnum.USER_EMAIL_REGISTERED);
+				}
+				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
+						CheckCodeTypeEnum.UPDATE_EMAIL, checkCode);
+				break;
 			default:
 				return;
 		}
@@ -279,6 +286,28 @@ public class UserInfoServiceImpl implements UserInfoService {
 			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 		}
 		return ApiResult.success();
+	}
+
+	/**
+	 * 修改邮箱
+	 *
+	 * @param updateEmailParam
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@Override
+	public ApiResult updateEmail(UserUpdateEmailParam updateEmailParam) throws JsonProcessingException {
+		UserTokenVo tokenVo = SessionUtil.currentSession().getUserToken();
+		// 更新邮箱
+		UserInfoEntity userInfo = new UserInfoEntity();
+		userInfo.setId(tokenVo.getId());
+		userInfo.setEmail(updateEmailParam.getEmail());
+		int count = userInfoDao.updateById(userInfo);
+		if (count < 1) {
+			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		tokenVo.setEmail(updateEmailParam.getEmail());
+		return ApiResult.success(TokenUtil.createToken(tokenVo));
 	}
 
 	/**

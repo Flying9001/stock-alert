@@ -18,6 +18,7 @@ public enum CheckCodeTypeEnum {
     REGISTER(1, "注册"),
     SIGN_IN(2, "登录"),
     UPDATE_PASSCODE(3, "修改密码"),
+    UPDATE_EMAIL(4, "修改邮箱"),
 
     /**
      * 未知操作

@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
@@ -40,12 +39,6 @@ public class UserInfoUpdateParam implements Serializable {
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
     @ApiModelProperty(value = "手机号", name = "mobilePhone", required = true)
     private String mobilePhone;
-    /**
-     * 邮箱
-     * */
-    @Email(message = "邮箱格式错误")
-    @ApiModelProperty(value = "邮箱", name = "email", required = true)
-    private String email;
 
 
 }
