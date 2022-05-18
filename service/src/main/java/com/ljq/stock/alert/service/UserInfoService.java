@@ -2,6 +2,7 @@ package com.ljq.stock.alert.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
 
@@ -72,6 +73,18 @@ public interface UserInfoService {
      * @return
      */
 	void update(UserInfoUpdateParam updateParam);
+
+
+	/**
+	 * 修改密码
+	 *
+	 * @param updatePasscodeParam
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 */
+	ApiResult updatePasscode(UserUpdatePasscodeParam updatePasscodeParam) throws UnsupportedEncodingException,
+			NoSuchAlgorithmException;
 
 	/**
      * 删除(单条)

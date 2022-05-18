@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
@@ -21,10 +22,12 @@ import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.entity.UserStockGroupEntity;
 import com.ljq.stock.alert.model.param.user.*;
+import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserInfoService;
 import com.ljq.stock.alert.service.component.AlertMessageMqSender;
 import com.ljq.stock.alert.service.util.CheckCodeUtil;
 import com.ljq.stock.alert.service.util.MessageHelper;
+import com.ljq.stock.alert.service.util.SessionUtil;
 import com.ljq.stock.alert.service.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 /**
@@ -137,12 +142,12 @@ public class UserInfoServiceImpl implements UserInfoService {
 				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
 						CheckCodeTypeEnum.SIGN_IN, checkCode);
 				break;
-			case UPDATE_PASSWORD:
+			case UPDATE_PASSCODE:
 				if (!emailExist) {
 					throw new CommonException(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 				}
 				message = MessageHelper.createCheckMessage(checkCodeParam.getMobilePhone(), checkCodeParam.getEmail(),
-						CheckCodeTypeEnum.UPDATE_PASSWORD, checkCode);
+						CheckCodeTypeEnum.UPDATE_PASSCODE, checkCode);
 				break;
 			default:
 				return;
@@ -251,6 +256,29 @@ public class UserInfoServiceImpl implements UserInfoService {
 		UserInfoEntity userInfoParam = new UserInfoEntity();
 		BeanUtil.copyProperties(updateParam, userInfoParam, CopyOptions.create().ignoreError().ignoreNullValue());
 		userInfoDao.updateById(userInfoParam);
+	}
+
+	/**
+	 * 修改密码
+	 *
+	 * @param updatePasscodeParam
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 */
+	@Override
+	public ApiResult updatePasscode(UserUpdatePasscodeParam updatePasscodeParam) throws UnsupportedEncodingException,
+			NoSuchAlgorithmException {
+		UserTokenVo tokenVo = SessionUtil.currentSession().getUserToken();
+		// 更新密码
+		UserInfoEntity userInfo = new UserInfoEntity();
+		userInfo.setId(tokenVo.getId());
+		userInfo.setPasscode(Md5Util.getEncryptedPwd(updatePasscodeParam.getPasscode()));
+		int count = userInfoDao.updateById(userInfo);
+		if (count < 1) {
+			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		return ApiResult.success();
 	}
 
 	/**

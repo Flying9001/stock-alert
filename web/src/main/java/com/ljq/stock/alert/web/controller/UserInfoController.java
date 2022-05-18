@@ -1,6 +1,5 @@
 package com.ljq.stock.alert.web.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
@@ -9,8 +8,10 @@ import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.param.user.*;
+import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserInfoService;
 import com.ljq.stock.alert.service.util.CheckCodeUtil;
+import com.ljq.stock.alert.service.util.SessionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 用户信息
@@ -37,17 +41,7 @@ public class UserInfoController {
 	@Autowired
     private RedisUtil redisUtil;
 
-    /**
-     * 新增(单条)
-     *
-     * @param saveParam
-     * @return
-     */
-    @PostMapping(value = "/add", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "用户信息新增(单条)",  notes = "用户信息新增(单条)")
-    public ResponseEntity<ApiResult<UserInfoEntity>> save(@Validated @RequestBody UserInfoSaveParam saveParam) {
-        return ResponseEntity.ok(ApiResult.success(userInfoService.save(saveParam)));
-    }
+
 
     /**
      * 获取验证码
@@ -109,18 +103,6 @@ public class UserInfoController {
     }
 
     /**
-     * 分页查询
-     *
-     * @param listParam
-     * @return
-     */
-    @GetMapping(value = "/page", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "用户信息分页查询",  notes = "用户信息分页查询")
-    public ResponseEntity<ApiResult<IPage<UserInfoEntity>>> page(@Validated UserInfoListParam listParam) {
-        return ResponseEntity.ok(ApiResult.success(userInfoService.page(listParam)));
-    }
-
-    /**
      * 修改(单条)
      *
      * @param
@@ -133,33 +115,28 @@ public class UserInfoController {
         return ResponseEntity.ok(ApiResult.success());
     }
 
-    /**
-     * 删除(单条)
-     *
-     * @param deleteParam
-     * @return
-     */
-    @DeleteMapping(value = "/delete", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "用户信息删除(单条)",  notes = "用户信息删除(单条)")
-    public ResponseEntity<ApiResult<Void>> delete(@Validated @RequestBody UserInfoDeleteParam deleteParam) {
-        userInfoService.delete(deleteParam);
-        return ResponseEntity.ok(ApiResult.success());
-    }
 
     /**
-     * 批量删除
+     * 修改密码
      *
-     * @param deleteBatchParam
+     * @param updatePasscodeParam
      * @return
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
      */
-    @DeleteMapping(value = "/delete/batch", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "用户信息批量删除",  notes = "用户信息批量删除")
-    public ResponseEntity<ApiResult<Void>> deleteBatch(@Validated @RequestBody UserInfoDeleteBatchParam deleteBatchParam) {
-        userInfoService.deleteBatch(deleteBatchParam);
-        return ResponseEntity.ok(ApiResult.success());
+    @PutMapping(value = "/update/passcode", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "修改密码",  notes = "修改密码")
+    public ResponseEntity<ApiResult> updatePasscode(@Validated @RequestBody UserUpdatePasscodeParam
+                                     updatePasscodeParam) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        // 验证码校验
+        UserTokenVo tokenVo = SessionUtil.currentSession().getUserToken();
+        boolean checkResult = CheckCodeUtil.validateCheckCodeValidity(updatePasscodeParam.getCheckCode(),
+                CheckCodeUtil.generateCacheKey(tokenVo.getEmail(), CheckCodeTypeEnum.UPDATE_PASSCODE), redisUtil);
+        if (!checkResult) {
+            return ResponseEntity.ok(ApiResult.fail(ApiMsgEnum.CHECK_CODE_VALIDATE_ERROR));
+        }
+        return ResponseEntity.ok(userInfoService.updatePasscode(updatePasscodeParam));
     }
-
-
 
 
 }

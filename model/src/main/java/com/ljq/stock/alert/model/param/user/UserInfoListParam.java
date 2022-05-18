@@ -28,25 +28,25 @@ public class UserInfoListParam extends BasePageParam {
      * id
      * */
     @Min(value = 1, message = "id 至少为 1")
-    @ApiModelProperty(value = "id 不能为空,至少为 1", name = "id", required = true, example = "0")
+    @ApiModelProperty(value = "id 不能为空,至少为 1", name = "id", example = "0")
     private Long id;
     /**
      * 昵称
      * */
     @Length(max = 16,message = "昵称需要控制在 16 字符以内")
-    @ApiModelProperty(value = "昵称", name = "nickName", required = true)
+    @ApiModelProperty(value = "昵称", name = "nickName")
     private String nickName;
     /**
      * 手机号
      * */
     @Pattern(regexp = "^(1[3-9]\\d{9})?$", message = "手机号格式错误")
-    @ApiModelProperty(value = "手机号", name = "mobilePhone", required = true)
+    @ApiModelProperty(value = "手机号", name = "mobilePhone")
     private String mobilePhone;
     /**
      * 邮箱
      * */
     @Email(message = "邮箱格式错误")
-    @ApiModelProperty(value = "邮箱", name = "email", required = true)
+    @ApiModelProperty(value = "邮箱", name = "email")
     private String email;
 
 

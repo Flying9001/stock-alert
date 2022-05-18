@@ -104,7 +104,7 @@ public class MessageHelper {
                 message.setTitle("【股价预警小助手】登录验证");
                 contentBuilder.append("【股价提醒小助手】欢迎你回来,你的登录验证码为: ");
                 break;
-            case UPDATE_PASSWORD:
+            case UPDATE_PASSCODE:
                 message.setTitle("【股价预警小助手】修改密码验证");
                 contentBuilder.append("【股价提醒小助手】为你的账户安全保驾护航,你正在进行修改密码操作,验证码为: ");
                 break;
