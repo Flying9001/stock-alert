@@ -91,6 +91,18 @@ public class UserInfoController {
     }
 
     /**
+     * 用户微信小程序登录
+     *
+     * @param loginParam
+     * @return
+     */
+    @PostMapping(value = "/login/wechat/mini", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "用户微信小程序登录",  notes = "用户微信小程序登录")
+    public ResponseEntity<ApiResult> loginByWechatMini(@Validated @RequestBody UserLoginByWechatMiniParam loginParam) {
+        return ResponseEntity.ok(userInfoService.loginByWechatMini(loginParam));
+    }
+
+    /**
      * 查询详情(单条)
      *
      * @param infoParam

@@ -34,3 +34,13 @@ stockApi:
   apiNetease: https://api.money.126.net/data/feed/
   active: sina
 
+
+## 微信配置
+wechat:
+  mini:
+    appId: xxxxx
+    appSecret: xxxxx
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session
+    msgToken: xxxxx
+    msgAesKey: xxxxx
+

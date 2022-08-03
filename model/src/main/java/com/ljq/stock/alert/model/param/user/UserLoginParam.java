@@ -31,7 +31,7 @@ public class UserLoginParam implements Serializable {
      * 密码
      * */
     @NotBlank(message = "密码 不能为空")
-    @Pattern(regexp = "^[\\S]{8,32}$", message = "密码不能包含空格、换行等")
+    @Pattern(regexp = "^[\\S]*$", message = "密码不能包含空格、换行等")
     @Length(min = 8, max = 32, message = "密码需要控制在 8-32 位字符,建议使用字母、数字、符号组合")
     @ApiModelProperty(value = "密码", name = "passcode", required = true)
     private String passcode;

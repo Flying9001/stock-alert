@@ -4,6 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -12,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
+import com.ljq.stock.alert.common.config.WechatConfig;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
@@ -23,6 +27,7 @@ import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.model.entity.UserStockGroupEntity;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.model.vo.UserTokenVo;
+import com.ljq.stock.alert.model.vo.WechatMiniLoginRespVo;
 import com.ljq.stock.alert.service.UserInfoService;
 import com.ljq.stock.alert.service.component.AlertMessageMqSender;
 import com.ljq.stock.alert.service.util.CheckCodeUtil;
@@ -37,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -65,6 +72,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 	private RedisUtil redisUtil;
 	@Autowired
 	private AlertMessageMqSender messageMqSender;
+
+	@Autowired
+	private WechatConfig wechatConfig;
 
 	/**
 	 * 保存(单条)
@@ -212,6 +222,32 @@ public class UserInfoServiceImpl implements UserInfoService {
 		// 生成 Token
 		userInfoDB.setToken(TokenUtil.createToken(userInfoDB));
 		return userInfoDB;
+	}
+
+	/**
+	 * 用户微信小程序登录
+	 *
+	 * @param wechatMiniParam
+	 * @return
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+	public ApiResult loginByWechatMini(UserLoginByWechatMiniParam wechatMiniParam) {
+		Map<String, Object> paramMap = new HashMap<>(8);
+		paramMap.put("appid", wechatConfig.getMiniAppId());
+		paramMap.put("secret", wechatConfig.getMiniAppSecret());
+		paramMap.put("js_code", wechatMiniParam.getCode());
+		paramMap.put("grant_type", "authorization_code");
+		String wechatResponse = HttpUtil.get(wechatConfig.getMiniLoginUrl(), paramMap);
+		WechatMiniLoginRespVo loginRespVo = JSONUtil.toBean(wechatResponse, WechatMiniLoginRespVo.class);
+		log.info("微信登录返回结果{}", loginRespVo);
+		if (Objects.isNull(loginRespVo) || StrUtil.isBlank(loginRespVo.getOpenid())) {
+			return ApiResult.fail(ApiMsgEnum.USER_LOGIN_WECHAT_MINI_ERROR);
+		}
+
+		// TODO 创建新用户
+
+		return ApiResult.success(loginRespVo);
 	}
 
 	/**

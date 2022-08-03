@@ -49,6 +49,7 @@ public enum ApiMsgEnum {
             "请输入字母、数字与下划线的组合"),
     USER_TOKEN_NULL_ERROR("api.response.user.tokenNullError", "用户登录凭证不能为空"),
     USER_TOKEN_ERROR("api.response.user.tokenError", "用户登录信息已失效"),
+    USER_LOGIN_WECHAT_MINI_ERROR("api.response.user.loginWechatMiniError", "微信小程序登录失败"),
 
     /**
      * 用户股票

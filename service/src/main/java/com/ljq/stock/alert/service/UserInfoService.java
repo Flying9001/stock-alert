@@ -51,6 +51,14 @@ public interface UserInfoService {
 	UserInfoEntity login(UserLoginParam loginParam) throws JsonProcessingException;
 
 	/**
+	 * 用户微信小程序登录
+	 *
+	 * @param wechatMiniParam
+	 * @return
+	 */
+	ApiResult loginByWechatMini(UserLoginByWechatMiniParam wechatMiniParam);
+
+	/**
      * 查询详情(单条)
      *
      * @param infoParam
