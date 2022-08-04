@@ -38,4 +38,19 @@
         AND (u.ACCOUNT = #{account} OR u.MOBILE_PHONE = #{account} OR u.EMAIL = #{account})
     </select>
 
+    <!-- 统计拥有关注股票的用户数量 -->
+    <select id="queryCountWithStock" resultType="int" >
+        SELECT COUNT(u.ID)
+        FROM `USER_INFO` u
+        WHERE u.ID IN (SELECT `USER_ID` FROM USER_STOCK)
+    </select>
+
+    <!-- 分页查询拥有关注股票的用户列表 -->
+    <select id="queryPageWithStock" resultMap="userInfoMap" >
+        SELECT
+            <include refid="user_info_base_field" />
+        FROM `USER_INFO` u
+        WHERE u.ID IN (SELECT `USER_ID` FROM USER_STOCK)
+    </select>
+
 </mapper>

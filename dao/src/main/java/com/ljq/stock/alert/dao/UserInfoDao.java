@@ -1,6 +1,8 @@
 package com.ljq.stock.alert.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -21,5 +23,20 @@ public interface UserInfoDao extends BaseMapper<UserInfoEntity> {
      * @return
      */
     UserInfoEntity login(@Param("account") String account);
+
+    /**
+     * 统计拥有关注股票的用户数量
+     *
+     * @return
+     */
+    int queryCountWithStock();
+
+    /**
+     * 分页查询拥有关注股票的用户列表
+     *
+     * @param page
+     * @return
+     */
+    Page<UserInfoEntity> queryPageWithStock(IPage<UserInfoEntity> page);
 	
 }

@@ -10,9 +10,11 @@ import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.AlertMessageDao;
+import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserStockDao;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
+import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 import com.ljq.stock.alert.service.AlertMessageService;
 import com.ljq.stock.alert.service.component.AlertMessageMqSender;
@@ -42,6 +44,8 @@ public class AlertMessageJob {
     private StockApiConfig stockApiConfig;
     @Autowired
     private UserStockDao userStockDao;
+    @Autowired
+    private UserInfoDao userInfoDao;
     @Autowired
     private AlertMessageMqSender alertMessageMqSender;
     @Autowired
@@ -122,6 +126,41 @@ public class AlertMessageJob {
             }
             log.info("retry alert message: {}", JSONUtil.toJsonStr(pageResult.getRecords()));
             alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
+        }
+    }
+
+    /**
+     * 周报，每周五下午五点向用户发送当周所关注股票的最新数据
+     */
+    @Scheduled(cron = "0 0 17 ? * 6 *", initialDelay = 30000L)
+    public void weekReport() {
+        // 查询所有有关注股票的用户(分页分段)
+        int countAll = userInfoDao.queryCountWithStock();
+        int pageSize = 1000;
+        int times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
+        IPage<UserInfoEntity> page = new Page<>(1,pageSize);
+        // 查询每个用户关注的股票
+        for (int i = 1; i < times + 1; i++) {
+            page.setCurrent(i);
+            page = userInfoDao.queryPageWithStock(page);
+            if (CollUtil.isEmpty(page.getRecords())) {
+                continue;
+            }
+            List<AlertMessageEntity> alertMessageList = new ArrayList<>();
+            page.getRecords().forEach(user -> {
+                log.info("股价报告接收用户昵称:{},id:{},邮箱:{}",user.getNickName(),user.getId(), user.getEmail());
+                // 以用户为单位创建推送消息
+                List<UserStockEntity> userStockList = userStockDao.queryByUser(user.getId());
+                userStockList.forEach(userStock ->
+                        userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
+                                CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
+                                        userStock.getStockSource().getStockCode()), StockSourceEntity.class))
+                );
+                AlertMessageEntity alertMessage = MessageHelper.createReportMessage(userStockList);
+                alertMessageList.add(alertMessage);
+            });
+            // 批量推送消息
+            alertMessageMqSender.sendBatchReportMessage(alertMessageList);
         }
     }
 

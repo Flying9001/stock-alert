@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,5 +28,13 @@ public interface UserStockDao extends BaseMapper<UserStockEntity> {
      */
     IPage<UserStockEntity> queryPage(@NotNull @Param("queryMap") Map<String, Object> queryMap,
                                      IPage<UserStockEntity> page);
+
+    /**
+     * 查询用户关注股票列表
+     *
+     * @param userId
+     * @return
+     */
+    List<UserStockEntity> queryByUser(Long userId);
 	
 }

@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.service.util;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
@@ -67,7 +68,7 @@ public class MessageHelper {
      */
     public static List<AlertMessageEntity> createAlertMessageBatch(List<UserStockEntity> userStockList) {
         List<AlertMessageEntity> alertMessageList = new ArrayList<>();
-        userStockList.stream().forEach(userStock -> {
+        userStockList.forEach(userStock -> {
             AlertMessageEntity alertMessagePrice = createAlertMessageFromPrice(userStock);
             if (Objects.nonNull(alertMessagePrice)) {
                 alertMessageList.add(alertMessagePrice);
@@ -78,6 +79,53 @@ public class MessageHelper {
             }
         });
         return alertMessageList;
+    }
+
+    /**
+     * 批量创建
+     * @param userStockList
+     * @return
+     */
+    public static AlertMessageEntity createReportMessage(List<UserStockEntity> userStockList) {
+        AlertMessageEntity message = new AlertMessageEntity();
+        message.setId(userStockList.get(0).getUserId() + System.currentTimeMillis());
+        message.setUserId(userStockList.get(0).getUserId());
+        message.setMobilePhone(userStockList.get(0).getUserInfo().getMobilePhone());
+        message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
+        message.setEmail(userStockList.get(0).getUserInfo().getEmail());
+        message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
+        message.setTitle("股价提醒小助手【股价周报】-" + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+        StringBuilder contentBuilder = new StringBuilder("尊敬的用户");
+        contentBuilder.append(userStockList.get(0).getUserInfo().getNickName()).append(",</br>")
+                .append("你好！以下为你所关注的股票本周收盘价格，请注意查收:</br>")
+                .append("<table border=\"1\"")
+                .append("<tr><th>").append("公司").append("</th>")
+                .append("<th>").append("代码").append("</th>")
+                .append("<th>").append("当前价").append("</th>")
+                .append("<th>").append("涨跌幅").append("</th>")
+                .append("<th>").append("涨跌额").append("</th>")
+                .append("<th>").append("最高价").append("</th>")
+                .append("<th>").append("最低价").append("</th>")
+                .append("<th>").append("昨日收盘价").append("</th>")
+                .append("<th>").append("今日开盘价").append("</th>")
+                .append("<th>").append("时间").append("</th></tr>");
+        userStockList.forEach(userStock -> {
+            contentBuilder.append("<tr>")
+                    .append("<td>").append(userStock.getStockSource().getCompanyName()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getStockCode()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getCurrentPrice()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getIncreasePer()).append("%</td>")
+                    .append("<td>").append(userStock.getStockSource().getIncrease()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getTodayMaxPrice()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getTodayMinPrice()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getYesterdayEndPrice()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getTodayStartPrice()).append("</td>")
+                    .append("<td>").append(userStock.getStockSource().getDate())
+                    .append(userStock.getStockSource().getTime()).append("</td></tr>");
+        });
+        contentBuilder.append("</table>");
+        message.setContent(contentBuilder.toString());
+        return message;
     }
 
     /**

@@ -20,6 +20,7 @@ public class RabbitMqConfig {
      * 消息队列名称
      */
     public static final String QUEUE_ALERT_MESSAGE = "RABBITMQ_STOCK_ALERT_MESSAGE";
+    public static final String QUEUE_REPORT_MESSAGE = "RABBITMQ_STOCK_REPORT_MESSAGE";
     public static final String QUEUE_USER_OPERATE = "RABBITMQ_STOCK_USER_CHECK";
 
     /**
@@ -36,6 +37,16 @@ public class RabbitMqConfig {
     @Bean(value = "alertMessageQueue")
     public Queue alertMessageQueue(){
         return new Queue(QUEUE_ALERT_MESSAGE);
+    }
+
+    /**
+     * 股价报告消息队列
+     *
+     * @return
+     */
+    @Bean(value = "reportMessageQueue")
+    public Queue reportMessageQueue() {
+        return new Queue(QUEUE_REPORT_MESSAGE);
     }
 
     /**
@@ -67,6 +78,19 @@ public class RabbitMqConfig {
      */
     @Bean
     public Binding bindingDirectExchangeAlertMessage(@Qualifier("alertMessageQueue") Queue queue,
+                                                     @Qualifier("directExchange") DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).withQueueName();
+    }
+
+    /**
+     * 绑定直连交换机与股价报告消息队列
+     *
+     * @param queue
+     * @param exchange
+     * @return
+     */
+    @Bean
+    public Binding bindingDirectExchangeReportMessage(@Qualifier("reportMessageQueue") Queue queue,
                                                      @Qualifier("directExchange") DirectExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).withQueueName();
     }

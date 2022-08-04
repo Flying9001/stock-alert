@@ -86,5 +86,15 @@
         </where>
     </select>
 
+    <!-- 查询用户关注股票列表 -->
+    <select id="queryByUser" parameterType="java.lang.Long" resultMap="userStockMap" >
+        SELECT
+        <include refid="user_stock_list_field" />
+        FROM `USER_STOCK` us
+        LEFT JOIN `STOCK_SOURCE` s ON s.ID = us.STOCK_ID
+        LEFT JOIN `USER_INFO` u ON u.ID = us.USER_ID
+        WHERE us.USER_ID = #{userId}
+    </select>
+
 
 </mapper>

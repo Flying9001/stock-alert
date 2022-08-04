@@ -33,6 +33,16 @@ public class AlertMessageMqSender {
     }
 
     /**
+     * 批量发送股价报告消息队列消息
+     *
+     * @param alertMessageList
+     */
+    public void sendBatchReportMessage(List<AlertMessageEntity> alertMessageList) {
+        rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE_DIRECT,RabbitMqConfig.QUEUE_REPORT_MESSAGE,
+                alertMessageList);
+    }
+
+    /**
      * 发送用户操作队列消息
      *
      * @param alertMessage

@@ -64,6 +64,29 @@ public class AlertMessageMqReceiver {
     }
 
     /**
+     * 接收股价报告消息队列消息
+     *
+     * @param alertMessageList
+     */
+    @RabbitListener(queues = RabbitMqConfig.QUEUE_REPORT_MESSAGE)
+    public void receiveReportMessage(List<AlertMessageEntity> alertMessageList) {
+        alertMessageList.stream().forEach(message -> {
+            String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
+                    String.valueOf(message.getId()), null);
+            if (redisUtil.exists(cacheKey)) {
+                return;
+            }
+            redisUtil.set(cacheKey, message.getId(), MessageConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
+            // 发送邮件
+            try {
+                mailClient.sendMail(message.getEmail(), message.getTitle(), message.getContent());
+            } catch (Exception e) {
+                log.error("report message email send error", e);
+            }
+        });
+    }
+
+    /**
      * 接收用户操作队列消息
      *
      * @param alertMessage
@@ -115,7 +138,7 @@ public class AlertMessageMqReceiver {
                 ThreadUtil.execAsync(new MessageMailTask(mailSender, alertMessageList.get(i)));
                 alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_SUCCESS);
             } catch (Exception e) {
-                log.error("Mail send error,{}", e);
+                log.error("Mail send error", e);
                 // 更新消息状态
                 alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
                 alertMessageList.get(i).setRetryTime(alertMessageList.get(i).getRetryTime() + 1);
