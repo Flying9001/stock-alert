@@ -132,7 +132,7 @@ public class AlertMessageJob {
     /**
      * 周报，每周五下午五点向用户发送当周所关注股票的最新数据
      */
-    @Scheduled(cron = "0 0 17 ? * 6 *", initialDelay = 30000L)
+    @Scheduled(cron = "0 0 17 ? * 6")
     public void weekReport() {
         // 查询所有有关注股票的用户(分页分段)
         int countAll = userInfoDao.queryCountWithStock();
