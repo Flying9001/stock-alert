@@ -103,6 +103,19 @@ public class UserInfoController {
     }
 
     /**
+     * 用户绑定微信小程序
+     *
+     * @param bindWechatMiniParam
+     * @return
+     */
+    @PostMapping(value = "/bind/wechat/mini", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "用户绑定微信小程序",  notes = "用户绑定微信小程序")
+    public ResponseEntity<ApiResult> bindWechatMini(@Validated @RequestBody UserBindWechatMiniParam
+                                                                bindWechatMiniParam) {
+        return ResponseEntity.ok(userInfoService.bindWechatMini(bindWechatMiniParam));
+    }
+
+    /**
      * 查询详情(单条)
      *
      * @param infoParam

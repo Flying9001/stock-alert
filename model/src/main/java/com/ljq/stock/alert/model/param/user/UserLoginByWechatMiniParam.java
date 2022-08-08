@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.model.param.user;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @Date: 2022/8/2
  */
 @Data
+@ApiModel(value = "用户微信小程序登录", description = "用户微信小程序登录")
 public class UserLoginByWechatMiniParam implements Serializable {
 
     private static final long serialVersionUID = -4506180429624614552L;

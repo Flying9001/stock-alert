@@ -59,6 +59,14 @@ public interface UserInfoService {
 	ApiResult loginByWechatMini(UserLoginByWechatMiniParam wechatMiniParam);
 
 	/**
+	 * 用户绑定微信小程序
+	 *
+	 * @param bindWechatMiniParam
+	 * @return
+	 */
+	ApiResult bindWechatMini(UserBindWechatMiniParam bindWechatMiniParam);
+
+	/**
      * 查询详情(单条)
      *
      * @param infoParam

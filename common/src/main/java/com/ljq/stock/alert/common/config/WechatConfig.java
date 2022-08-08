@@ -16,31 +16,31 @@ public class WechatConfig {
     /**
      * 微信小程序 AppId
      */
-    @Value(value = "${wechat.mini.appId : null}")
+    @Value(value = "${wechat.mini.appId:null}")
     private String miniAppId;
 
     /**
      * 微信小程序秘钥
      */
-    @Value(value = "${wechat.mini.appSecret : null}")
+    @Value(value = "${wechat.mini.appSecret:null}")
     private String miniAppSecret;
 
     /**
      * 微信小程序登录地址
      */
-    @Value(value = "${wechat.mini.loginUrl : null}")
+    @Value(value = "${wechat.mini.loginUrl:null}")
     private String miniLoginUrl;
 
     /**
      * 小程序消息推送服务器认证凭证
      */
-    @Value(value = "${wechat.mini.msgToken : null}")
+    @Value(value = "${wechat.mini.msgToken:null}")
     private String miniMsgToken;
 
     /**
      * 小程序消息AES加密秘钥
      */
-    @Value(value = "${wechat.mini.msgAesKey : null}")
+    @Value(value = "${wechat.mini.msgAesKey:null}")
     private String miniMsgAesKey;
 
 

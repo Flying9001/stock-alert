@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ljq.stock.alert.dao.UserOauthDao">
+
+    <resultMap id="userOauthMap" type="com.ljq.stock.alert.model.entity.UserOauthEntity" >
+        <result column="ID" property="id" />
+        <result column="USER_ID" property="userId" />
+        <result column="ACCESS_ID" property="accessId" />
+        <result column="LOGIN_TYPE" property="loginType" />
+        <result column="ENABLE" property="enable" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <sql id="user_oauth_base_field">
+        ua.ID,
+        ua.USER_ID,
+        ua.ACCESS_ID,
+        ua.LOGIN_TYPE,
+        ua.ENABLE,
+        ua.CREATE_TIME,
+        ua.UPDATE_TIME
+    </sql>
+
+
+
+</mapper>

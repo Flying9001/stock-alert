@@ -25,6 +25,14 @@ public interface UserInfoDao extends BaseMapper<UserInfoEntity> {
     UserInfoEntity login(@Param("account") String account);
 
     /**
+     * 微信小程序登录
+     *
+     * @param accessId
+     * @return
+     */
+    UserInfoEntity loginByWechatMini(@Param("accessId") String accessId);
+
+    /**
      * 统计拥有关注股票的用户数量
      *
      * @return

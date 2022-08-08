@@ -17,14 +17,12 @@ import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.WechatConfig;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
+import com.ljq.stock.alert.common.constant.LoginTypeEnum;
 import com.ljq.stock.alert.common.constant.UserConst;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.Md5Util;
 import com.ljq.stock.alert.dao.*;
-import com.ljq.stock.alert.model.entity.AlertMessageEntity;
-import com.ljq.stock.alert.model.entity.UserInfoEntity;
-import com.ljq.stock.alert.model.entity.UserStockEntity;
-import com.ljq.stock.alert.model.entity.UserStockGroupEntity;
+import com.ljq.stock.alert.model.entity.*;
 import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.model.vo.WechatMiniLoginRespVo;
@@ -67,6 +65,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	private UserStockGroupDao userStockGroupDao;
 	@Autowired
 	private StockGroupStockDao stockGroupStockDao;
+	@Autowired
+	private UserOauthDao userOauthDao;
 
 	@Autowired
 	private RedisUtil redisUtil;
@@ -231,23 +231,57 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 * @return
 	 */
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
 	public ApiResult loginByWechatMini(UserLoginByWechatMiniParam wechatMiniParam) {
-		Map<String, Object> paramMap = new HashMap<>(8);
-		paramMap.put("appid", wechatConfig.getMiniAppId());
-		paramMap.put("secret", wechatConfig.getMiniAppSecret());
-		paramMap.put("js_code", wechatMiniParam.getCode());
-		paramMap.put("grant_type", "authorization_code");
-		String wechatResponse = HttpUtil.get(wechatConfig.getMiniLoginUrl(), paramMap);
-		WechatMiniLoginRespVo loginRespVo = JSONUtil.toBean(wechatResponse, WechatMiniLoginRespVo.class);
-		log.info("微信登录返回结果{}", loginRespVo);
+		WechatMiniLoginRespVo loginRespVo = getWechatMiniAuth(wechatMiniParam.getCode());
 		if (Objects.isNull(loginRespVo) || StrUtil.isBlank(loginRespVo.getOpenid())) {
 			return ApiResult.fail(ApiMsgEnum.USER_LOGIN_WECHAT_MINI_ERROR);
 		}
+		// 判断是否绑定
+		int count = userOauthDao.selectCount(Wrappers.lambdaQuery(UserOauthEntity.class)
+				.eq(UserOauthEntity::getAccessId, loginRespVo.getOpenid()));
+		if (count < 1) {
+			return ApiResult.fail(ApiMsgEnum.USER_WECHAT_MINI_NOT_BIND);
+		}
+		UserInfoEntity userInfoDB = userInfoDao.loginByWechatMini(loginRespVo.getOpenid());
+		// 过滤密码
+		userInfoDB.setPasscode(null);
+		// 生成 Token
+		userInfoDB.setToken(TokenUtil.createToken(userInfoDB));
+		return ApiResult.success(userInfoDB);
+	}
 
-		// TODO 创建新用户
-
-		return ApiResult.success(loginRespVo);
+	/**
+	 * 用户绑定微信小程序
+	 *
+	 * @param bindWechatMiniParam
+	 * @return
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+	public ApiResult bindWechatMini(UserBindWechatMiniParam bindWechatMiniParam) {
+		WechatMiniLoginRespVo loginRespVo = getWechatMiniAuth(bindWechatMiniParam.getCode());
+		if (Objects.isNull(loginRespVo) || StrUtil.isBlank(loginRespVo.getOpenid())) {
+			return ApiResult.fail(ApiMsgEnum.USER_LOGIN_WECHAT_MINI_ERROR);
+		}
+		// 校验用户是否存在
+		int countUser = userInfoDao.selectCount(Wrappers.lambdaQuery(UserInfoEntity.class)
+				.eq(UserInfoEntity::getId, bindWechatMiniParam.getUserId()));
+		if (countUser < 1) {
+			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		// 校验是否重复绑定
+		int countUserOauth = userOauthDao.selectCount(Wrappers.lambdaQuery(UserOauthEntity.class)
+				.eq(UserOauthEntity::getUserId, bindWechatMiniParam.getUserId()));
+		if (countUserOauth > 0) {
+			return ApiResult.fail(ApiMsgEnum.USER_WECHAT_MINI_BIND_REPEAT);
+		}
+		UserOauthEntity userOauthEntity = new UserOauthEntity();
+		userOauthEntity.setUserId(bindWechatMiniParam.getUserId());
+		userOauthEntity.setAccessId(loginRespVo.getOpenid());
+		userOauthEntity.setLoginType(LoginTypeEnum.WECHAT_MINI.getType());
+		userOauthEntity.setEnable(1);
+		userOauthDao.insert(userOauthEntity);
+		return ApiResult.success();
 	}
 
 	/**
@@ -398,6 +432,23 @@ public class UserInfoServiceImpl implements UserInfoService {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 获取微信小程序认证信息
+	 *
+	 * @param code
+	 * @return
+	 */
+	private WechatMiniLoginRespVo getWechatMiniAuth(String code) {
+		Map<String, Object> paramMap = new HashMap<>(8);
+		paramMap.put("appid", wechatConfig.getMiniAppId());
+		paramMap.put("secret", wechatConfig.getMiniAppSecret());
+		paramMap.put("js_code", code);
+		paramMap.put("grant_type", "authorization_code");
+		String wechatResponse = HttpUtil.get(wechatConfig.getMiniLoginUrl(), paramMap);
+		log.debug("微信登录返回结果: {}", wechatResponse);
+		return JSONUtil.toBean(wechatResponse, WechatMiniLoginRespVo.class);
 	}
 
 

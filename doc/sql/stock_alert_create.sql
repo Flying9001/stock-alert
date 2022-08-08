@@ -14,6 +14,8 @@ DROP TABLE IF EXISTS USER_STOCK;
 
 DROP TABLE IF EXISTS STOCK_GROUP_STOCK;
 
+DROP TABLE IF EXISTS USER_OAUTH;
+
 DROP TABLE IF EXISTS USER_STOCK_GROUP;
 
 /*==============================================================*/
@@ -126,6 +128,25 @@ ENGINE = INNODB DEFAULT
 CHARSET = UTF8MB4;
 
 ALTER TABLE STOCK_GROUP_STOCK COMMENT '用户股票分组关联股票';
+
+/*==============================================================*/
+/* Table: USER_OAUTH                                            */
+/*==============================================================*/
+CREATE TABLE USER_OAUTH
+(
+    ID                   BIGINT NOT NULL COMMENT 'id',
+    USER_ID              BIGINT COMMENT '用户id',
+    ACCESS_ID            VARCHAR(64) COMMENT '第三方接入id',
+    LOGIN_TYPE           VARCHAR(10) COMMENT '第三方登录类型',
+    ENABLE               TINYINT COMMENT '是否启用,0-不启用,1-启用',
+    CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE USER_OAUTH COMMENT '用户第三方登录信息';
 
 /*==============================================================*/
 /* Table: USER_STOCK_GROUP                                      */

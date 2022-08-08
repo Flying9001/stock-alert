@@ -38,6 +38,15 @@
         AND (u.ACCOUNT = #{account} OR u.MOBILE_PHONE = #{account} OR u.EMAIL = #{account})
     </select>
 
+    <!-- 微信小程序登录 -->
+    <select id="loginByWechatMini" parameterType="java.lang.String" resultMap="userInfoMap" >
+        SELECT
+        <include refid="user_info_base_field" />
+        FROM `USER_INFO` u
+        LEFT JOIN `USER_OAUTH` ua ON ua.USER_ID = u.ID
+        WHERE ua.ACCESS_ID = #{accessId}
+    </select>
+
     <!-- 统计拥有关注股票的用户数量 -->
     <select id="queryCountWithStock" resultType="int" >
         SELECT COUNT(u.ID)

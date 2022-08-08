@@ -2,9 +2,7 @@ package com.ljq.stock.alert.service.util;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.constant.TokenConst;
 import com.ljq.stock.alert.common.util.JwtUtil;
@@ -31,13 +29,10 @@ public class TokenUtil {
      *
      * @param userToken
      * @return
-     * @throws JsonProcessingException
      */
-    public static String createToken(UserTokenVo userToken) throws JsonProcessingException {
+    public static String createToken(UserTokenVo userToken) {
         userToken.setTokenTime(System.currentTimeMillis());
-        return JwtUtil.encode(TokenConst.TOKEN_KEY, new ObjectMapper()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .writeValueAsString(userToken));
+        return JwtUtil.encode(TokenConst.TOKEN_KEY, JSONUtil.toJsonStr(userToken));
     }
 
     /**
@@ -45,15 +40,12 @@ public class TokenUtil {
      *
      * @param userInfo
      * @return
-     * @throws JsonProcessingException
      */
-    public static String createToken(UserInfoEntity userInfo) throws JsonProcessingException {
+    public static String createToken(UserInfoEntity userInfo) {
         UserTokenVo userToken = new UserTokenVo();
         BeanUtil.copyProperties(userInfo, userToken, CopyOptions.create().ignoreNullValue());
         userToken.setTokenTime(System.currentTimeMillis());
-        return JwtUtil.encode(TokenConst.TOKEN_KEY, new ObjectMapper()
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .writeValueAsString(userToken));
+        return JwtUtil.encode(TokenConst.TOKEN_KEY, JSONUtil.toJsonStr(userToken));
     }
 
     /**
@@ -61,11 +53,10 @@ public class TokenUtil {
      *
      * @param token
      * @return
-     * @throws JsonProcessingException
      */
-    public static UserTokenVo decodeToken(String token) throws JsonProcessingException {
+    public static UserTokenVo decodeToken(String token) {
         String tokenValue = JwtUtil.decode(TokenConst.TOKEN_KEY, token);
-        return new ObjectMapper().readValue(tokenValue, UserTokenVo.class);
+        return JSONUtil.toBean(tokenValue, UserTokenVo.class);
     }
 
     /**

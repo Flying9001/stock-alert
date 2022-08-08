@@ -15,8 +15,6 @@ import java.util.Date;
  */
 public class JwtUtil {
 
-    private static final long serialVersionUID = -9101115541530000111L;
-
     /**
      * 默认秘钥
      */

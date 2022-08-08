@@ -50,6 +50,8 @@ public enum ApiMsgEnum {
     USER_TOKEN_NULL_ERROR("api.response.user.tokenNullError", "用户登录凭证不能为空"),
     USER_TOKEN_ERROR("api.response.user.tokenError", "用户登录信息已失效"),
     USER_LOGIN_WECHAT_MINI_ERROR("api.response.user.loginWechatMiniError", "微信小程序登录失败"),
+    USER_WECHAT_MINI_NOT_BIND("api.response.user.wechatMiniNotBind", "用户未绑定微信小程序"),
+    USER_WECHAT_MINI_BIND_REPEAT("api.response.user.wechatMiniBindRepeat", "用户已绑定微信,请勿重复操作"),
 
     /**
      * 用户股票
