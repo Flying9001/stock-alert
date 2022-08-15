@@ -26,6 +26,11 @@ public class UserTokenVo implements Serializable {
     @ApiModelProperty(value = "用户 id", name = "id")
     private Long id;
     /**
+     * 账户类型
+     */
+    @ApiModelProperty(value = "账户类型", name = "accountType")
+    private Integer accountType;
+    /**
      * 账户
      **/
     @ApiModelProperty(value = "账户", name = "account")

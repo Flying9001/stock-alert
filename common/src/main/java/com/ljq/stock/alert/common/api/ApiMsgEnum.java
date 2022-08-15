@@ -77,6 +77,11 @@ public enum ApiMsgEnum {
      */
     ALERT_MESSAGE_NOT_EXIST("api.response.alterMessage.notExist", "提醒消息不存在"),
 
+    /**
+     * 管理员用户
+     */
+    ADMIN_USER_ACCOUNT_DISABLED("api.response.adminUser.accountDisabled", "账号被禁用"),
+
 
     /**
      * 未知异常

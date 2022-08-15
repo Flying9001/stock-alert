@@ -20,6 +20,14 @@ public interface AdminUserService {
 	ApiResult save(AdminUserSaveParam adminUserSaveParam);
 
 	/**
+	 * 登录
+	 *
+	 * @param loginParam
+	 * @return
+	 */
+	ApiResult login(AdminUserLoginParam loginParam);
+
+	/**
      * 查询详情(单条)
      *
      * @param adminUserInfoParam
@@ -42,6 +50,14 @@ public interface AdminUserService {
      * @return
      */
 	ApiResult update(AdminUserUpdateParam adminUserUpdateParam);
+
+	/**
+	 * 账号是否启用
+	 *
+	 * @param enableParam
+	 * @return
+	 */
+	ApiResult enable(AdminUserEnableParam enableParam);
 
 	/**
      * 删除(单条)

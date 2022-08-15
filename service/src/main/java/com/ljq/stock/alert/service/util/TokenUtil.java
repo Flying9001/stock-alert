@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.constant.TokenConst;
 import com.ljq.stock.alert.common.util.JwtUtil;
+import com.ljq.stock.alert.model.entity.AdminUserEntity;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.vo.UserTokenVo;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,20 @@ public class TokenUtil {
         UserTokenVo userToken = new UserTokenVo();
         BeanUtil.copyProperties(userInfo, userToken, CopyOptions.create().ignoreNullValue());
         userToken.setTokenTime(System.currentTimeMillis());
+        userToken.setAccountType(TokenConst.ACCOUNT_TYPE_USER);
+        return JwtUtil.encode(TokenConst.TOKEN_KEY, JSONUtil.toJsonStr(userToken));
+    }
+
+    /**
+     * 生成 Token
+     * @param adminUser
+     * @return
+     */
+    public static String createToken(AdminUserEntity adminUser) {
+        UserTokenVo userToken = new UserTokenVo();
+        BeanUtil.copyProperties(adminUser, userToken, CopyOptions.create().ignoreNullValue());
+        userToken.setTokenTime(System.currentTimeMillis());
+        userToken.setAccountType(TokenConst.ACCOUNT_TYPE_ADMIN);
         return JwtUtil.encode(TokenConst.TOKEN_KEY, JSONUtil.toJsonStr(userToken));
     }
 

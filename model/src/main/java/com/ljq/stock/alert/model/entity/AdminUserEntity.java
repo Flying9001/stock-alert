@@ -64,4 +64,11 @@ public class AdminUserEntity extends BaseEntity {
     @ApiModelProperty(value = "邮箱", name = "email")
     private String email;
 
+    /**
+     * 用户 token
+     */
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户 token", name = "token")
+    private String token;
+
 }

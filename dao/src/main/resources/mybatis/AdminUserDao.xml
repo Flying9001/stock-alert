@@ -31,4 +31,13 @@
         `update_time`
 	</sql>
 
+    <!-- 管理员用户登录 -->
+    <select id="login" parameterType="java.lang.String" resultMap="adminUserMap" >
+        SELECT
+        <include refid="admin_user_base_field" />
+        FROM `ADMIN_USER` au
+        WHERE 1 = 1
+        AND (au.ACCOUNT = #{account} OR au.MOBILE_PHONE = #{account} OR au.EMAIL = #{account})
+    </select>
+
 </mapper>

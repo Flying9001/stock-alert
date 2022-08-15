@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -34,8 +35,20 @@ public class AdminUserController {
      */
     @PostMapping(value = "/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "管理员用户保存(单条)",  notes = "管理员用户保存(单条)")
-    public ResponseEntity<ApiResult> save(@RequestBody AdminUserSaveParam adminUserSaveParam){
+    public ResponseEntity<ApiResult> save(@RequestBody @Validated AdminUserSaveParam adminUserSaveParam){
         return ResponseEntity.ok(adminUserService.save(adminUserSaveParam));
+    }
+
+    /**
+     * 登录
+     *
+     * @param loginParam
+     * @return
+     */
+    @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "管理员用户登录",  notes = "管理员用户登录")
+    public ResponseEntity<ApiResult> login(@RequestBody @Validated AdminUserLoginParam loginParam){
+        return ResponseEntity.ok(adminUserService.login(loginParam));
     }
 
     /**
@@ -46,7 +59,7 @@ public class AdminUserController {
      */
     @GetMapping(value = "/info", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "管理员用户查询详情(单条)",  notes = "管理员用户查询详情(单条)")
-    public ResponseEntity<ApiResult> info(AdminUserInfoParam adminUserInfoParam) {
+    public ResponseEntity<ApiResult> info(@Validated AdminUserInfoParam adminUserInfoParam) {
         return ResponseEntity.ok(adminUserService.info(adminUserInfoParam));
     }
 
@@ -70,8 +83,20 @@ public class AdminUserController {
      */
     @PutMapping(value = "/update", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "管理员用户修改(单条)",  notes = "管理员用户修改(单条)")
-    public ResponseEntity<ApiResult> update(@RequestBody AdminUserUpdateParam adminUserUpdateParam) {
+    public ResponseEntity<ApiResult> update(@RequestBody @Validated AdminUserUpdateParam adminUserUpdateParam) {
         return ResponseEntity.ok(adminUserService.update(adminUserUpdateParam));
+    }
+
+    /**
+     * 账号是否启用
+     *
+     * @param enableParam
+     * @return
+     */
+    @PutMapping(value = "/enable", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "管理员用户账号是否启用",  notes = "管理员用户账号是否启用")
+    public ResponseEntity<ApiResult> enable(@RequestBody @Validated AdminUserEnableParam enableParam) {
+        return ResponseEntity.ok(adminUserService.enable(enableParam));
     }
 
     /**
@@ -82,7 +107,7 @@ public class AdminUserController {
      */
     @DeleteMapping(value = "/delete", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "管理员用户删除(单条)",  notes = "管理员用户删除(单条)")
-    public ResponseEntity<ApiResult> delete(@RequestBody AdminUserDeleteParam adminUserDeleteParam) {
+    public ResponseEntity<ApiResult> delete(@RequestBody @Validated AdminUserDeleteParam adminUserDeleteParam) {
         return ResponseEntity.ok(adminUserService.delete(adminUserDeleteParam));
     }
 

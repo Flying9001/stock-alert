@@ -16,6 +16,7 @@ import com.ljq.stock.alert.dao.AdminUserDao;
 import com.ljq.stock.alert.model.entity.AdminUserEntity;
 import com.ljq.stock.alert.model.param.adminuser.*;
 import com.ljq.stock.alert.service.AdminUserService;
+import com.ljq.stock.alert.service.util.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,40 @@ public class AdminUserServiceImpl implements AdminUserService {
 	}
 
 	/**
+	 * 登录
+	 *
+	 * @param loginParam
+	 * @return
+	 */
+	@Override
+	public ApiResult login(AdminUserLoginParam loginParam) {
+		// 查询用户
+		AdminUserEntity adminUserDB = adminUserDao.login(loginParam.getAccount());
+		if (Objects.isNull(adminUserDB)) {
+			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		if (Objects.equals(adminUserDB.getEnable(), EnableEnum.DISABLE.getCode())) {
+			return ApiResult.fail(ApiMsgEnum.ADMIN_USER_ACCOUNT_DISABLED);
+		}
+		// 密码校验
+		boolean validateResult = false;
+		try {
+			validateResult = Md5Util.validPassword(loginParam.getPasscode(), adminUserDB.getPasscode());
+		} catch (Exception e) {
+			log.error("密码加密失败", e);
+			return ApiResult.fail(ApiMsgEnum.USER_PASSCODE_ENCRYPT_ERROR);
+		}
+		if (!validateResult) {
+			return ApiResult.fail(ApiMsgEnum.USER_PASSCODE_ERROR);
+		}
+		// 过滤密码
+		adminUserDB.setPasscode(null);
+		// 生成 Token
+		adminUserDB.setToken(TokenUtil.createToken(adminUserDB));
+		return ApiResult.success(adminUserDB);
+	}
+
+	/**
 	 * 查询详情(单条)
 	 *
 	 * @param adminUserInfoParam
@@ -135,6 +170,26 @@ public class AdminUserServiceImpl implements AdminUserService {
 		AdminUserEntity adminUserParam = new AdminUserEntity();
 		BeanUtil.copyProperties(adminUserUpdateParam, adminUserParam, CopyOptions.create()
 				.ignoreError().ignoreNullValue());
+		int count = adminUserDao.updateById(adminUserParam);
+		if (count < 1) {
+			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+		}
+		return ApiResult.success();
+	}
+
+	/**
+	 * 账号是否启用
+	 *
+	 * @param enableParam
+	 * @return
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
+	public ApiResult enable(AdminUserEnableParam enableParam) {
+		// 请求参数获取
+		AdminUserEntity adminUserParam = new AdminUserEntity();
+		adminUserParam.setId(enableParam.getId());
+		adminUserParam.setEnable(enableParam.getEnable());
 		int count = adminUserDao.updateById(adminUserParam);
 		if (count < 1) {
 			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);

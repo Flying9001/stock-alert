@@ -19,7 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
     private static String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**", "/swagger-resources**",
             "/swagger-resources/**",
             "/api/user/info/checkCode", "/api/user/info/register", "/api/user/info/login",
-            "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg"};
+            "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg",
+            "/admin/admin/user/login"};
 
     @Bean
     WebInterceptor webInterceptor() {
