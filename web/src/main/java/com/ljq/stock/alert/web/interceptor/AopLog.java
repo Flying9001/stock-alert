@@ -44,7 +44,7 @@ public class AopLog {
     /**
      * controller 层切点
      */
-    @Pointcut("execution(* com.ljq.stock.alert.web.controller.*.*(..))")
+    @Pointcut("execution(* com.ljq.stock.alert.web.controller..*.*(..))")
     public void controllerPointcut() {
         // 定义切点
     }

@@ -1,6 +1,6 @@
 package com.ljq.stock.alert.web.interceptor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.constant.RequestConst;
@@ -36,7 +36,7 @@ public class WebInterceptor implements HandlerInterceptor {
             response.setContentType("application/json; charset=utf-8");
             response.setCharacterEncoding("utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(new ObjectMapper().writeValueAsString(ApiResult.fail(apiMsgEnum)));
+            writer.write(JSONUtil.toJsonStr(ApiResult.fail(apiMsgEnum)));
             return false;
         }
         return true;

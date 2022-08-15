@@ -18,6 +18,8 @@ DROP TABLE IF EXISTS USER_OAUTH;
 
 DROP TABLE IF EXISTS USER_STOCK_GROUP;
 
+DROP TABLE IF EXISTS ADMIN_USER;
+
 /*==============================================================*/
 /* Table: ALERT_MESSAGE                                         */
 /*==============================================================*/
@@ -137,7 +139,7 @@ CREATE TABLE USER_OAUTH
     ID                   BIGINT NOT NULL COMMENT 'id',
     USER_ID              BIGINT COMMENT '用户id',
     ACCESS_ID            VARCHAR(64) COMMENT '第三方接入id',
-    LOGIN_TYPE           VARCHAR(10) COMMENT '第三方登录类型',
+    LOGIN_TYPE           VARCHAR(20) COMMENT '第三方登录类型',
     ENABLE               TINYINT COMMENT '是否启用,0-不启用,1-启用',
     CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -165,3 +167,24 @@ CHARSET = UTF8MB4;
 
 ALTER TABLE USER_STOCK_GROUP COMMENT '用户股票分组';
 
+/*==============================================================*/
+/* Table: ADMIN_USER                                            */
+/*==============================================================*/
+CREATE TABLE ADMIN_USER
+(
+   ID                   BIGINT UNSIGNED NOT NULL COMMENT 'id',
+   ACCOUNT              VARCHAR(32) COMMENT '账号',
+   PASSCODE             VARCHAR(128) COMMENT '密码',
+   ENABLE               TINYINT COMMENT '是否启用,0-禁用,1-启用',
+   NICK_NAME            VARCHAR(32) COMMENT '昵称',
+   HEAD_URL             VARCHAR(128) COMMENT '头像链接',
+   MOBILE_PHONE         VARCHAR(15) COMMENT '手机号',
+   EMAIL                VARCHAR(64) COMMENT '邮箱',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE ADMIN_USER COMMENT '管理员用户';
