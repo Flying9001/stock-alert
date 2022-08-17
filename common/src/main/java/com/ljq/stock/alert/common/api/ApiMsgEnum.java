@@ -52,6 +52,7 @@ public enum ApiMsgEnum {
     USER_LOGIN_WECHAT_MINI_ERROR("api.response.user.loginWechatMiniError", "微信小程序登录失败"),
     USER_WECHAT_MINI_NOT_BIND("api.response.user.wechatMiniNotBind", "用户未绑定微信小程序"),
     USER_WECHAT_MINI_BIND_REPEAT("api.response.user.wechatMiniBindRepeat", "用户已绑定微信,请勿重复操作"),
+    USER_NO_PERMISSION("api.response.user.noPermission","用户无权限"),
 
     /**
      * 用户股票

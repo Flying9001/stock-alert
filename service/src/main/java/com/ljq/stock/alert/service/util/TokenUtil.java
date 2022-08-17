@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
+import com.ljq.stock.alert.common.constant.RequestConst;
 import com.ljq.stock.alert.common.constant.TokenConst;
 import com.ljq.stock.alert.common.util.JwtUtil;
 import com.ljq.stock.alert.model.entity.AdminUserEntity;
@@ -97,6 +98,19 @@ public class TokenUtil {
             }
             if (subResult < TokenConst.TOKEN_REFRESH_TIME_MILLIS) {
                 return ApiMsgEnum.SUCCESS;
+            }
+            // 校验 Token 权限
+            String requestPath = request.getRequestURI();
+            switch (userToken.getAccountType()) {
+                case TokenConst.ACCOUNT_TYPE_ADMIN:
+                    if (!requestPath.startsWith(RequestConst.REQUEST_URL_PREFIX_ADMIN)) {
+                        return ApiMsgEnum.USER_NO_PERMISSION;
+                    }
+                case TokenConst.ACCOUNT_TYPE_USER:
+                    if (!requestPath.startsWith(RequestConst.REQUEST_URL_PREFIX_APP)) {
+                        return ApiMsgEnum.USER_NO_PERMISSION;
+                    }
+                default: break;
             }
             // 刷新 Token
             response.setHeader(TokenConst.TOKEN_HEADERS_FIELD, TokenUtil.createToken(userToken));

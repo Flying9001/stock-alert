@@ -31,12 +31,12 @@ public class WebInterceptor implements HandlerInterceptor {
         // Token 校验
         ApiMsgEnum apiMsgEnum = TokenUtil.validateToken(request, response);
         if (!Objects.equals(ApiMsgEnum.SUCCESS, apiMsgEnum)) {
-            log.warn("{}", apiMsgEnum.getDefaultMsg());
+            log.warn("{}", apiMsgEnum);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.setContentType("application/json; charset=utf-8");
             response.setCharacterEncoding("utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(JSONUtil.toJsonStr(ApiResult.fail(apiMsgEnum)));
+            writer.write(JSONUtil.toJsonStr(JSONUtil.parseObj(ApiResult.fail(apiMsgEnum), false)));
             return false;
         }
         return true;
