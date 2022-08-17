@@ -1,4 +1,4 @@
-package com.ljq.stock.alert.web.controller;
+package com.ljq.stock.alert.web.controller.app;
 
 import com.ljq.stock.alert.model.param.stockgroupstock.StockGroupStockDeleteParam;
 import com.ljq.stock.alert.model.param.stockgroupstock.StockGroupStockInfoParam;

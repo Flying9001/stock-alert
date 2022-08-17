@@ -78,6 +78,17 @@ public class UserStockGroupServiceImpl implements UserStockGroupService {
 	}
 
 	/**
+	 * 查询详情(单条)-后台管理
+	 *
+	 * @param userStockGroupInfoParam
+	 * @return
+	 */
+	@Override
+	public ApiResult infoAdmin(UserStockGroupInfoParam userStockGroupInfoParam) {
+		return ApiResult.success(userStockGroupDao.selectById(userStockGroupInfoParam.getId()));
+	}
+
+	/**
 	 * 查询列表
 	 *
 	 * @param userStockGroupListParam
@@ -95,6 +106,24 @@ public class UserStockGroupServiceImpl implements UserStockGroupService {
 				userStockGroupListParam.getCurrentPage(), userStockGroupListParam.getPageSize()), queryWrapper);
 		return ApiResult.success(page);
 	}
+
+	/**
+	 * 查询列表-后台管理
+	 *
+	 * @param listAdminParam
+	 * @return
+	 */
+	@Override
+	public ApiResult listAdmin(UserStockGroupListAdminParam listAdminParam) {
+        // 分页查询
+		LambdaQueryWrapper<UserStockGroupEntity> queryWrapper = Wrappers.lambdaQuery();
+		queryWrapper.eq(Objects.nonNull(listAdminParam.getUserId()),UserStockGroupEntity::getUserId,
+						listAdminParam.getUserId())
+				.like(StrUtil.isNotBlank(listAdminParam.getGroupName()),UserStockGroupEntity::getGroupName,
+						listAdminParam.getGroupName());
+		IPage<UserStockGroupEntity> page = userStockGroupDao.selectPage(new Page<>(
+				listAdminParam.getCurrentPage(), listAdminParam.getPageSize()), queryWrapper);
+		return ApiResult.success(page);	}
 
 	/**
 	 * 更新(单条)

@@ -1,4 +1,4 @@
-package com.ljq.stock.alert.web.controller;
+package com.ljq.stock.alert.web.controller.app;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;

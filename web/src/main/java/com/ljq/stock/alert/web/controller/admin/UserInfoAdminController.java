@@ -3,10 +3,7 @@ package com.ljq.stock.alert.web.controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
-import com.ljq.stock.alert.model.param.user.UserInfoDeleteBatchParam;
-import com.ljq.stock.alert.model.param.user.UserInfoDeleteParam;
-import com.ljq.stock.alert.model.param.user.UserInfoListParam;
-import com.ljq.stock.alert.model.param.user.UserInfoSaveParam;
+import com.ljq.stock.alert.model.param.user.*;
 import com.ljq.stock.alert.service.UserInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +36,18 @@ public class UserInfoAdminController {
     @ApiOperation(value = "用户信息新增(单条)",  notes = "用户信息新增(单条)")
     public ResponseEntity<ApiResult<UserInfoEntity>> save(@Validated @RequestBody UserInfoSaveParam saveParam) {
         return ResponseEntity.ok(ApiResult.success(userInfoService.save(saveParam)));
+    }
+
+    /**
+     * 查询详情(单条)
+     *
+     * @param infoParam
+     * @return
+     */
+    @GetMapping(value = "/info", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "用户信息查询详情(单条)",  notes = "用户信息查询详情(单条)")
+    public ResponseEntity<ApiResult<UserInfoEntity>> info(@Validated UserInfoInfoParam infoParam) {
+        return ResponseEntity.ok(ApiResult.success(userInfoService.info(infoParam)));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.ljq.stock.alert.web.controller;
+package com.ljq.stock.alert.web.controller.app;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ljq.stock.alert.common.api.ApiResult;
@@ -30,18 +30,6 @@ public class AlertMessageController {
 	private AlertMessageService alertMessageService;
 
     /**
-     * 查询详情(单条)
-     *
-     * @param infoParam
-     * @return
-     */
-    @GetMapping(value = "/info", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息查询详情(单条)",  notes = "预警消息查询详情(单条)")
-    public ResponseEntity<ApiResult<AlertMessageEntity>> info(@Validated AlertMessageInfoParam infoParam) {
-        return ResponseEntity.ok(ApiResult.success(alertMessageService.info(infoParam)));
-    }
-
-    /**
      * 查询用户的消息详情
      *
      * @param infoUserParam
@@ -51,18 +39,6 @@ public class AlertMessageController {
     @ApiOperation(value = "查询用户的消息详情",  notes = "查询用户的消息详情")
     public ResponseEntity<ApiResult<AlertMessageEntity>> infoUser(@Validated AlertMessageInfoUserParam infoUserParam) {
         return ResponseEntity.ok(ApiResult.success(alertMessageService.infoUser(infoUserParam)));
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param listParam
-     * @return
-     */
-    @GetMapping(value = "/page", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息分页查询",  notes = "预警消息分页查询")
-    public ResponseEntity<ApiResult<IPage<AlertMessageEntity>>> page(@Validated AlertMessageListParam listParam) {
-        return ResponseEntity.ok(ApiResult.success(alertMessageService.page(listParam)));
     }
 
     /**
@@ -79,19 +55,6 @@ public class AlertMessageController {
     }
 
     /**
-     * 删除(单条)
-     *
-     * @param deleteParam
-     * @return
-     */
-    @DeleteMapping(value = "/delete", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息删除(单条)",  notes = "预警消息删除(单条)")
-    public ResponseEntity<ApiResult<Void>> delete(@Validated @RequestBody AlertMessageDeleteParam deleteParam) {
-        alertMessageService.delete(deleteParam);
-        return ResponseEntity.ok(ApiResult.success());
-    }
-
-    /**
      * 删除用户消息(单条)
      *
      * @param deleteUserParam
@@ -102,20 +65,6 @@ public class AlertMessageController {
     public ResponseEntity<ApiResult<Void>> deleteUser(@Validated @RequestBody AlertMessageDeleteUserParam
                                                                   deleteUserParam) {
         alertMessageService.deleteUser(deleteUserParam);
-        return ResponseEntity.ok(ApiResult.success());
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param deleteBatchParam
-     * @return
-     */
-    @DeleteMapping(value = "/delete/batch", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiOperation(value = "预警消息批量删除",  notes = "预警消息批量删除")
-    public ResponseEntity<ApiResult<Void>> deleteBatch(@Validated @RequestBody AlertMessageDeleteBatchParam
-                                                                   deleteBatchParam) {
-        alertMessageService.deleteBatch(deleteBatchParam);
         return ResponseEntity.ok(ApiResult.success());
     }
 

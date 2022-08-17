@@ -28,12 +28,28 @@ public interface UserStockGroupService {
 	ApiResult info(UserStockGroupInfoParam userStockGroupInfoParam);
 
 	/**
+	 * 查询详情(单条)-后台管理
+	 *
+	 * @param userStockGroupInfoParam
+	 * @return
+	 */
+	ApiResult infoAdmin(UserStockGroupInfoParam userStockGroupInfoParam);
+
+	/**
      * 查询列表
      *
      * @param userStockGroupListParam
      * @return
      */
 	ApiResult list(UserStockGroupListParam userStockGroupListParam);
+
+	/**
+	 * 查询列表-后台管理
+	 *
+	 * @param listAdminParam
+	 * @return
+	 */
+	ApiResult listAdmin(UserStockGroupListAdminParam listAdminParam);
 
 	/**
      * 更新(单条)

@@ -91,10 +91,13 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 		// 请求参数获
 		LambdaQueryWrapper<AlertMessageEntity> queryWrapper = Wrappers.lambdaQuery();
 		queryWrapper.eq(Objects.nonNull(listParam.getUserId()), AlertMessageEntity::getUserId, listParam.getUserId())
-				.eq(Objects.nonNull(listParam.getPhoneSend()), AlertMessageEntity::getPhoneSend, listParam.getPhoneSend())
-				.eq(Objects.nonNull(listParam.getEmailSend()), AlertMessageEntity::getEmailSend, listParam.getEmailSend())
+				.eq(Objects.nonNull(listParam.getPhoneSend()), AlertMessageEntity::getPhoneSend,
+						listParam.getPhoneSend())
+				.eq(Objects.nonNull(listParam.getEmailSend()), AlertMessageEntity::getEmailSend,
+						listParam.getEmailSend())
 				.eq(Objects.nonNull(listParam.getStockId()), AlertMessageEntity::getStockId, listParam.getStockId())
-				.like(CharSequenceUtil.isNotBlank(listParam.getContent()), AlertMessageEntity::getContent, listParam.getContent());
+				.like(CharSequenceUtil.isNotBlank(listParam.getContent()), AlertMessageEntity::getContent,
+						listParam.getContent());
 		// 分页查询
 		page = alertMessageDao.selectPage(page, queryWrapper);
 		return page;

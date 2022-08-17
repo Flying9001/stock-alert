@@ -108,6 +108,28 @@ public class UserStockServiceImpl implements UserStockService {
 	}
 
 	/**
+	 * 查询详情(单条)-后台管理
+	 *
+	 * @param infoParam
+	 * @return
+	 */
+	@Override
+	public UserStockEntity infoAdmin(UserStockInfoParam infoParam) {
+		UserStockEntity userStockDB = userStockDao.selectOne(Wrappers.lambdaQuery(new UserStockEntity())
+				.eq(UserStockEntity::getId, infoParam.getId()));
+		if (Objects.isNull(userStockDB)) {
+			return new UserStockEntity();
+		}
+		// 查询股票信息
+		StockSourceEntity stockDB = stockSourceDao.selectById(userStockDB.getStockId());
+		// 查询实时股价
+		userStockDB.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
+				CacheKeyUtil.createStockSourceKey(stockDB.getMarketType(), stockDB.getStockCode()),
+				StockSourceEntity.class));
+		return userStockDB;
+	}
+
+	/**
 	 * 分页查询
 	 *
 	 * @param listParam
@@ -124,6 +146,31 @@ public class UserStockServiceImpl implements UserStockService {
 			return page;
 		}
         // 获取用户关注股票的实时价格
+		page.getRecords().stream().forEach(userStock ->
+				userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
+						CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
+								userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
+		return page;
+	}
+
+	/**
+	 * 分页查询-后台管理
+	 *
+	 * @param listAdminParam
+	 * @return
+	 */
+	@Override
+	public IPage<UserStockEntity> pageAdmin(UserStockListAdminParam listAdminParam) {
+		Map<String, Object> queryMap = BeanUtil.beanToMap(listAdminParam);
+		if (Objects.nonNull(listAdminParam.getUserId())) {
+			queryMap.put("userId", listAdminParam.getUserId());
+		}
+		IPage<UserStockEntity> page = userStockDao.queryPage(queryMap,
+				new Page<>(listAdminParam.getCurrentPage(), listAdminParam.getPageSize()));
+		if (CollUtil.isEmpty(page.getRecords())) {
+			return page;
+		}
+		// 获取用户关注股票的实时价格
 		page.getRecords().stream().forEach(userStock ->
 				userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
 						CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),

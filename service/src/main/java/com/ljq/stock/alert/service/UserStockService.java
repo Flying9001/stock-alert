@@ -29,12 +29,28 @@ public interface UserStockService {
 	UserStockEntity info(UserStockInfoParam infoParam);
 
 	/**
+	 * 查询详情(单条)-后台管理
+	 *
+	 * @param infoParam
+	 * @return
+	 */
+	UserStockEntity infoAdmin(UserStockInfoParam infoParam);
+
+	/**
      * 分页查询
      *
      * @param listParam
      * @return
      */
 	IPage<UserStockEntity> page(UserStockListParam listParam);
+
+	/**
+	 * 分页查询-后台管理
+	 *
+	 * @param listAdminParam
+	 * @return
+	 */
+	IPage<UserStockEntity> pageAdmin(UserStockListAdminParam listAdminParam);
 
 	/**
      * 更新(单条)
