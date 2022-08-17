@@ -28,6 +28,7 @@ public enum ApiMsgEnum {
     MISSING_UPLOAD_FILE_ERROR("api.response.missingUploadFileError", "缺失上传文件"),
     MAX_UPLOAD_SIZE_ERROR("api.response.maxUploadSizeError", "上传文件过大"),
     CANNOT_CREATE_TRANSACTION_ERROR("api.response.cannotCreateTractionError", "无法创建数据库连接"),
+    HTTP_NOT_FOUND("api.response.httpNotFound","请求资源不存在"),
 
     /**
      * 股票数据
