@@ -317,7 +317,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 						listParam.getMobilePhone())
 				.like(CharSequenceUtil.isNotBlank(listParam.getEmail()), UserInfoEntity::getEmail, listParam.getEmail());
 		IPage<UserInfoEntity> page = new Page<>(listParam.getCurrentPage(), listParam.getPageSize());
-		return userInfoDao.selectPage(page, queryWrapper);
+		page = userInfoDao.selectPage(page, queryWrapper);
+		page.getRecords().stream().forEach(userInfo -> userInfo.setPasscode(null));
+		return page;
 	}
 
 	/**
