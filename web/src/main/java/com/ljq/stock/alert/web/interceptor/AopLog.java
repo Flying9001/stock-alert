@@ -1,6 +1,7 @@
 package com.ljq.stock.alert.web.interceptor;
 
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +29,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @Description: Controller 出入参日志记录
@@ -57,6 +59,9 @@ public class AopLog {
      */
     @Around(value = "controllerPointcut()")
     public Object controllerLogAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        if (StrUtil.isBlank(MDC.get(RequestConst.REQUEST_ID))) {
+            MDC.put(RequestConst.REQUEST_ID, UUID.randomUUID().toString());
+        }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         // 获取切点请求参数(class,method)

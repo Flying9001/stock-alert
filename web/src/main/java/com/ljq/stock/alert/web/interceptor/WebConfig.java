@@ -1,5 +1,6 @@
 package com.ljq.stock.alert.web.interceptor;
 
+import com.ljq.stock.alert.common.constant.TokenConst;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
@@ -12,15 +13,6 @@ import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
-
-    /**
-     * 无需 token 的接口路径
-     */
-    private static final String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**", "/swagger-resources**",
-            "/swagger-resources/**",
-            "/api/user/info/checkCode", "/api/user/info/register", "/api/user/info/login",
-            "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg",
-            "/admin/admin/user/login"};
 
     @Bean
     WebInterceptor webInterceptor() {
@@ -36,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(webInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns(NO_TOKEN_API);
+                .excludePathPatterns(TokenConst.NO_TOKEN_API);
     }
 
     /**
