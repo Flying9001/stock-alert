@@ -1,5 +1,7 @@
 package com.ljq.stock.alert.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -121,9 +123,11 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 		if (Objects.isNull(stockDB)) {
 			throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
 		}
-		// 获取股票信息
-		return StockUtil.getStockLive(stockApiConfig, infoRealTimeParam.getStockCode(),
+		// 获取实时股票信息
+		StockSourceEntity stockRealTime = StockUtil.getStockLive(stockApiConfig, infoRealTimeParam.getStockCode(),
 				infoRealTimeParam.getMarketType());
+		BeanUtil.copyProperties(stockRealTime, stockDB, CopyOptions.create().ignoreError().ignoreNullValue());
+		return stockDB;
 	}
 
 	/**
