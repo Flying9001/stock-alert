@@ -22,25 +22,25 @@ public class UserPushTypeEntity extends BaseEntity {
     /**
      * 用户id
      */
-    @ApiModelProperty("用户id")
+    @ApiModelProperty(value = "用户id", example = "0")
     private Long userId;
 
     /**
      * 推送方式，1-短信;2-邮件;3-pushplus
      */
-    @ApiModelProperty("推送方式，1-短信;2-邮件;3-pushplus")
+    @ApiModelProperty(value = "推送方式，1-短信;2-邮件;3-pushplus", example = "0")
     private Integer pushType;
 
     /**
      * 通知推送接收地址
      */
-    @ApiModelProperty("通知推送接收地址")
+    @ApiModelProperty(value = "通知推送接收地址")
     private String receiveAddress;
 
     /**
      * 是否启用，0-未启用，1-启用
      */
-    @ApiModelProperty("是否启用，0-未启用，1-启用")
+    @ApiModelProperty(value = "是否启用，0-未启用，1-启用", example = "0")
     private Integer enable;
 
 }

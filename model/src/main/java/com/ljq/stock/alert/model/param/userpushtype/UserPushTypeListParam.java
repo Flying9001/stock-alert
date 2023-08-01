@@ -23,8 +23,14 @@ public class UserPushTypeListParam extends BasePageParam {
      * id
      * */
     @Min(value = 1, message = "id 至少为 1")
-    @ApiModelProperty(value = "id 不能为空,至少为 1", name = "id", required = true, example = "0")
+    @ApiModelProperty(value = "id 不能为空,至少为 1", name = "id", example = "0")
     private Long id;
+
+    /**
+     * 是否启用，0-未启用，1-启用
+     */
+    @ApiModelProperty(value = "是否启用，0-未启用，1-启用", example = "1")
+    private Integer enable;
 
 
 

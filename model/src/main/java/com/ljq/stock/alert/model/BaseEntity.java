@@ -26,7 +26,7 @@ public class BaseEntity implements Serializable {
      **/
     @JsonSerialize(using= ToStringSerializer.class)
     @TableId(value = "ID", type = IdType.ASSIGN_ID)
-    @ApiModelProperty(value = "id", name = "id")
+    @ApiModelProperty(value = "id", name = "id", example = "0")
     private Long id;
     /**
      * 创建时间

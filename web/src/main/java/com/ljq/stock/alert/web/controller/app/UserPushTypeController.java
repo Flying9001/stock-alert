@@ -5,6 +5,7 @@ import com.ljq.stock.alert.service.UserPushTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +29,8 @@ public class UserPushTypeController {
      * @param userPushTypeSaveParam
      * @return
      */
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {"application/json"})
+    @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式保存(单条)",  notes = "用户消息推送方式保存(单条)")
-    @ResponseBody
     public ResponseEntity<?> save(@RequestBody UserPushTypeSaveParam userPushTypeSaveParam) throws Exception{
         return ResponseEntity.ok(userPushTypeService.save(userPushTypeSaveParam));
     }
@@ -41,9 +41,8 @@ public class UserPushTypeController {
      * @param userPushTypeInfoParam
      * @return
      */
-    @RequestMapping(value = "/query/one", method = RequestMethod.GET, produces = {"application/json"})
+    @GetMapping(value = "/query/one", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式查询详情(单条)",  notes = "用户消息推送方式查询详情(单条)")
-    @ResponseBody
     public ResponseEntity<?> info(UserPushTypeInfoParam userPushTypeInfoParam) {
         return ResponseEntity.ok(userPushTypeService.info(userPushTypeInfoParam));
     }
@@ -54,9 +53,8 @@ public class UserPushTypeController {
      * @param userPushTypeListParam
      * @return
      */
-    @RequestMapping(value = "/query/page", method = RequestMethod.GET, produces = {"application/json"})
+    @GetMapping(value = "/query/page", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式查询列表",  notes = "用户消息推送方式查询列表")
-    @ResponseBody
     public ResponseEntity<?> list(UserPushTypeListParam userPushTypeListParam) {
         return ResponseEntity.ok(userPushTypeService.list(userPushTypeListParam));
     }
@@ -67,9 +65,8 @@ public class UserPushTypeController {
      * @param userPushTypeUpdateParam
      * @return
      */
-    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = {"application/json"})
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式修改(单条)",  notes = "用户消息推送方式修改(单条)")
-    @ResponseBody
     public ResponseEntity<?> update(@RequestBody UserPushTypeUpdateParam userPushTypeUpdateParam) {
         return ResponseEntity.ok(userPushTypeService.update(userPushTypeUpdateParam));
     }
@@ -80,10 +77,9 @@ public class UserPushTypeController {
      * @param userPushTypeDeleteParam
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = {"application/json"})
+    @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式删除(单条)",  notes = "用户消息推送方式删除(单条)")
-    @ResponseBody
-    public ResponseEntity<?> delete(UserPushTypeDeleteParam userPushTypeDeleteParam) {
+    public ResponseEntity<?> delete(@RequestBody UserPushTypeDeleteParam userPushTypeDeleteParam) {
         return ResponseEntity.ok(userPushTypeService.delete(userPushTypeDeleteParam));
     }
 

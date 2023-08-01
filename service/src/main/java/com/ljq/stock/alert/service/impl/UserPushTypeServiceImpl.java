@@ -2,15 +2,28 @@ package com.ljq.stock.alert.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
+import com.ljq.stock.alert.common.constant.EnableEnum;
+import com.ljq.stock.alert.common.constant.UserPushConst;
+import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserPushTypeDao;
 import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
 import com.ljq.stock.alert.model.param.userpushtype.*;
+import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserPushTypeService;
+import com.ljq.stock.alert.service.util.SessionUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * @Description: 用户消息推送方式服务实现
@@ -22,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPushTypeEntity>
         implements UserPushTypeService {
 
+    @Resource
+    private UserInfoDao userInfoDao;
+
     /**
      * 保存(单条)
      *
@@ -31,13 +47,24 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public ApiResult save(UserPushTypeSaveParam userPushTypeSaveParam) {
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+        // 校验推送方式数量
+        int count = super.count(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+                .eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
+                .eq(UserPushTypeEntity::getEnable, EnableEnum.ENABLE.getCode()));
+        if (count >= UserPushConst.USER_PUSH_TYPE_MAX) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_MAX_ERROR);
+        }
+        // TODO 校验是否重复插入
+
         // 请求参数获取
         UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
         BeanUtil.copyProperties(userPushTypeSaveParam,userPushTypeParam,CopyOptions.create()
-                .setIgnoreNullValue(true).setIgnoreError(true));
+                .ignoreError().ignoreNullValue());
+        userPushTypeParam.setUserId(userTokenVo.getId());
         // 保存
-
-        return ApiResult.success();
+        super.save(userPushTypeParam);
+        return ApiResult.success(userPushTypeParam);
     }
 
     /**
@@ -48,13 +75,11 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
      */
     @Override
     public ApiResult info(UserPushTypeInfoParam userPushTypeInfoParam) {
-        // 请求参数获取
-        UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
-        BeanUtil.copyProperties(userPushTypeInfoParam,userPushTypeParam,CopyOptions.create()
-                .setIgnoreNullValue(true).setIgnoreError(true));
-        // 查询
-
-        return ApiResult.success();
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+        UserPushTypeEntity userPushTypeDb = super.getOne(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+                .eq(UserPushTypeEntity::getId, userPushTypeInfoParam.getId())
+                .eq(UserPushTypeEntity::getUserId, userTokenVo.getId()));
+        return ApiResult.success(userPushTypeDb);
     }
 
     /**
@@ -65,11 +90,16 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
      */
     @Override
     public ApiResult list(UserPushTypeListParam userPushTypeListParam) {
-        // 请求参数获取
-        // 分页查询
-
-
-        return ApiResult.success();
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
+                .eq(Objects.nonNull(userPushTypeListParam.getId()), UserPushTypeEntity::getId,
+                        userPushTypeListParam.getId())
+                .eq(Objects.nonNull(userPushTypeListParam.getEnable()), UserPushTypeEntity::getEnable,
+                        userPushTypeListParam.getEnable());
+        IPage<UserPushTypeEntity> page = super.page(new Page<>(userPushTypeListParam.getCurrentPage(),
+                userPushTypeListParam.getPageSize()), queryWrapper);
+        return ApiResult.success(page);
     }
 
     /**
@@ -81,14 +111,20 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public ApiResult update(UserPushTypeUpdateParam userPushTypeUpdateParam) {
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
         // 请求参数获取
         UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
-        userPushTypeParam.setId(userPushTypeUpdateParam.getId());
-
-        // 判断对象是否存在
-
+        BeanUtil.copyProperties(userPushTypeUpdateParam,userPushTypeParam,CopyOptions.create()
+                .ignoreError().ignoreNullValue());
+        userPushTypeParam.setUserId(userTokenVo.getId());
         // 更新对象
-
+        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
+                .eq(UserPushTypeEntity::getId, userPushTypeUpdateParam.getId());
+        boolean updateFlag = super.update(userPushTypeParam, queryWrapper);
+        if (!updateFlag) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_NOT_EXIST);
+        }
         return ApiResult.success();
     }
 
@@ -101,14 +137,15 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public ApiResult delete(UserPushTypeDeleteParam userPushTypeDeleteParam) {
-        // 请求参数获取
-        UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
-        BeanUtil.copyProperties(userPushTypeDeleteParam, userPushTypeParam, CopyOptions.create()
-                .setIgnoreNullValue(true).setIgnoreError(true));
-        // 判断对象是否存在
-
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
         // 更新对象
-
+        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
+                .eq(UserPushTypeEntity::getId, userPushTypeDeleteParam.getId());
+        boolean updateFlag = super.remove(queryWrapper);
+        if (!updateFlag) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_NOT_EXIST);
+        }
         return ApiResult.success();
     }
 
