@@ -18,13 +18,16 @@ public class RabbitMqConfig {
 
     /**
      * 消息队列名称
+     * RABBITMQ_STOCK_ALERT_MESSAGE: 预警消息
+     * RABBITMQ_STOCK_REPORT_MESSAGE: 股票周报
+     * RABBITMQ_STOCK_USER_CHECK: 用户验证码操作
      */
     public static final String QUEUE_ALERT_MESSAGE = "RABBITMQ_STOCK_ALERT_MESSAGE";
     public static final String QUEUE_REPORT_MESSAGE = "RABBITMQ_STOCK_REPORT_MESSAGE";
     public static final String QUEUE_USER_OPERATE = "RABBITMQ_STOCK_USER_CHECK";
 
     /**
-     * 交换机名称
+     * 直连交换机名称
      */
     public static final String EXCHANGE_DIRECT = "RABBITMQ_EXCHANGE_DIRECT";
 

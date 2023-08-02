@@ -1,13 +1,18 @@
 package com.ljq.stock.alert.service.component;
 
 import cn.hutool.core.thread.ThreadUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ljq.stock.alert.common.component.MailClient;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.RabbitMqConfig;
+import com.ljq.stock.alert.common.constant.EnableEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
+import com.ljq.stock.alert.common.constant.UserPushConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
+import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
 import com.ljq.stock.alert.service.AlertMessageService;
+import com.ljq.stock.alert.service.UserPushTypeService;
 import com.ljq.stock.alert.service.task.MessageMailTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -36,6 +41,8 @@ public class AlertMessageMqReceiver {
     private JavaMailSender mailSender;
     @Autowired
     private RedisUtil redisUtil;
+    @Resource
+    private UserPushTypeService userPushTypeService;
 
     /**
      * 发件人邮箱
@@ -79,7 +86,7 @@ public class AlertMessageMqReceiver {
             redisUtil.set(cacheKey, message.getId(), MessageConst.DEFAULT_TIME_ALERT_MESSAGE_MQ);
             // 发送邮件
             try {
-                mailClient.sendMail(message.getEmail(), message.getTitle(), message.getContent());
+                mailClient.sendMail(message.getReceiveAddress(), message.getTitle(), message.getContent());
             } catch (Exception e) {
                 log.error("report message email send error", e);
             }
@@ -95,9 +102,21 @@ public class AlertMessageMqReceiver {
     public void receiveUserOperate(AlertMessageEntity alertMessage) {
         try {
             log.info("userOperateMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
-            mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
+            switch (alertMessage.getPushType()) {
+                case UserPushConst.USER_PUSH_TYPE_EMAIL:
+                    mailClient.sendMail(alertMessage.getReceiveAddress(), alertMessage.getTitle(), alertMessage.getContent());
+                    break;
+                case UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC:
+                    // TODO pushplus 微信公众号推送
+
+                case UserPushConst.USER_PUSH_TYPE_SMS:
+                    // TODO 预留短信通知
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception e) {
-            log.error("user operate email send error", e);
+            log.error("user operate send error", e);
         }
     }
 
@@ -107,13 +126,37 @@ public class AlertMessageMqReceiver {
      * @param alertMessage
      */
     private void sendAndUpdateMessage(AlertMessageEntity alertMessage) {
+        log.info("alertMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
+        List<UserPushTypeEntity> pushTypeList = userPushTypeService.list(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+                .eq(UserPushTypeEntity::getUserId, alertMessage.getUserId())
+                .eq(UserPushTypeEntity::getEnable, EnableEnum.ENABLE.getCode()));
         try {
-            log.info("alertMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
-            mailClient.sendMail(alertMessage.getEmail(), alertMessage.getTitle(), alertMessage.getContent());
+            // 根据推送类型推送消息
+            for (UserPushTypeEntity pushType : pushTypeList) {
+                switch (pushType.getPushType()) {
+                    case UserPushConst.USER_PUSH_TYPE_SMS:
+                        // TODO 预留短信通知
+                        alertMessage.setPushType(UserPushConst.USER_PUSH_TYPE_SMS);
+                        continue;
+                    case UserPushConst.USER_PUSH_TYPE_EMAIL:
+                        alertMessage.setPushType(UserPushConst.USER_PUSH_TYPE_EMAIL);
+                        mailClient.sendMail(pushType.getReceiveAddress(), alertMessage.getTitle(),
+                                alertMessage.getContent());
+                        alertMessage.setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
+                        continue;
+                    case UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC:
+                        // TODO pushplus 微信公众号推送
+                        alertMessage.setPushType(UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
+
+                        continue;
+                    default:
+                        break;
+                }
+            }
         } catch (Exception e) {
-            log.error("alert message email send error", e);
+            log.error("alert message send error", e);
             // 更新消息状态
-            alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
+            alertMessage.setPushResult(MessageConst.MESSAGE_SEND_FAIL);
             alertMessage.setRetryTime(alertMessage.getRetryTime() + 1);
             alertMessageService.updateById(alertMessage);
             String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
@@ -122,7 +165,6 @@ public class AlertMessageMqReceiver {
             return;
         }
         // 更新消息状态
-        alertMessage.setEmailSend(MessageConst.MESSAGE_SEND_SUCCESS);
         alertMessageService.updateById(alertMessage);
     }
 

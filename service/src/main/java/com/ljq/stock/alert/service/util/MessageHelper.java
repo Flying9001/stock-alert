@@ -2,9 +2,11 @@ package com.ljq.stock.alert.service.util;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
 import com.ljq.stock.alert.common.constant.StockConst;
+import com.ljq.stock.alert.common.constant.UserPushConst;
 import com.ljq.stock.alert.model.entity.AlertMessageEntity;
 import com.ljq.stock.alert.model.entity.UserStockEntity;
 
@@ -69,10 +71,12 @@ public class MessageHelper {
     public static List<AlertMessageEntity> createAlertMessageBatch(List<UserStockEntity> userStockList) {
         List<AlertMessageEntity> alertMessageList = new ArrayList<>();
         userStockList.forEach(userStock -> {
+            // 根据股价创建预警消息
             AlertMessageEntity alertMessagePrice = createAlertMessageFromPrice(userStock);
             if (Objects.nonNull(alertMessagePrice)) {
                 alertMessageList.add(alertMessagePrice);
             }
+            // 根据涨跌幅创建预警消息
             AlertMessageEntity alertMessageIncreasePer = createAlertMessageFromIncreasePer(userStock);
             if (Objects.nonNull(alertMessageIncreasePer)) {
                 alertMessageList.add(alertMessageIncreasePer);
@@ -90,10 +94,7 @@ public class MessageHelper {
         AlertMessageEntity message = new AlertMessageEntity();
         message.setId(userStockList.get(0).getUserId() + System.currentTimeMillis());
         message.setUserId(userStockList.get(0).getUserId());
-        message.setMobilePhone(userStockList.get(0).getUserInfo().getMobilePhone());
-        message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
-        message.setEmail(userStockList.get(0).getUserInfo().getEmail());
-        message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
+        message.setReceiveAddress(userStockList.get(0).getUserInfo().getEmail());
         message.setTitle("股价提醒小助手【股价周报】-" + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         StringBuilder contentBuilder = new StringBuilder("尊敬的用户");
         contentBuilder.append(userStockList.get(0).getUserInfo().getNickName()).append(",</br>")
@@ -140,8 +141,13 @@ public class MessageHelper {
     public static AlertMessageEntity createCheckMessage(String mobilePhone, String email,
                                                         CheckCodeTypeEnum checkCodeType, String checkCode) {
         AlertMessageEntity message = new AlertMessageEntity();
-        message.setMobilePhone(mobilePhone);
-        message.setEmail(email);
+        message.setPushType(UserPushConst.USER_PUSH_TYPE_EMAIL);
+        message.setReceiveAddress(email);
+        // TODO 预留手机短信验证
+        if (StrUtil.isBlank(email)) {
+            message.setPushType(UserPushConst.USER_PUSH_TYPE_SMS);
+            message.setReceiveAddress(mobilePhone);
+        }
         StringBuilder contentBuilder = new StringBuilder("尊敬的用户,<br />");
         switch (checkCodeType) {
             case REGISTER:
@@ -255,11 +261,8 @@ public class MessageHelper {
     private static AlertMessageEntity getPriceLimitAlertMessage(UserStockEntity userStock, int compareResult) {
         AlertMessageEntity message = new AlertMessageEntity();
         message.setUserId(userStock.getUserId());
-        message.setMobilePhone(userStock.getUserInfo().getMobilePhone());
-        message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
-        message.setEmail(userStock.getUserInfo().getEmail());
-        message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
-        message.setStockId(userStock.getStockSource().getId());
+        message.setStockId(userStock.getStockId());
+        message.setPushResult(MessageConst.MESSAGE_SEND_NOT);
         String highOrLow = compareResult == 1 ? "高" : "低";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_PRICE_MAX :
                 MessageConst.ALERT_TYPE_PRICE_MIN);
@@ -287,11 +290,8 @@ public class MessageHelper {
     private static AlertMessageEntity getIncreasePerLimitAlertMessage(UserStockEntity userStock, int compareResult) {
         AlertMessageEntity message = new AlertMessageEntity();
         message.setUserId(userStock.getUserId());
-        message.setMobilePhone(userStock.getUserInfo().getMobilePhone());
-        message.setPhoneSend(MessageConst.MESSAGE_SEND_NOT);
-        message.setEmail(userStock.getUserInfo().getEmail());
-        message.setEmailSend(MessageConst.MESSAGE_SEND_NOT);
-        message.setStockId(userStock.getStockSource().getId());
+        message.setStockId(userStock.getStockId());
+        message.setPushResult(MessageConst.MESSAGE_SEND_NOT);
         String highOrLow = compareResult == 1 ? "涨" : "跌";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_INCREASE_PER_MAX :
                 MessageConst.ALERT_TYPE_INCREASE_PER_MIN);

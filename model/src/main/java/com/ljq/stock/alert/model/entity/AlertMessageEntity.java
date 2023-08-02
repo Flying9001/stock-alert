@@ -31,15 +31,24 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "USER_ID")
     @ApiModelProperty(value = "用户信息", name = "userId")
     private Long userId;
+
+    @ApiModelProperty(value = "推送类型,1-短信,2-邮箱,3-pushplus")
+    private Integer pushType;
+
+    @ApiModelProperty(value = "推送结果,0-失败,1-成功,2-未推送")
+    private Integer pushResult;
+
     /**
      * 手机发送,1-发送成功,2-发送失败,3-未发送
      **/
+    @Deprecated
     @TableField(value = "PHONE_SEND")
     @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送", name = "phoneSend")
     private Integer phoneSend;
     /**
      * 邮箱发送,1-发送成功,2-发送失败,3-未发送
      **/
+    @Deprecated
     @TableField(value = "EMAIL_SEND")
     @ApiModelProperty(value = "邮箱发送,1-发送成功,2-发送失败,3-未发送", name = "emailSend")
     private Integer emailSend;
@@ -76,18 +85,30 @@ public class AlertMessageEntity extends BaseEntity {
     /**
      * 手机号
      **/
+    @Deprecated
     @TableField(value = "MOBILE_PHONE", exist = false)
     @ApiModelProperty(value = "手机号", name = "mobilePhone")
     private String mobilePhone;
     /**
      * 邮箱
      **/
+    @Deprecated
     @TableField(value = "EMAIL",exist = false)
     @ApiModelProperty(value = "邮箱", name = "email")
     private String email;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "接收通知的地址")
+    private String receiveAddress;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "发送通知的地址")
+    private String sendAddress;
+
     /**
      * 发件人邮箱
      */
+    @Deprecated
     @TableField(exist = false)
     @ApiModelProperty(value = "发件人邮箱", name = "senderEmail")
     private String senderEmail;
