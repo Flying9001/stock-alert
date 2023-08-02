@@ -11,7 +11,7 @@ public class UserPushConst {
     }
 
     /**
-     * 单个用户最大允许启用的推送方式数量
+     * 单个用户最大允许设置的推送方式数量
      */
     public static final int USER_PUSH_TYPE_MAX = 3;
 

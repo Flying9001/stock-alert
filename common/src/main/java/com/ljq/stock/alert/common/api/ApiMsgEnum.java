@@ -84,6 +84,7 @@ public enum ApiMsgEnum {
      */
     USER_PUSH_TYPE_MAX_ERROR("api.response.userPush.typeMax", "用户推送方式数量超过最大限制"),
     USER_PUSH_TYPE_NOT_EXIST("api.response.userPush.typeNotExist", "用户推送方式不存在"),
+    USER_PUSH_TYPE_REPEAT("api.response.userPush.typeRepeat", "用户推送方式重复,请勿重复操作"),
 
     /**
      * 管理员用户

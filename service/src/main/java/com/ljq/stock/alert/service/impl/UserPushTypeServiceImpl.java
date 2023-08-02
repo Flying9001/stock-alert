@@ -2,6 +2,7 @@ package com.ljq.stock.alert.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,9 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
-import com.ljq.stock.alert.common.constant.EnableEnum;
 import com.ljq.stock.alert.common.constant.UserPushConst;
-import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserPushTypeDao;
 import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
 import com.ljq.stock.alert.model.param.userpushtype.*;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,9 +34,6 @@ import java.util.Objects;
 public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPushTypeEntity>
         implements UserPushTypeService {
 
-    @Resource
-    private UserInfoDao userInfoDao;
-
     /**
      * 保存(单条)
      *
@@ -49,14 +45,18 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     public ApiResult save(UserPushTypeSaveParam userPushTypeSaveParam) {
         UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
         // 校验推送方式数量
-        int count = super.count(Wrappers.lambdaQuery(UserPushTypeEntity.class)
-                .eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
-                .eq(UserPushTypeEntity::getEnable, EnableEnum.ENABLE.getCode()));
-        if (count >= UserPushConst.USER_PUSH_TYPE_MAX) {
+        List<UserPushTypeEntity> entityList = super.list(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+                .eq(UserPushTypeEntity::getUserId, userTokenVo.getId()));
+        if (CollUtil.isNotEmpty(entityList) && entityList.size() >= UserPushConst.USER_PUSH_TYPE_MAX) {
             return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_MAX_ERROR);
         }
-        // TODO 校验是否重复插入
-
+        // 校验是否重复插入
+        for (UserPushTypeEntity entity : entityList) {
+            if (Objects.equals(entity.getPushType(), userPushTypeSaveParam.getPushType())
+                    && entity.getReceiveAddress().equalsIgnoreCase(userPushTypeSaveParam.getReceiveAddress())) {
+                return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_REPEAT);
+            }
+        }
         // 请求参数获取
         UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
         BeanUtil.copyProperties(userPushTypeSaveParam,userPushTypeParam,CopyOptions.create()
