@@ -111,20 +111,20 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public ApiResult update(UserPushTypeUpdateParam userPushTypeUpdateParam) {
-        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
-        // 请求参数获取
+        // 校验请求参数
+        UserPushTypeEntity pushTypeDb = this.getUserPushType(userPushTypeUpdateParam.getId());
+        if (Objects.isNull(pushTypeDb)) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_NOT_EXIST);
+        }
+        if (Objects.equals(UserPushConst.USER_PUSH_TYPE_SMS, pushTypeDb.getPushType())
+                || Objects.equals(UserPushConst.USER_PUSH_TYPE_EMAIL, pushTypeDb.getPushType())) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_PRESET_NO_EDIT);
+        }
+        // 更新对象
         UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
         BeanUtil.copyProperties(userPushTypeUpdateParam,userPushTypeParam,CopyOptions.create()
                 .ignoreError().ignoreNullValue());
-        userPushTypeParam.setUserId(userTokenVo.getId());
-        // 更新对象
-        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
-                .eq(UserPushTypeEntity::getId, userPushTypeUpdateParam.getId());
-        boolean updateFlag = super.update(userPushTypeParam, queryWrapper);
-        if (!updateFlag) {
-            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_NOT_EXIST);
-        }
+        super.updateById(userPushTypeParam);
         return ApiResult.success();
     }
 
@@ -137,16 +137,33 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class})
     public ApiResult delete(UserPushTypeDeleteParam userPushTypeDeleteParam) {
-        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
-        // 更新对象
-        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
-                .eq(UserPushTypeEntity::getId, userPushTypeDeleteParam.getId());
-        boolean updateFlag = super.remove(queryWrapper);
-        if (!updateFlag) {
+        // 校验请求参数
+        UserPushTypeEntity pushTypeDb = getUserPushType(userPushTypeDeleteParam.getId());
+        if (Objects.isNull(pushTypeDb)) {
             return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_NOT_EXIST);
         }
+        if (Objects.equals(UserPushConst.USER_PUSH_TYPE_SMS, pushTypeDb.getPushType())
+                || Objects.equals(UserPushConst.USER_PUSH_TYPE_EMAIL, pushTypeDb.getPushType())) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_PRESET_NO_EDIT);
+        }
+        super.removeById(userPushTypeDeleteParam.getId());
         return ApiResult.success();
+    }
+
+    /**
+     * 获取用户的推送方式
+     *
+     * @param id
+     * @return
+     */
+    private UserPushTypeEntity getUserPushType(long id) {
+        // 请求参数获取
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+        LambdaQueryWrapper<UserPushTypeEntity> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(UserPushTypeEntity::getUserId, userTokenVo.getId())
+                .eq(UserPushTypeEntity::getId, id);
+        // 校验请求参数
+        return super.getOne(queryWrapper);
     }
 
 

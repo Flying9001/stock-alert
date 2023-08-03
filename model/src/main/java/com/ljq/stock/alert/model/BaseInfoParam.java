@@ -22,7 +22,7 @@ public class BaseInfoParam implements Serializable {
     /**
      * id
      **/
-    @NotNull(message = "请选择需要查询的对象")
+    @NotNull(message = "请选择需要操作的对象")
     @Min(value = 1, message = "请求参数不合理")
     @ApiModelProperty(value = "id", name = "id", required = true, example = "1")
     private Long id;

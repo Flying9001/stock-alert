@@ -26,9 +26,9 @@ public class UserPushTypeSaveParam implements Serializable {
      * 推送方式,1-短信;2-邮件;3-pushplus
      * */
     @NotNull(message = "推送方式不能为空")
-    @Min(value = 1, message = "推送方式错误")
-    @Max(value = 3, message = "推送方式错误")
-    @ApiModelProperty(value = "推送方式,1-短信;2-邮件;3-pushplus", name = "pushType", required = true, example = "0")
+    @Min(value = 31, message = "推送方式错误")
+    @Max(value = 31, message = "推送方式错误")
+    @ApiModelProperty(value = "推送方式,31-pushplus 微信公众号", name = "pushType", required = true, example = "0")
     private Integer pushType;
     /**
      * 通知推送接收地址
@@ -39,8 +39,9 @@ public class UserPushTypeSaveParam implements Serializable {
     /**
      * 是否启用,0-未启用,1-启用
      * */
-    @NotNull(message = "是否启用,0-未启用,1-启用 不能为空")
-    @Min(value = 1, message = "是否启用,0-未启用,1-启用 至少为 1")
+    @NotNull(message = "是否启用不能为空")
+    @Min(value = 0, message = "是否启用设置错误")
+    @Max(value = 1, message = "是否启用设置错误")
     @ApiModelProperty(value = "是否启用,0-未启用,1-启用", name = "enable", required = true, example = "0")
     private Integer enable;
 

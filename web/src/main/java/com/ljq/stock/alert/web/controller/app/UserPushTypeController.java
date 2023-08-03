@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @Description: 用户消息推送方式控制层
  * @Author: junqiang.lu
@@ -31,7 +33,7 @@ public class UserPushTypeController {
      */
     @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式保存(单条)",  notes = "用户消息推送方式保存(单条)")
-    public ResponseEntity<?> save(@RequestBody UserPushTypeSaveParam userPushTypeSaveParam) throws Exception{
+    public ResponseEntity<?> save(@Valid @RequestBody UserPushTypeSaveParam userPushTypeSaveParam) throws Exception{
         return ResponseEntity.ok(userPushTypeService.save(userPushTypeSaveParam));
     }
 
@@ -43,7 +45,7 @@ public class UserPushTypeController {
      */
     @GetMapping(value = "/query/one", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式查询详情(单条)",  notes = "用户消息推送方式查询详情(单条)")
-    public ResponseEntity<?> info(UserPushTypeInfoParam userPushTypeInfoParam) {
+    public ResponseEntity<?> info(@Valid UserPushTypeInfoParam userPushTypeInfoParam) {
         return ResponseEntity.ok(userPushTypeService.info(userPushTypeInfoParam));
     }
 
@@ -55,7 +57,7 @@ public class UserPushTypeController {
      */
     @GetMapping(value = "/query/page", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式查询列表",  notes = "用户消息推送方式查询列表")
-    public ResponseEntity<?> list(UserPushTypeListParam userPushTypeListParam) {
+    public ResponseEntity<?> list(@Valid UserPushTypeListParam userPushTypeListParam) {
         return ResponseEntity.ok(userPushTypeService.list(userPushTypeListParam));
     }
 
@@ -67,7 +69,7 @@ public class UserPushTypeController {
      */
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式修改(单条)",  notes = "用户消息推送方式修改(单条)")
-    public ResponseEntity<?> update(@RequestBody UserPushTypeUpdateParam userPushTypeUpdateParam) {
+    public ResponseEntity<?> update(@Valid @RequestBody UserPushTypeUpdateParam userPushTypeUpdateParam) {
         return ResponseEntity.ok(userPushTypeService.update(userPushTypeUpdateParam));
     }
 
@@ -79,7 +81,7 @@ public class UserPushTypeController {
      */
     @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户消息推送方式删除(单条)",  notes = "用户消息推送方式删除(单条)")
-    public ResponseEntity<?> delete(@RequestBody UserPushTypeDeleteParam userPushTypeDeleteParam) {
+    public ResponseEntity<?> delete(@Valid @RequestBody UserPushTypeDeleteParam userPushTypeDeleteParam) {
         return ResponseEntity.ok(userPushTypeService.delete(userPushTypeDeleteParam));
     }
 

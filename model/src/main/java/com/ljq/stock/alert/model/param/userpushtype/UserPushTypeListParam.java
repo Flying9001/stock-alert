@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
@@ -29,6 +30,8 @@ public class UserPushTypeListParam extends BasePageParam {
     /**
      * 是否启用，0-未启用，1-启用
      */
+    @Min(value = 0, message = "是否启用设置错误")
+    @Max(value = 1, message = "是否启用设置错误")
     @ApiModelProperty(value = "是否启用，0-未启用，1-启用", example = "1")
     private Integer enable;
 
