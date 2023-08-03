@@ -107,9 +107,8 @@ public interface UserInfoService {
 	 *
 	 * @param updateEmailParam
 	 * @return
-	 * @throws JsonProcessingException
 	 */
-	ApiResult updateEmail(UserUpdateEmailParam updateEmailParam) throws JsonProcessingException;
+	ApiResult updateEmail(UserUpdateEmailParam updateEmailParam);
 
 	/**
      * 删除(单条)

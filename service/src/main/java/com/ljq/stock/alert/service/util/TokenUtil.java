@@ -96,9 +96,6 @@ public class TokenUtil {
             if (subResult >= TokenConst.TOKEN_EXPIRE_TIME_MILLIS) {
                 return ApiMsgEnum.USER_TOKEN_ERROR;
             }
-            if (subResult < TokenConst.TOKEN_REFRESH_TIME_MILLIS) {
-                return ApiMsgEnum.SUCCESS;
-            }
             // 校验 Token 权限
             String requestPath = request.getRequestURI();
             switch (userToken.getAccountType()) {
@@ -113,6 +110,9 @@ public class TokenUtil {
                 default: break;
             }
             // 刷新 Token
+            if (subResult < TokenConst.TOKEN_REFRESH_TIME_MILLIS) {
+                return ApiMsgEnum.SUCCESS;
+            }
             response.setHeader(TokenConst.TOKEN_HEADERS_FIELD, TokenUtil.createToken(userToken));
         } catch (Exception e) {
             log.error("Token 校验失败,{}:{}", e.getClass().getName(), e.getMessage());

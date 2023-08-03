@@ -16,9 +16,7 @@ import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.WechatConfig;
-import com.ljq.stock.alert.common.constant.CheckCodeTypeEnum;
-import com.ljq.stock.alert.common.constant.LoginTypeEnum;
-import com.ljq.stock.alert.common.constant.UserConst;
+import com.ljq.stock.alert.common.constant.*;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.Md5Util;
 import com.ljq.stock.alert.dao.*;
@@ -67,6 +65,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 	private StockGroupStockDao stockGroupStockDao;
 	@Autowired
 	private UserOauthDao userOauthDao;
+	@Autowired
+	private UserPushTypeDao userPushTypeDao;
 
 	@Autowired
 	private RedisUtil redisUtil;
@@ -190,6 +190,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 		userInfoDB.setPasscode(null);
 		// 生成 Token
 		userInfoDB.setToken(TokenUtil.createToken(userInfoDB));
+		// 设置用户推送方式
+		UserPushTypeEntity pushTypeEmail = new UserPushTypeEntity();
+		pushTypeEmail.setUserId(userInfoDB.getId());
+		pushTypeEmail.setPushType(UserPushConst.USER_PUSH_TYPE_EMAIL);
+		pushTypeEmail.setReceiveAddress(userInfoDB.getEmail());
+		pushTypeEmail.setEnable(EnableEnum.ENABLE.getCode());
+		userPushTypeDao.insert(pushTypeEmail);
+		if (StrUtil.isNotBlank(registerParam.getMobilePhone())) {
+			UserPushTypeEntity pushTypePhone = new UserPushTypeEntity();
+			pushTypePhone.setUserId(userInfoDB.getId());
+			pushTypePhone.setPushType(UserPushConst.USER_PUSH_TYPE_SMS);
+			pushTypePhone.setReceiveAddress(userInfoDB.getMobilePhone());
+			pushTypePhone.setEnable(EnableEnum.DISABLE.getCode());
+			userPushTypeDao.insert(pushTypePhone);
+		}
 		return userInfoDB;
 	}
 
@@ -335,6 +350,14 @@ public class UserInfoServiceImpl implements UserInfoService {
 		UserInfoEntity userInfoParam = new UserInfoEntity();
 		BeanUtil.copyProperties(updateParam, userInfoParam, CopyOptions.create().ignoreError().ignoreNullValue());
 		userInfoDao.updateById(userInfoParam);
+		// 更新推送方式
+		if (StrUtil.isNotBlank(updateParam.getMobilePhone())) {
+			UserPushTypeEntity pushType = new UserPushTypeEntity();
+			pushType.setReceiveAddress(updateParam.getMobilePhone());
+			userPushTypeDao.update(pushType, Wrappers.lambdaUpdate(UserPushTypeEntity.class)
+					.eq(UserPushTypeEntity::getUserId, updateParam.getId())
+					.eq(UserPushTypeEntity::getPushType, UserPushConst.USER_PUSH_TYPE_SMS));
+		}
 	}
 
 	/**
@@ -365,10 +388,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 	 *
 	 * @param updateEmailParam
 	 * @return
-	 * @throws JsonProcessingException
 	 */
 	@Override
-	public ApiResult updateEmail(UserUpdateEmailParam updateEmailParam) throws JsonProcessingException {
+	public ApiResult updateEmail(UserUpdateEmailParam updateEmailParam){
 		UserTokenVo tokenVo = SessionUtil.currentSession().getUserToken();
 		// 更新邮箱
 		UserInfoEntity userInfo = new UserInfoEntity();
@@ -379,6 +401,12 @@ public class UserInfoServiceImpl implements UserInfoService {
 			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 		}
 		tokenVo.setEmail(updateEmailParam.getEmail());
+		// 更新推送方式
+		UserPushTypeEntity pushType = new UserPushTypeEntity();
+		pushType.setReceiveAddress(updateEmailParam.getEmail());
+		userPushTypeDao.update(pushType, Wrappers.lambdaUpdate(UserPushTypeEntity.class)
+				.eq(UserPushTypeEntity::getUserId, tokenVo.getId())
+				.eq(UserPushTypeEntity::getPushType, UserPushConst.USER_PUSH_TYPE_EMAIL));
 		return ApiResult.success(TokenUtil.createToken(tokenVo));
 	}
 
@@ -401,6 +429,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 		stockGroupStockDao.deleteByUser(deleteParam.getId());
 		userStockGroupDao.delete(Wrappers.lambdaQuery(UserStockGroupEntity.class)
 				.eq(UserStockGroupEntity::getUserId, deleteParam.getId()));
+		// 删除用户推送方式
+		userPushTypeDao.delete(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+				.eq(UserPushTypeEntity::getUserId, deleteParam.getId()));
 		// 删除用户信息
 		userInfoDao.deleteById(deleteParam.getId());
 	}

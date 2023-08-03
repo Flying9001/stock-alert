@@ -168,12 +168,11 @@ public class UserInfoController {
      *
      * @param updateEmailParam
      * @return
-     * @throws JsonProcessingException
      */
     @PutMapping(value = "/update/email", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "修改邮箱",  notes = "修改邮箱")
     public ResponseEntity<ApiResult<String>> updateEmail(@Validated @RequestBody UserUpdateEmailParam updateEmailParam)
-            throws JsonProcessingException {
+            {
         // 验证码校验
         boolean checkResult = CheckCodeUtil.validateCheckCodeValidity(updateEmailParam.getCheckCode(),
                 CheckCodeUtil.generateCacheKey(updateEmailParam.getEmail(), CheckCodeTypeEnum.UPDATE_EMAIL), redisUtil);
