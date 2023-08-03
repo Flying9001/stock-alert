@@ -28,8 +28,8 @@ public class MessageMailTask implements Callable<AlertMessageEntity> {
     public AlertMessageEntity call() throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom(alertMessage.getSenderEmail());
-        helper.setTo(alertMessage.getEmail());
+        helper.setFrom(alertMessage.getSendAddress());
+        helper.setTo(alertMessage.getReceiveAddress());
         helper.setSubject(alertMessage.getTitle());
         helper.setText(alertMessage.getContent(), true);
         mailSender.send(helper.getMimeMessage());

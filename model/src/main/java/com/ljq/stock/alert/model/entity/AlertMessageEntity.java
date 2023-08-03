@@ -39,20 +39,6 @@ public class AlertMessageEntity extends BaseEntity {
     private Integer pushResult;
 
     /**
-     * 手机发送,1-发送成功,2-发送失败,3-未发送
-     **/
-    @Deprecated
-    @TableField(value = "PHONE_SEND")
-    @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送", name = "phoneSend")
-    private Integer phoneSend;
-    /**
-     * 邮箱发送,1-发送成功,2-发送失败,3-未发送
-     **/
-    @Deprecated
-    @TableField(value = "EMAIL_SEND")
-    @ApiModelProperty(value = "邮箱发送,1-发送成功,2-发送失败,3-未发送", name = "emailSend")
-    private Integer emailSend;
-    /**
      * 提醒类型,1-股价提醒;2-单日涨跌幅提醒
      */
     @TableField(value = "ALERT_TYPE")
@@ -82,20 +68,6 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "CONTENT")
     @ApiModelProperty(value = "消息内容", name = "content")
     private String content;
-    /**
-     * 手机号
-     **/
-    @Deprecated
-    @TableField(value = "MOBILE_PHONE", exist = false)
-    @ApiModelProperty(value = "手机号", name = "mobilePhone")
-    private String mobilePhone;
-    /**
-     * 邮箱
-     **/
-    @Deprecated
-    @TableField(value = "EMAIL",exist = false)
-    @ApiModelProperty(value = "邮箱", name = "email")
-    private String email;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "接收通知的地址")
@@ -104,13 +76,5 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(exist = false)
     @ApiModelProperty(value = "发送通知的地址")
     private String sendAddress;
-
-    /**
-     * 发件人邮箱
-     */
-    @Deprecated
-    @TableField(exist = false)
-    @ApiModelProperty(value = "发件人邮箱", name = "senderEmail")
-    private String senderEmail;
 
 }

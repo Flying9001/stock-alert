@@ -7,8 +7,8 @@
     <resultMap type="com.ljq.stock.alert.model.entity.AlertMessageEntity" id="alertMessageMap">
         <id property="id" column="ID" />
         <result property="userId" column="USER_ID"/>
-        <result property="phoneSend" column="PHONE_SEND"/>
-        <result property="emailSend" column="EMAIL_SEND"/>
+        <result property="pushType" column="PUSH_TYPE"/>
+        <result property="pushResult" column="PUSH_RESULT"/>
         <result property="alertType" column="ALERT_TYPE"/>
         <result property="retryTime" column="RETRY_TIME" />
         <result property="stockId" column="STOCK_ID"/>
@@ -16,16 +16,15 @@
         <result property="content" column="CONTENT"/>
         <result property="createTime" column="CREATE_TIME"/>
         <result property="updateTime" column="UPDATE_TIME"/>
-        <result property="mobilePhone" column="MOBILE_PHONE" />
-        <result property="email" column="EMAIL" />
+        <result property="receiveAddress" column="RECEIVE_ADDRESS" />
     </resultMap>
 
    <!-- 预警消息-基础字段 -->
 	<sql id="alert_message_base_field">
         m.`ID`,
         m.`USER_ID`,
-        m.`PHONE_SEND`,
-        m.`EMAIL_SEND`,
+        m.`PUSH_TYPE`,
+        m.`PUSH_RESULT`,
         m.`ALERT_TYPE`,
         m.`RETRY_TIME`,
         m.`STOCK_ID`,
@@ -39,8 +38,7 @@
     <sql id="alert_message_list_field" >
         <include refid="alert_message_base_field" />
         ,
-        u.`MOBILE_PHONE` AS `MOBILE_PHONE`,
-        u.`EMAIL` AS EMAIL
+        upt.`RECEIVE_ADDRESS` AS `RECEIVE_ADDRESS`
     </sql>
 
     <!-- 校验重复性 -->
@@ -58,9 +56,10 @@
         SELECT
         <include refid="alert_message_list_field" />
         FROM `ALERT_MESSAGE` m
-        LEFT JOIN `USER_INFO` u ON u.ID = m.USER_ID
-        WHERE m.PHONE_SEND != 1
-            AND m.EMAIL_SEND != 1
+        LEFT JOIN `USER_PUSH_TYPE` upt ON upt.USER_ID = m.USER_ID AND upt.PUSH_TYPE = m.PUSH_TYPE
+        WHERE m.PUSH_RESULT != 1
+            AND upt.ENABLE = 1
+            AND m.PUSH_TYPE = upt.PUSH_TYPE
             AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
             AND m.RETRY_TIME &lt; 5
     </select>

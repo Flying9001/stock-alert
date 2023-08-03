@@ -175,14 +175,14 @@ public class AlertMessageMqReceiver {
      */
     private void sendAndUpdateMessageBatch(List<AlertMessageEntity> alertMessageList) {
         for (int i = 0; i < alertMessageList.size(); i++) {
-            alertMessageList.get(i).setSenderEmail(from);
+            alertMessageList.get(i).setSendAddress(from);
             try {
                 ThreadUtil.execAsync(new MessageMailTask(mailSender, alertMessageList.get(i)));
-                alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_SUCCESS);
+                alertMessageList.get(i).setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
             } catch (Exception e) {
                 log.error("Mail send error", e);
                 // 更新消息状态
-                alertMessageList.get(i).setEmailSend(MessageConst.MESSAGE_SEND_FAIL);
+                alertMessageList.get(i).setPushResult(MessageConst.MESSAGE_SEND_FAIL);
                 alertMessageList.get(i).setRetryTime(alertMessageList.get(i).getRetryTime() + 1);
                 String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
                         String.valueOf(alertMessageList.get(i).getId()), null);

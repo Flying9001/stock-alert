@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
@@ -22,20 +21,6 @@ public class AlertMessageListUserParam extends BasePageParam {
 
     private static final long serialVersionUID = -2961655977467552180L;
 
-    /**
-     * 手机发送,1-发送成功,2-发送失败,3-未发送
-     * */
-    @Min(value = 1, message = "手机提醒发送状态设置错误")
-    @Max(value = 3, message = "手机提醒发送状态设置错误")
-    @ApiModelProperty(value = "手机发送,1-发送成功,2-发送失败,3-未发送 不能为空,至少为 1", name = "phoneSend", example = "0")
-    private Integer phoneSend;
-    /**
-     * 邮箱发送,1-发送成功,2-发送失败,3-未发送
-     * */
-    @Min(value = 1, message = "邮箱提醒发送状态设置错误")
-    @Max(value = 3, message = "邮箱提醒发送状态设置错误")
-    @ApiModelProperty(value = "邮箱发送,1-发送成功,2-发送失败,3-未发送 不能为空,至少为 1", name = "emailSend", example = "0")
-    private Integer emailSend;
     /**
      * 股票 id
      * */

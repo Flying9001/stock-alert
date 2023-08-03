@@ -1,5 +1,7 @@
 package com.ljq.stock.alert.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -91,10 +93,6 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 		// 请求参数获
 		LambdaQueryWrapper<AlertMessageEntity> queryWrapper = Wrappers.lambdaQuery();
 		queryWrapper.eq(Objects.nonNull(listParam.getUserId()), AlertMessageEntity::getUserId, listParam.getUserId())
-				.eq(Objects.nonNull(listParam.getPhoneSend()), AlertMessageEntity::getPhoneSend,
-						listParam.getPhoneSend())
-				.eq(Objects.nonNull(listParam.getEmailSend()), AlertMessageEntity::getEmailSend,
-						listParam.getEmailSend())
 				.eq(Objects.nonNull(listParam.getStockId()), AlertMessageEntity::getStockId, listParam.getStockId())
 				.like(CharSequenceUtil.isNotBlank(listParam.getContent()), AlertMessageEntity::getContent,
 						listParam.getContent());
@@ -111,7 +109,8 @@ public class AlertMessageServiceImpl extends ServiceImpl<AlertMessageDao, AlertM
 	 */
 	@Override
 	public IPage<AlertMessageEntity> pageUser(AlertMessageListUserParam listUserParam) {
-		AlertMessageListParam listParam =  (AlertMessageListParam) listUserParam;
+		AlertMessageListParam listParam = new AlertMessageListParam();
+		BeanUtil.copyProperties(listUserParam, listParam, CopyOptions.create().ignoreNullValue().ignoreError());
 		UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
 		listParam.setUserId(userTokenVo.getId());
 		return page(listParam);
