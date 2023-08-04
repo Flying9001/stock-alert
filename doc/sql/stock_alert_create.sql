@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2021/3/29 19:51:11                           */
+/* Created on:     2023/8/4 9:53:58                             */
 /*==============================================================*/
 
 
@@ -12,13 +12,15 @@ DROP TABLE IF EXISTS USER_INFO;
 
 DROP TABLE IF EXISTS USER_STOCK;
 
+DROP TABLE IF EXISTS ADMIN_USER;
+
 DROP TABLE IF EXISTS STOCK_GROUP_STOCK;
 
 DROP TABLE IF EXISTS USER_OAUTH;
 
-DROP TABLE IF EXISTS USER_STOCK_GROUP;
+DROP TABLE IF EXISTS USER_PUSH_TYPE;
 
-DROP TABLE IF EXISTS ADMIN_USER;
+DROP TABLE IF EXISTS USER_STOCK_GROUP;
 
 /*==============================================================*/
 /* Table: ALERT_MESSAGE                                         */
@@ -27,8 +29,8 @@ CREATE TABLE ALERT_MESSAGE
 (
    ID                   BIGINT NOT NULL COMMENT 'id',
    USER_ID              BIGINT COMMENT '用户信息',
-   PHONE_SEND           TINYINT COMMENT '手机发送,1-发送成功,2-发送失败,3-未发送',
-   EMAIL_SEND           TINYINT COMMENT '邮箱发送,1-发送成功,2-发送失败,3-未发送',
+   PUSH_TYPE            TINYINT COMMENT '推送类型,1-短信,2-邮箱,3-pushplus',
+   PUSH_RESULT          TINYINT COMMENT '推送结果,0-失败,1-成功,2-未推送',
    ALERT_TYPE           TINYINT COMMENT '提醒类型,1-股价提醒;2-单日涨跌幅提醒',
    RETRY_TIME           TINYINT DEFAULT 0 COMMENT '消息发送失败重试次数',
    STOCK_ID             BIGINT COMMENT '股票 id',
@@ -115,6 +117,28 @@ CHARSET = UTF8;
 ALTER TABLE USER_STOCK COMMENT '用户股票';
 
 /*==============================================================*/
+/* Table: ADMIN_USER                                            */
+/*==============================================================*/
+CREATE TABLE ADMIN_USER
+(
+   ID                   BIGINT UNSIGNED NOT NULL COMMENT 'id',
+   ACCOUNT              VARCHAR(32) COMMENT '账号',
+   PASSCODE             VARCHAR(128) COMMENT '密码',
+   ENABLE               TINYINT COMMENT '是否启用,0-禁用,1-启用',
+   NICK_NAME            VARCHAR(32) COMMENT '昵称',
+   HEAD_URL             VARCHAR(128) COMMENT '头像链接',
+   MOBILE_PHONE         VARCHAR(15) COMMENT '手机号',
+   EMAIL                VARCHAR(64) COMMENT '邮箱',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE ADMIN_USER COMMENT '管理员用户';
+
+/*==============================================================*/
 /* Table: STOCK_GROUP_STOCK                                     */
 /*==============================================================*/
 CREATE TABLE STOCK_GROUP_STOCK
@@ -136,19 +160,38 @@ ALTER TABLE STOCK_GROUP_STOCK COMMENT '用户股票分组关联股票';
 /*==============================================================*/
 CREATE TABLE USER_OAUTH
 (
-    ID                   BIGINT NOT NULL COMMENT 'id',
-    USER_ID              BIGINT COMMENT '用户id',
-    ACCESS_ID            VARCHAR(64) COMMENT '第三方接入id',
-    LOGIN_TYPE           VARCHAR(20) COMMENT '第三方登录类型',
-    ENABLE               TINYINT COMMENT '是否启用,0-不启用,1-启用',
-    CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (ID)
+   ID                   BIGINT NOT NULL COMMENT 'id',
+   USER_ID              BIGINT COMMENT '用户id',
+   ACCESS_ID            VARCHAR(64) COMMENT '第三方接入id',
+   LOGIN_TYPE           VARCHAR(10) COMMENT '第三方登录类型',
+   ENABLE               TINYINT COMMENT '是否启用,0-不启用,1-启用',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
 )
 ENGINE = INNODB DEFAULT
 CHARSET = UTF8MB4;
 
 ALTER TABLE USER_OAUTH COMMENT '用户第三方登录信息';
+
+/*==============================================================*/
+/* Table: USER_PUSH_TYPE                                        */
+/*==============================================================*/
+CREATE TABLE USER_PUSH_TYPE
+(
+   ID                   BIGINT NOT NULL COMMENT 'id',
+   USER_ID              BIGINT COMMENT '用户id',
+   PUSH_TYPE            TINYINT COMMENT '推送方式,1-短信;2-邮件;3-pushplus',
+   RECEIVE_ADDRESS      VARCHAR(128) COMMENT '通知推送接收地址',
+   ENABLE               TINYINT COMMENT '是否启用,0-未启用,1-启用',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE USER_PUSH_TYPE COMMENT '用户消息推送方式';
 
 /*==============================================================*/
 /* Table: USER_STOCK_GROUP                                      */
@@ -167,24 +210,3 @@ CHARSET = UTF8MB4;
 
 ALTER TABLE USER_STOCK_GROUP COMMENT '用户股票分组';
 
-/*==============================================================*/
-/* Table: ADMIN_USER                                            */
-/*==============================================================*/
-CREATE TABLE ADMIN_USER
-(
-   ID                   BIGINT UNSIGNED NOT NULL COMMENT 'id',
-   ACCOUNT              VARCHAR(32) COMMENT '账号',
-   PASSCODE             VARCHAR(128) COMMENT '密码',
-   ENABLE               TINYINT COMMENT '是否启用,0-禁用,1-启用',
-   NICK_NAME            VARCHAR(32) COMMENT '昵称',
-   HEAD_URL             VARCHAR(128) COMMENT '头像链接',
-   MOBILE_PHONE         VARCHAR(15) COMMENT '手机号',
-   EMAIL                VARCHAR(64) COMMENT '邮箱',
-   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-   PRIMARY KEY (ID)
-)
-ENGINE = INNODB DEFAULT
-CHARSET = UTF8MB4;
-
-ALTER TABLE ADMIN_USER COMMENT '管理员用户';
