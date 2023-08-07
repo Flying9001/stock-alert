@@ -262,7 +262,8 @@ public class MessageHelper {
         AlertMessageEntity message = new AlertMessageEntity();
         message.setUserId(userStock.getUserId());
         message.setStockId(userStock.getStockId());
-        message.setPushResult(MessageConst.MESSAGE_SEND_NOT);
+        message.setPushTotal(0);
+        message.setPushCount(0);
         String highOrLow = compareResult == 1 ? "高" : "低";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_PRICE_MAX :
                 MessageConst.ALERT_TYPE_PRICE_MIN);
@@ -291,7 +292,8 @@ public class MessageHelper {
         AlertMessageEntity message = new AlertMessageEntity();
         message.setUserId(userStock.getUserId());
         message.setStockId(userStock.getStockId());
-        message.setPushResult(MessageConst.MESSAGE_SEND_NOT);
+        message.setPushTotal(0);
+        message.setPushCount(0);
         String highOrLow = compareResult == 1 ? "涨" : "跌";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_INCREASE_PER_MAX :
                 MessageConst.ALERT_TYPE_INCREASE_PER_MIN);

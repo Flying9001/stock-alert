@@ -47,3 +47,8 @@ spring:
         max-active: 20
         max-idle: 10
         min-idle: 5
+
+## pushPlus
+pushPlus:
+  api:
+    pushWechatPublic: https://www.pushplus.plus/send

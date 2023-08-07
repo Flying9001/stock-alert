@@ -32,11 +32,11 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "用户信息", name = "userId")
     private Long userId;
 
-    @ApiModelProperty(value = "推送类型,1-短信,2-邮箱,3-pushplus")
-    private Integer pushType;
+    @ApiModelProperty(value = "总共消息所需推送次数")
+    private Integer pushTotal;
 
-    @ApiModelProperty(value = "推送结果,0-失败,1-成功,2-未推送")
-    private Integer pushResult;
+    @ApiModelProperty(value = "实际消息推送次数")
+    private Integer pushCount;
 
     /**
      * 提醒类型,1-股价提醒;2-单日涨跌幅提醒
@@ -68,6 +68,10 @@ public class AlertMessageEntity extends BaseEntity {
     @TableField(value = "CONTENT")
     @ApiModelProperty(value = "消息内容", name = "content")
     private String content;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "推送类型,1-短信,2-邮箱,3-pushplus")
+    private Integer pushType;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "接收通知的地址")

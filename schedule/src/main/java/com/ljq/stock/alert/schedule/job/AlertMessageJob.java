@@ -105,7 +105,8 @@ public class AlertMessageJob {
      * 消息重试,最多重试 5 次
      * 120 秒 1 次
      */
-    @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
+    // todo 待重构
+//    @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
     public void messageReTry() {
         // 统计所有当天发送失败的消息
         int pageSize = 1000;

@@ -55,3 +55,7 @@ swagger3:
   description: Stock Alert api document
   authHeaderKey: Authorization
 
+## pushPlus
+pushPlus:
+  api:
+    pushWechatPublic: https://www.pushplus.plus/send
