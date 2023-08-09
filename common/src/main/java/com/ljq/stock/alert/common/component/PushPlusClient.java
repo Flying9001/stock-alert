@@ -1,7 +1,10 @@
 package com.ljq.stock.alert.common.component;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.http.HttpStatus;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.config.PushPlusConfig;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @Description: PushPlus 消息推送客户端
@@ -30,9 +34,14 @@ public class PushPlusClient {
      *
      * @param pushParam
      */
-    public void push(PushPlusPushParam pushParam) {
-        String response = HttpUtil.post(pushPlusConfig.getApiPushWechatPublic(), BeanUtil.beanToMap(pushParam));
-        log.info("pushPlus push response: {}", response);
+    public String push(PushPlusPushParam pushParam) {
+        String responseStr = HttpUtil.post(pushPlusConfig.getApiPushWechatPublic(), BeanUtil.beanToMap(pushParam));
+        JSONObject responseJson = JSONUtil.parseObj(responseStr);
+        Integer responseCode = responseJson.get("code", Integer.class);
+        if (Objects.isNull(responseCode) || !Objects.equals(HttpStatus.HTTP_OK, responseCode)) {
+            return "";
+        }
+        return responseJson.getStr("data");
     }
 
     @Data

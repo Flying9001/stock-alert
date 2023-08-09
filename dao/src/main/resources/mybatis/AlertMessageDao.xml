@@ -7,10 +7,9 @@
     <resultMap type="com.ljq.stock.alert.model.entity.AlertMessageEntity" id="alertMessageMap">
         <id property="id" column="ID" />
         <result property="userId" column="USER_ID"/>
-        <result property="pushType" column="PUSH_TYPE"/>
-        <result property="pushResult" column="PUSH_RESULT"/>
+        <result property="pushCount" column="PUSH_COUNT"/>
+        <result property="pushTotal" column="PUSH_TOTAL"/>
         <result property="alertType" column="ALERT_TYPE"/>
-        <result property="retryTime" column="RETRY_TIME" />
         <result property="stockId" column="STOCK_ID"/>
         <result property="title" column="TITLE"/>
         <result property="content" column="CONTENT"/>
@@ -23,10 +22,9 @@
 	<sql id="alert_message_base_field">
         m.`ID`,
         m.`USER_ID`,
-        m.`PUSH_TYPE`,
-        m.`PUSH_RESULT`,
+        m.`PUSH_COUNT`,
+        m.`PUSH_TOTAL`,
         m.`ALERT_TYPE`,
-        m.`RETRY_TIME`,
         m.`STOCK_ID`,
         m.`TITLE`,
         m.`CONTENT`,

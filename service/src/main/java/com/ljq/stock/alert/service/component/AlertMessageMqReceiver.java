@@ -176,9 +176,10 @@ public class AlertMessageMqReceiver {
                         pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
                         pushParam.setTitle(alertMessage.getTitle());
                         pushParam.setContent(alertMessage.getContent());
-                        pushPlusClient.push(pushParam);
+                        String pushRecord = pushPlusClient.push(pushParam);
                         // 更新推送结果
                         pushResultPushPlus.setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
+                        pushResultPushPlus.setPushRecord(pushRecord);
                         messagePushResultDao.insert(pushResultPushPlus);
                         alertMessage.setPushCount(alertMessage.getPushCount() + 1);
                         alertMessageService.updateById(alertMessage);

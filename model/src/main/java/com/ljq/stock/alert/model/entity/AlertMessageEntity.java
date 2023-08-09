@@ -45,12 +45,6 @@ public class AlertMessageEntity extends BaseEntity {
     @ApiModelProperty(value = "提醒类型,1-股价提醒;2-单日涨跌幅提醒", name = "alertType")
     private Integer alertType;
     /**
-     * 消息推送失败重试次数
-     */
-    @TableField(value = "RETRY_TIME")
-    @ApiModelProperty(value = "消息推送失败重试次数", name = "retryTime")
-    private Integer retryTime;
-    /**
      * 股票 id
      **/
     @TableField(value = "STOCK_ID")

@@ -36,6 +36,10 @@ public class MessagePushResultEntity extends BaseEntity {
 	 * */
 	@ApiModelProperty(value = "推送结果,0-失败,1-成功,2-未推送", name = "pushResult")
 	private Integer pushResult;
+
+	@ApiModelProperty(value = "推送记录值,部分推送方式可根据记录值查询实际推送结果")
+	private String pushRecord;
+
     /**
 	 * 消息发送失败重试次数
 	 * */

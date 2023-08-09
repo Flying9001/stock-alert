@@ -267,7 +267,7 @@ public class MessageHelper {
         String highOrLow = compareResult == 1 ? "高" : "低";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_PRICE_MAX :
                 MessageConst.ALERT_TYPE_PRICE_MIN);
-        String title = "股价提醒小助手-【" + userStock.getStockSource().getCompanyName() + "】最" + highOrLow + "股价提醒";
+        String title = "【" + userStock.getStockSource().getCompanyName() + "】最" + highOrLow + "股价提醒-股价提醒小助手";
         message.setTitle(title);
         StringBuilder contentBuilder = new StringBuilder("尊敬的用户");
         contentBuilder.append(userStock.getUserInfo().getNickName()).append(",</br>")
@@ -297,7 +297,7 @@ public class MessageHelper {
         String highOrLow = compareResult == 1 ? "涨" : "跌";
         message.setAlertType(compareResult == 1 ? MessageConst.ALERT_TYPE_INCREASE_PER_MAX :
                 MessageConst.ALERT_TYPE_INCREASE_PER_MIN);
-        String title = "股价提醒小助手-【" + userStock.getStockSource().getCompanyName() + "】单日最大" + highOrLow + "幅提醒";
+        String title = "【" + userStock.getStockSource().getCompanyName() + "】单日最大" + highOrLow + "幅提醒-股价提醒小助手";
         message.setTitle(title);
         StringBuilder contentBuilder = new StringBuilder("尊敬的用户");
         contentBuilder.append(userStock.getUserInfo().getNickName()).append(",</br>")

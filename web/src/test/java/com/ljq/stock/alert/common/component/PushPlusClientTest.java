@@ -28,13 +28,13 @@ class PushPlusClientTest {
 
     @Test
     void push() {
-      log.info("pushPlus config: {}", pushPlusConfig);
-      PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
-      pushParam.setToken(token);
-      pushParam.setTitle("plushPlush" + new Date());
-      pushParam.setContent(RandomUtil.randomString(50));
-      pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
-      pushPlusClient.push(pushParam);
+        log.info("pushPlus config: {}", pushPlusConfig);
+        PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
+        pushParam.setToken(token);
+        pushParam.setTitle("plushPlush" + new Date());
+        pushParam.setContent(RandomUtil.randomString(50));
+        pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
+        log.info("push result: {}", pushPlusClient.push(pushParam));
 
 
 
