@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2023/8/4 9:53:58                             */
+/* Created on:     2023/8/9 11:00:38                            */
 /*==============================================================*/
 
 
@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS USER_INFO;
 DROP TABLE IF EXISTS USER_STOCK;
 
 DROP TABLE IF EXISTS ADMIN_USER;
+
+DROP TABLE IF EXISTS MESSAGE_PUSH_RESULT;
 
 DROP TABLE IF EXISTS STOCK_GROUP_STOCK;
 
@@ -29,10 +31,9 @@ CREATE TABLE ALERT_MESSAGE
 (
    ID                   BIGINT NOT NULL COMMENT 'id',
    USER_ID              BIGINT COMMENT '用户信息',
-   PUSH_TYPE            TINYINT COMMENT '推送类型,1-短信,2-邮箱,3-pushplus',
-   PUSH_RESULT          TINYINT COMMENT '推送结果,0-失败,1-成功,2-未推送',
+   PUSH_COUNT           TINYINT NOT NULL DEFAULT 0 COMMENT '实际消息推送次数',
+   PUSH_TOTAL           TINYINT NOT NULL DEFAULT 0 COMMENT '总共消息所需推送次数',
    ALERT_TYPE           TINYINT COMMENT '提醒类型,1-股价提醒;2-单日涨跌幅提醒',
-   RETRY_TIME           TINYINT DEFAULT 0 COMMENT '消息发送失败重试次数',
    STOCK_ID             BIGINT COMMENT '股票 id',
    TITLE                VARCHAR(64) COMMENT '消息标题',
    CONTENT              VARCHAR(256) COMMENT '消息内容',
@@ -137,6 +138,26 @@ ENGINE = INNODB DEFAULT
 CHARSET = UTF8MB4;
 
 ALTER TABLE ADMIN_USER COMMENT '管理员用户';
+
+/*==============================================================*/
+/* Table: MESSAGE_PUSH_RESULT                                   */
+/*==============================================================*/
+CREATE TABLE MESSAGE_PUSH_RESULT
+(
+   ID                   BIGINT UNSIGNED NOT NULL COMMENT 'id',
+   MESSAGE_ID           BIGINT UNSIGNED COMMENT '消息id',
+   PUSH_TYPE            TINYINT COMMENT '推送类型,1-短信,2-邮箱,3-pushplus',
+   PUSH_RESULT          TINYINT COMMENT '推送结果,0-失败,1-成功,2-未推送',
+   PUSH_RECORD          VARCHAR(32) COMMENT '推送记录值,部分推送方式可根据记录值查询实际推送结果',
+   RETRY_TIME           TINYINT DEFAULT 0 COMMENT '消息发送失败重试次数',
+   CREATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   UPDATE_TIME          DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+   PRIMARY KEY (ID)
+)
+ENGINE = INNODB DEFAULT
+CHARSET = UTF8MB4;
+
+ALTER TABLE MESSAGE_PUSH_RESULT COMMENT '消息推送结果';
 
 /*==============================================================*/
 /* Table: STOCK_GROUP_STOCK                                     */
