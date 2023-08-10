@@ -12,13 +12,13 @@ public class MessageConst {
 
     /**
      * 消息发送状态
+     * 0: 发送失败
      * 1: 发送成功
-     * 2: 发送失败
-     * 3: 未发送
+     * 2: 未发送
      */
+    public static final int MESSAGE_SEND_FAIL = 0;
     public static final int MESSAGE_SEND_SUCCESS = 1;
-    public static final int MESSAGE_SEND_FAIL = 2;
-    public static final int MESSAGE_SEND_NOT = 3;
+    public static final int MESSAGE_SEND_NOT = 2;
 
     /**
      * 消息提醒类型

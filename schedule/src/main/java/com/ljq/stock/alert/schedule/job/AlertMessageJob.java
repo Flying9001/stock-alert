@@ -1,7 +1,6 @@
 package com.ljq.stock.alert.schedule.job;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -67,7 +66,7 @@ public class AlertMessageJob {
         List<StockSourceEntity> stockLiveList = StockUtil.getStocksLive(stockApiConfig, stockCacheList);
         // 更新缓存中股票数据
         Map<String, Object> stockSourceMap = new HashMap<>(16);
-        stockLiveList.stream().forEach(stockSource ->
+        stockLiveList.forEach(stockSource ->
                 stockSourceMap.put(CacheKeyUtil.createStockSourceKey(stockSource.getMarketType(),
                         stockSource.getStockCode()), stockSource));
         redisUtil.mapPutBatch(StockConst.CACHE_KEY_STOCK_SOURCE_ALL, stockSourceMap);
@@ -92,7 +91,7 @@ public class AlertMessageJob {
                 continue;
             }
             // 获取用户关注股票的实时价格
-            page.getRecords().stream().forEach(userStock ->
+            page.getRecords().forEach(userStock ->
                 userStock.setStockSource(redisUtil.mapGet(StockConst.CACHE_KEY_STOCK_SOURCE_ALL,
                         CacheKeyUtil.createStockSourceKey(userStock.getStockSource().getMarketType(),
                                 userStock.getStockSource().getStockCode()), StockSourceEntity.class)));
@@ -105,8 +104,7 @@ public class AlertMessageJob {
      * 消息重试,最多重试 5 次
      * 120 秒 1 次
      */
-    // todo 待重构
-//    @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
+    @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
     public void messageReTry() {
         // 统计所有当天发送失败的消息
         int pageSize = 1000;
@@ -117,7 +115,10 @@ public class AlertMessageJob {
         }
         long countAll = pageResult.getTotal();
         long times = countAll % pageSize == 0 ? countAll / pageSize : (countAll / pageSize) + 1;
-        log.info("retry alert message: {}", JSONUtil.toJsonStr(pageResult.getRecords()));
+        StringBuilder messageBuilder = new StringBuilder("retry alert message: \n");
+        pageResult.getRecords().forEach(alertMessage -> messageBuilder.append("id=").append(alertMessage.getId())
+                .append(",title=").append(alertMessage.getTitle()).append("\n"));
+        log.info("{}", messageBuilder);
         alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         for (int i = 2; i < times + 1; i++) {
             pageParam.setCurrent(i);
@@ -125,7 +126,9 @@ public class AlertMessageJob {
             if (CollUtil.isEmpty(pageResult.getRecords())) {
                 continue;
             }
-            log.info("retry alert message: {}", JSONUtil.toJsonStr(pageResult.getRecords()));
+            pageResult.getRecords().forEach(alertMessage -> messageBuilder.append("id=").append(alertMessage.getId())
+                    .append(",title=").append(alertMessage.getTitle()).append("\n"));
+            log.info("{}", messageBuilder);
             alertMessageMqSender.sendBatchAlertMessage(pageResult.getRecords());
         }
     }
@@ -191,7 +194,7 @@ public class AlertMessageJob {
         alertMessageService.saveBatch(messageSendList);
         // 推送预警消息
         StringBuilder messageBuilder = new StringBuilder("alert message: \n");
-        messageSendList.stream().forEach(alertMessage -> messageBuilder.append("id=").append(alertMessage.getId())
+        messageSendList.forEach(alertMessage -> messageBuilder.append("id=").append(alertMessage.getId())
                 .append(",title=").append(alertMessage.getTitle()).append("\n"));
         log.info("{}", messageBuilder);
         alertMessageMqSender.sendBatchAlertMessage(messageSendList);

@@ -1,5 +1,7 @@
 package com.ljq.stock.alert.service.component;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ljq.stock.alert.common.component.MailClient;
@@ -25,6 +27,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @Description: RabbitMQ 消息队列消费者
@@ -46,7 +51,7 @@ public class AlertMessageMqReceiver {
     @Resource
     private PushPlusClient pushPlusClient;
     @Resource
-    private MessagePushResultDao messagePushResultDao;
+    private MessagePushResultDao pushResultDao;
 
     /**
      * 发件人邮箱
@@ -136,53 +141,42 @@ public class AlertMessageMqReceiver {
      */
     private void sendAndUpdateMessage(AlertMessageEntity alertMessage) {
         log.info("alertMessage:id={},title={}", alertMessage.getId(), alertMessage.getTitle());
-        List<UserPushTypeEntity> pushTypeList = userPushTypeService.list(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+        // 查询用户支持的推送方式
+        List<UserPushTypeEntity> userPushTypeList = userPushTypeService.list(Wrappers
+                .lambdaQuery(UserPushTypeEntity.class)
                 .eq(UserPushTypeEntity::getUserId, alertMessage.getUserId())
                 .eq(UserPushTypeEntity::getEnable, EnableEnum.ENABLE.getCode()));
-        // 设置消息总共推送次数
-        alertMessage.setPushTotal(pushTypeList.size());
-        alertMessageService.updateById(alertMessage);
+        Map<Integer, String> userPushTypeMap = userPushTypeList.stream()
+                .collect(Collectors.toMap(UserPushTypeEntity::getPushType, UserPushTypeEntity::getReceiveAddress));
+        List<Integer> pushTypeList;
+        // 判断是是首次推送还是重试消息
+        if (Objects.isNull(alertMessage.getPushTotal()) || alertMessage.getPushTotal() < 1) {
+            // 首次推送
+            // 设置推送总次数
+            alertMessage.setPushTotal(userPushTypeList.size());
+            alertMessageService.updateById(alertMessage);
+            pushTypeList = userPushTypeList.stream().map(UserPushTypeEntity::getPushType).collect(Collectors.toList());
+        } else {
+            // 重试推送
+            // 查询推送失败的消息
+            List<MessagePushResultEntity> pushResultList = pushResultDao.selectList(Wrappers
+                    .lambdaQuery(MessagePushResultEntity.class)
+                    .eq(MessagePushResultEntity::getMessageId, alertMessage.getId())
+                    .eq(MessagePushResultEntity::getPushResult, MessageConst.MESSAGE_SEND_FAIL));
+            pushTypeList = pushResultList.stream().map(MessagePushResultEntity::getPushType).collect(Collectors.toList());
+        }
         try {
             // 根据推送类型推送消息
-            for (UserPushTypeEntity pushType : pushTypeList) {
-                switch (pushType.getPushType()) {
+            for (Integer pushType : pushTypeList) {
+                switch (pushType) {
                     case UserPushConst.USER_PUSH_TYPE_SMS:
                         // TODO 预留短信通知
                         continue;
                     case UserPushConst.USER_PUSH_TYPE_EMAIL:
-                        // 设置推送结果
-                        MessagePushResultEntity pushResultEmail = new MessagePushResultEntity();
-                        pushResultEmail.setMessageId(alertMessage.getId());
-                        pushResultEmail.setPushType(UserPushConst.USER_PUSH_TYPE_EMAIL);
-                        pushResultEmail.setRetryTime(0);
-                        // 推送消息
-                        mailClient.sendMail(pushType.getReceiveAddress(), alertMessage.getTitle(),
-                                alertMessage.getContent());
-                        // 更新推送结果
-                        pushResultEmail.setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
-                        messagePushResultDao.insert(pushResultEmail);
-                        alertMessage.setPushCount(alertMessage.getPushCount() + 1);
-                        alertMessageService.updateById(alertMessage);
+                        sendByEmail(alertMessage, userPushTypeMap.get(pushType));
                         continue;
                     case UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC:
-                        // 设置推送结果
-                        MessagePushResultEntity pushResultPushPlus = new MessagePushResultEntity();
-                        pushResultPushPlus.setMessageId(alertMessage.getId());
-                        pushResultPushPlus.setPushType(UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
-                        pushResultPushPlus.setRetryTime(0);
-                        // 推送消息
-                        PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
-                        pushParam.setToken(pushType.getReceiveAddress());
-                        pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
-                        pushParam.setTitle(alertMessage.getTitle());
-                        pushParam.setContent(alertMessage.getContent());
-                        String pushRecord = pushPlusClient.push(pushParam);
-                        // 更新推送结果
-                        pushResultPushPlus.setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
-                        pushResultPushPlus.setPushRecord(pushRecord);
-                        messagePushResultDao.insert(pushResultPushPlus);
-                        alertMessage.setPushCount(alertMessage.getPushCount() + 1);
-                        alertMessageService.updateById(alertMessage);
+                        sendByPushPlusWechatPublic(alertMessage, userPushTypeMap.get(pushType));
                         continue;
                     default:
                         break;
@@ -202,11 +196,81 @@ public class AlertMessageMqReceiver {
             } else {
                 wrapper.eq(MessagePushResultEntity::getPushType, UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
             }
-            messagePushResultDao.update(pushResultError, wrapper);
+            pushResultDao.update(pushResultError, wrapper);
             // 释放消息消费资源
             String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
                     String.valueOf(alertMessage.getId()), null);
             redisUtil.remove(cacheKey);
+        }
+    }
+
+    /**
+     * 通过邮件方式推送
+     *
+     * @param alertMessage
+     * @param receiveAddress
+     */
+    private void sendByEmail(AlertMessageEntity alertMessage, String receiveAddress) throws MessagingException {
+        // 设置推送结果
+        MessagePushResultEntity pushResult = new MessagePushResultEntity();
+        pushResult.setMessageId(alertMessage.getId());
+        pushResult.setPushType(UserPushConst.USER_PUSH_TYPE_EMAIL);
+        // 推送消息
+        mailClient.sendMail(receiveAddress, alertMessage.getTitle(), alertMessage.getContent());
+        // 更新推送结果
+        LambdaQueryWrapper<MessagePushResultEntity> wrapper = Wrappers.lambdaQuery(MessagePushResultEntity.class);
+        wrapper.eq(MessagePushResultEntity::getMessageId, alertMessage.getId())
+                .eq(MessagePushResultEntity::getPushType, UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
+        MessagePushResultEntity pushResultDb = pushResultDao.selectOne(wrapper);
+        pushResult.setPushResult(MessageConst.MESSAGE_SEND_SUCCESS);
+        if (Objects.isNull(pushResultDb)) {
+            pushResult.setRetryTime(0);
+            pushResultDao.insert(pushResult);
+        } else {
+            pushResultDao.update(pushResult, wrapper);
+        }
+        alertMessage.setPushCount(alertMessage.getPushCount() + 1);
+        alertMessageService.updateById(alertMessage);
+    }
+
+    /**
+     * 通过 pushPlus 微信公众号消息推送
+     *
+     * @param alertMessage
+     * @param receiveAddress
+     */
+    private void sendByPushPlusWechatPublic(AlertMessageEntity alertMessage, String receiveAddress) {
+        // 设置推送结果
+        MessagePushResultEntity pushResult = new MessagePushResultEntity();
+        pushResult.setMessageId(alertMessage.getId());
+        pushResult.setPushType(UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
+        // 推送消息
+        PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
+        pushParam.setToken(receiveAddress);
+        pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
+        pushParam.setTitle(alertMessage.getTitle());
+        pushParam.setContent(alertMessage.getContent());
+        String pushRecord = pushPlusClient.push(pushParam);
+        // 推送结果
+        int realPushResult = StrUtil.isBlank(pushRecord) ? MessageConst.MESSAGE_SEND_FAIL
+                : MessageConst.MESSAGE_SEND_SUCCESS;
+        // 更新推送结果
+        LambdaQueryWrapper<MessagePushResultEntity> wrapper = Wrappers.lambdaQuery(MessagePushResultEntity.class);
+        wrapper.eq(MessagePushResultEntity::getMessageId, alertMessage.getId())
+                .eq(MessagePushResultEntity::getPushType, UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
+        MessagePushResultEntity pushResultDb = pushResultDao.selectOne(wrapper);
+        pushResult.setPushResult(realPushResult);
+        pushResult.setPushRecord(pushRecord);
+        if (Objects.isNull(pushResultDb)) {
+            pushResult.setRetryTime(0);
+            pushResultDao.insert(pushResult);
+        } else {
+            pushResultDao.update(pushResult, wrapper);
+        }
+        // 只有推送成功才增加消息推送次数
+        if (Objects.equals(realPushResult, MessageConst.MESSAGE_SEND_SUCCESS)) {
+            alertMessage.setPushCount(alertMessage.getPushCount() + 1);
+            alertMessageService.updateById(alertMessage);
         }
     }
 

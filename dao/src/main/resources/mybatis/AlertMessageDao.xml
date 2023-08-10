@@ -35,8 +35,6 @@
     <!-- 预警消息-列表字段 -->
     <sql id="alert_message_list_field" >
         <include refid="alert_message_base_field" />
-        ,
-        upt.`RECEIVE_ADDRESS` AS `RECEIVE_ADDRESS`
     </sql>
 
     <!-- 校验重复性 -->
@@ -54,12 +52,8 @@
         SELECT
         <include refid="alert_message_list_field" />
         FROM `ALERT_MESSAGE` m
-        LEFT JOIN `USER_PUSH_TYPE` upt ON upt.USER_ID = m.USER_ID AND upt.PUSH_TYPE = m.PUSH_TYPE
-        WHERE m.PUSH_RESULT != 1
-            AND upt.ENABLE = 1
-            AND m.PUSH_TYPE = upt.PUSH_TYPE
+        WHERE (m.push_count &lt; m.push_total OR m.push_total = 0)
             AND (DATEDIFF(NOW(),m.create_time) &lt; 1)
-            AND m.RETRY_TIME &lt; 5
     </select>
 
 </mapper>
