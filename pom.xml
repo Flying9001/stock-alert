@@ -36,6 +36,7 @@
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <hutool.version>5.6.1</hutool.version>
         <springfox-swagger3.version>3.0.0</springfox-swagger3.version>
+        <knife4j-spring-ui.version>3.0.3</knife4j-spring-ui.version>
         <auth.jwt.version>3.16.0</auth.jwt.version>
         <stock.alert.version>1.0.0</stock.alert.version>
         <spring-boot.version>2.5.1</spring-boot.version>
@@ -97,6 +98,12 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>${springfox-swagger3.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-ui</artifactId>
+            <version>${knife4j-spring-ui.version}</version>
+        </dependency>
+
         <!-- Apache httpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

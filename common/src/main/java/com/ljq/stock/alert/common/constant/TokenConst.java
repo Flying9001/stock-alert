@@ -37,7 +37,7 @@ public class TokenConst {
      * 无需 token 的接口路径
      */
     public static final String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**", "/swagger-resources**",
-            "/swagger-resources/**",
+            "/swagger-resources/**", "/doc.html", "/favicon.ico", "/error",
             "/api/user/info/checkCode", "/api/user/info/register", "/api/user/info/login",
             "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg",
             "/admin/admin/user/login"};

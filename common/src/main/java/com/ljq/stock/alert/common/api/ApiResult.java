@@ -1,7 +1,6 @@
 package com.ljq.stock.alert.common.api;
 
 import com.ljq.stock.alert.common.constant.RequestConst;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.slf4j.MDC;
@@ -14,7 +13,6 @@ import java.util.Map;
  * @Date: 2020/9/3
  */
 @Data
-@ApiModel(value = "接口返回结果",description = "接口返回结果")
 public class ApiResult<T> {
 
     /**
@@ -47,7 +45,6 @@ public class ApiResult<T> {
     /**
      * 返回数据
      */
-    @ApiModelProperty(value = "返回数据", name = "data")
     private T data;
     /**
      * 额外返回数据
