@@ -107,7 +107,9 @@ maven 打包
 
 [网易股票接口使用说明](./doc/stock_api_netease.md "./doc/stock_api_netease.md")  
 
+**扫码体验微信小程序(用户端)**
 
+<img src="https://cdn.jsdelivr.net/gh/Flying9001/images/pic2023/stock_alert_mini_program_qrcode_30.jpg" alt="stock_alert_mini_program_qrcode_30" style="zoom:30%;" />
 
 
 
