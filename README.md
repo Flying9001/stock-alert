@@ -26,6 +26,12 @@
 
 ​    
 
+### 消息推送模块架构设计
+
+![multi-type-message-push-v1.0](https://cdn.jsdelivr.net/gh/Flying9001/images/pic2023/multi-type-message-push-v1.0.jpg)
+
+
+
 ### 项目运行环境  
 
 - JDK 1.8+  
