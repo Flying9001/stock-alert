@@ -60,3 +60,13 @@ pushPlus:
   api:
     pushWechatPublic: https://www.pushplus.plus/send
 
+## wxPusher
+wxPusher:
+  appToken: xxxx
+  successCode: 1000
+  action:
+    subscribe: app_subscribe
+  qrCode:
+    validTime: 3600
+  api:
+    createQrCode: https://wxpusher.zjiecode.com/api/fun/create/qrcode

@@ -1,16 +1,20 @@
 package com.ljq.stock.alert.web.controller.app;
 
+import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.config.WechatConfig;
+import com.ljq.stock.alert.common.config.WxPusherConfig;
 import com.ljq.stock.alert.model.param.common.WechatMiniMsgParam;
+import com.ljq.stock.alert.model.param.common.WxPusherCallbackParam;
+import com.ljq.stock.alert.service.UserPushTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @Description: 公共模块控制层
@@ -23,8 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "公共模块", tags = "公共模块")
 public class CommonController {
 
-    @Autowired
+    @Resource
     private WechatConfig wechatConfig;
+    @Resource
+    private UserPushTypeService pushTypeService;
+    @Resource
+    private WxPusherConfig wxPusherConfig;
+
 
     /**
      * 获取微信小程序消息推送Token
@@ -38,5 +47,33 @@ public class CommonController {
 
         return msgParam.getEchostr();
     }
+
+    /**
+     * WxPusher 回调接口
+     *
+     * @return
+     */
+    @PostMapping(value = "/wxpusher/callback", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "WxPusher 回调接口", notes = "WxPusher 回调接口")
+    public ResponseEntity<ApiResult> wxPusherCallback(@Validated @RequestBody WxPusherCallbackParam callbackParam) {
+        if (wxPusherConfig.getActionSubscribe().equalsIgnoreCase(callbackParam.getAction())) {
+            return ResponseEntity.ok(pushTypeService.addWxPusher(callbackParam));
+        }
+        return ResponseEntity.ok(ApiResult.success());
+    }
+
+    /**
+     * WxPusher 创建二维码
+     *
+     * @return
+     */
+    @PostMapping(value = "/wxpusher/qrcode/create", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiOperation(value = "WxPusher 创建二维码")
+    public ResponseEntity<ApiResult> wxPusherCreateQrCode() {
+        return ResponseEntity.ok(pushTypeService.createWxPusherQrCode());
+    }
+
+
+
 
 }

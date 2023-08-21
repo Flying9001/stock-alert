@@ -3,6 +3,9 @@ package com.ljq.stock.alert.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,17 +13,25 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
+import com.ljq.stock.alert.common.config.WxPusherConfig;
+import com.ljq.stock.alert.common.constant.EnableEnum;
 import com.ljq.stock.alert.common.constant.UserPushConst;
+import com.ljq.stock.alert.dao.UserInfoDao;
 import com.ljq.stock.alert.dao.UserPushTypeDao;
+import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
+import com.ljq.stock.alert.model.param.common.WxPusherCallbackParam;
+import com.ljq.stock.alert.model.param.common.WxPusherCreateQrCodeParam;
 import com.ljq.stock.alert.model.param.userpushtype.*;
 import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserPushTypeService;
 import com.ljq.stock.alert.service.util.SessionUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,10 +40,16 @@ import java.util.Objects;
  * @Author: junqiang.lu
  * @Date: 2023/7/31
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPushTypeEntity>
         implements UserPushTypeService {
+
+    @Resource
+    private UserInfoDao userInfoDao;
+    @Resource
+    private WxPusherConfig wxPusherConfig;
 
     /**
      * 保存(单条)
@@ -52,8 +69,7 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
         }
         // 校验是否重复插入
         for (UserPushTypeEntity entity : entityList) {
-            if (Objects.equals(entity.getPushType(), userPushTypeSaveParam.getPushType())
-                    && entity.getReceiveAddress().equalsIgnoreCase(userPushTypeSaveParam.getReceiveAddress())) {
+            if (Objects.equals(entity.getPushType(), userPushTypeSaveParam.getPushType())) {
                 return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_REPEAT);
             }
         }
@@ -65,6 +81,66 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
         // 保存
         super.save(userPushTypeParam);
         return ApiResult.success(userPushTypeParam);
+    }
+
+    /**
+     * 添加 WxPusher 推送方式
+     *
+     * @param callbackParam
+     * @return
+     */
+    @Override
+    public ApiResult addWxPusher(WxPusherCallbackParam callbackParam) {
+        Long userId = Long.parseLong(callbackParam.getData().getExtra());
+        // 校验用户是否存在
+        UserInfoEntity userInfoDb = userInfoDao.selectById(userId);
+        if (Objects.isNull(userInfoDb)) {
+            return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
+        }
+        // 校验推送方式数量
+        List<UserPushTypeEntity> entityList = super.list(Wrappers.lambdaQuery(UserPushTypeEntity.class)
+                .eq(UserPushTypeEntity::getUserId, userId));
+        if (CollUtil.isNotEmpty(entityList) && entityList.size() >= UserPushConst.USER_PUSH_TYPE_MAX) {
+            return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_MAX_ERROR);
+        }
+        // 校验是否重复插入
+        for (UserPushTypeEntity entity : entityList) {
+            if (Objects.equals(entity.getPushType(), UserPushConst.USER_PUSH_TYPE_WXPUSHER)) {
+                return ApiResult.fail(ApiMsgEnum.USER_PUSH_TYPE_REPEAT);
+            }
+        }
+        // 请求参数获取
+        UserPushTypeEntity userPushTypeParam = new UserPushTypeEntity();
+        userPushTypeParam.setUserId(userId);
+        userPushTypeParam.setPushType(UserPushConst.USER_PUSH_TYPE_WXPUSHER);
+        userPushTypeParam.setReceiveAddress(callbackParam.getData().getUid());
+        userPushTypeParam.setEnable(EnableEnum.ENABLE.getCode());
+        // 保存
+        super.save(userPushTypeParam);
+        return ApiResult.success();
+    }
+
+    /**
+     * 创建 wxPusher 二维码
+     *
+     * @return
+     */
+    @Override
+    public ApiResult createWxPusherQrCode() {
+        UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
+        WxPusherCreateQrCodeParam createQrCodeParam = new WxPusherCreateQrCodeParam();
+        createQrCodeParam.setAppToken(wxPusherConfig.getAppToken());
+        createQrCodeParam.setExtra(String.valueOf(userTokenVo.getId()));
+        createQrCodeParam.setValidTime(wxPusherConfig.getQrCodeValidTime());
+        String responseStr = HttpUtil.post(wxPusherConfig.getApiCreateQrCode(), JSONUtil.toJsonStr(createQrCodeParam),
+                60000);
+        JSONObject responseJson = JSONUtil.parseObj(responseStr);
+        Integer responseCode = responseJson.get("code", Integer.class, true);
+        if (!Objects.equals(responseCode, wxPusherConfig.getSuccessCode())) {
+            log.warn("wxPush qrcode create error,reason: {}",responseStr);
+            return ApiResult.fail();
+        }
+        return ApiResult.success(responseJson.getByPath("data.url"));
     }
 
     /**

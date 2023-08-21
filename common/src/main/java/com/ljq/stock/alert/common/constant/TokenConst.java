@@ -39,7 +39,7 @@ public class TokenConst {
     public static final String[] NO_TOKEN_API = {"/swagger-ui/**", "/webjars/**", "/v3/**", "/swagger-resources**",
             "/swagger-resources/**", "/doc.html", "/favicon.ico", "/error",
             "/api/user/info/checkCode", "/api/user/info/register", "/api/user/info/login",
-            "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg",
+            "/api/user/info/login/wechat/mini", "/api/common/wechat/minMsg", "/api/common/wxpusher/callback",
             "/admin/admin/user/login"};
 
 

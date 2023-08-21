@@ -3,6 +3,7 @@ package com.ljq.stock.alert.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
+import com.ljq.stock.alert.model.param.common.WxPusherCallbackParam;
 import com.ljq.stock.alert.model.param.userpushtype.*;
 
 /**
@@ -19,6 +20,22 @@ public interface UserPushTypeService extends IService<UserPushTypeEntity> {
      * @return
      */
     ApiResult save(UserPushTypeSaveParam userPushTypeSaveParam);
+
+    /**
+     * 添加 WxPusher 推送方式
+     *
+     * @param callbackParam
+     * @return
+     */
+    ApiResult addWxPusher(WxPusherCallbackParam callbackParam);
+
+
+    /**
+     * 创建 wxPusher 二维码
+     *
+     * @return
+     */
+    ApiResult createWxPusherQrCode();
 
     /**
      * 查询详情(单条)
