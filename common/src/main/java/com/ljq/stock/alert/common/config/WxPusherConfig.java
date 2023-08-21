@@ -43,5 +43,11 @@ public class WxPusherConfig {
     @Value(value = "${wxPusher.api.createQrCode: null}")
     private String apiCreateQrCode;
 
+    /**
+     * 推送消息接口路径
+     */
+    @Value(value = "${wxPusher.api.push: null}")
+    private String apiPush;
+
 
 }

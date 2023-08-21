@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ljq.stock.alert.common.component.MailClient;
 import com.ljq.stock.alert.common.component.PushPlusClient;
 import com.ljq.stock.alert.common.component.RedisUtil;
+import com.ljq.stock.alert.common.component.WxPusherClient;
 import com.ljq.stock.alert.common.config.RabbitMqConfig;
 import com.ljq.stock.alert.common.constant.EnableEnum;
 import com.ljq.stock.alert.common.constant.MessageConst;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +54,8 @@ public class AlertMessageMqReceiver {
     private PushPlusClient pushPlusClient;
     @Resource
     private MessagePushResultDao pushResultDao;
+    @Resource
+    private WxPusherClient wxPusherClient;
 
     /**
      * 发件人邮箱
@@ -116,7 +120,7 @@ public class AlertMessageMqReceiver {
                     mailClient.sendMail(alertMessage.getReceiveAddress(), alertMessage.getTitle(), alertMessage.getContent());
                     break;
                 case UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC:
-                    PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
+                    PushPlusClient.PushParam pushParam = new PushPlusClient.PushParam();
                     pushParam.setToken(alertMessage.getReceiveAddress());
                     pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
                     pushParam.setTitle(alertMessage.getTitle());
@@ -177,6 +181,9 @@ public class AlertMessageMqReceiver {
                         continue;
                     case UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC:
                         sendByPushPlusWechatPublic(alertMessage, userPushTypeMap.get(pushType));
+                        continue;
+                    case UserPushConst.USER_PUSH_TYPE_WXPUSHER:
+                        sendByWxPusher(alertMessage, userPushTypeMap.get(pushType));
                         continue;
                     default:
                         break;
@@ -245,7 +252,7 @@ public class AlertMessageMqReceiver {
         pushResult.setMessageId(alertMessage.getId());
         pushResult.setPushType(UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
         // 推送消息
-        PushPlusClient.PushPlusPushParam pushParam = new PushPlusClient.PushPlusPushParam();
+        PushPlusClient.PushParam pushParam = new PushPlusClient.PushParam();
         pushParam.setToken(receiveAddress);
         pushParam.setChannel(PushPlusChannelEnum.WECHAT_PUBLIC.getChannel());
         pushParam.setTitle(alertMessage.getTitle());
@@ -274,6 +281,46 @@ public class AlertMessageMqReceiver {
         }
     }
 
+    /**
+     * 通过 WxPusher 微信公众号消息推送
+     *
+     * @param alertMessage
+     * @param receiveAddress
+     */
+    private void sendByWxPusher(AlertMessageEntity alertMessage, String receiveAddress) {
+        // 设置推送结果
+        MessagePushResultEntity pushResult = new MessagePushResultEntity();
+        pushResult.setMessageId(alertMessage.getId());
+        pushResult.setPushType(UserPushConst.USER_PUSH_TYPE_WXPUSHER);
+        // 推送消息
+        WxPusherClient.PushParam pushParam = new WxPusherClient.PushParam();
+        pushParam.setSummary(alertMessage.getTitle());
+        pushParam.setContentType(1);
+        pushParam.setContent(alertMessage.getContent());
+        pushParam.setUids(Collections.singletonList(receiveAddress));
+        String pushRecord = wxPusherClient.push(pushParam);
+        // 推送结果
+        int realPushResult = StrUtil.isBlank(pushRecord) ? MessageConst.MESSAGE_SEND_FAIL
+                : MessageConst.MESSAGE_SEND_SUCCESS;
+        // 更新推送结果
+        LambdaQueryWrapper<MessagePushResultEntity> wrapper = Wrappers.lambdaQuery(MessagePushResultEntity.class);
+        wrapper.eq(MessagePushResultEntity::getMessageId, alertMessage.getId())
+                .eq(MessagePushResultEntity::getPushType, UserPushConst.USER_PUSH_TYPE_WXPUSHER);
+        MessagePushResultEntity pushResultDb = pushResultDao.selectOne(wrapper);
+        pushResult.setPushResult(realPushResult);
+        pushResult.setPushRecord(pushRecord);
+        if (Objects.isNull(pushResultDb)) {
+            pushResult.setRetryTime(0);
+            pushResultDao.insert(pushResult);
+        } else {
+            pushResultDao.update(pushResult, wrapper);
+        }
+        // 只有推送成功才增加消息推送次数
+        if (Objects.equals(realPushResult, MessageConst.MESSAGE_SEND_SUCCESS)) {
+            alertMessage.setPushCount(alertMessage.getPushCount() + 1);
+            alertMessageService.updateById(alertMessage);
+        }
+    }
 
 
 }

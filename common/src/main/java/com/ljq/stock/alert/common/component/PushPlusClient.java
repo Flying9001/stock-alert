@@ -34,7 +34,7 @@ public class PushPlusClient {
      *
      * @param pushParam
      */
-    public String push(PushPlusPushParam pushParam) {
+    public String push(PushParam pushParam) {
         String responseStr = HttpUtil.post(pushPlusConfig.getApiPushWechatPublic(), BeanUtil.beanToMap(pushParam));
         JSONObject responseJson = JSONUtil.parseObj(responseStr);
         Integer responseCode = responseJson.get("code", Integer.class);
@@ -46,7 +46,7 @@ public class PushPlusClient {
 
     @Data
     @ApiModel(value = "PushPlus 推送请求参数", description = "PushPlus 推送请求参数")
-    public static class PushPlusPushParam implements Serializable {
+    public static class PushParam implements Serializable {
 
         private static final long serialVersionUID = -9050774274884470793L;
 

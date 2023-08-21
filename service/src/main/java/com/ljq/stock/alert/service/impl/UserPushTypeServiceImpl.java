@@ -3,9 +3,6 @@ package com.ljq.stock.alert.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -13,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
-import com.ljq.stock.alert.common.config.WxPusherConfig;
+import com.ljq.stock.alert.common.component.WxPusherClient;
 import com.ljq.stock.alert.common.constant.EnableEnum;
 import com.ljq.stock.alert.common.constant.UserPushConst;
 import com.ljq.stock.alert.dao.UserInfoDao;
@@ -21,7 +18,6 @@ import com.ljq.stock.alert.dao.UserPushTypeDao;
 import com.ljq.stock.alert.model.entity.UserInfoEntity;
 import com.ljq.stock.alert.model.entity.UserPushTypeEntity;
 import com.ljq.stock.alert.model.param.common.WxPusherCallbackParam;
-import com.ljq.stock.alert.model.param.common.WxPusherCreateQrCodeParam;
 import com.ljq.stock.alert.model.param.userpushtype.*;
 import com.ljq.stock.alert.model.vo.UserTokenVo;
 import com.ljq.stock.alert.service.UserPushTypeService;
@@ -49,7 +45,7 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Resource
     private UserInfoDao userInfoDao;
     @Resource
-    private WxPusherConfig wxPusherConfig;
+    private WxPusherClient wxPusherClient;
 
     /**
      * 保存(单条)
@@ -128,19 +124,9 @@ public class UserPushTypeServiceImpl extends ServiceImpl<UserPushTypeDao, UserPu
     @Override
     public ApiResult createWxPusherQrCode() {
         UserTokenVo userTokenVo = SessionUtil.currentSession().getUserToken();
-        WxPusherCreateQrCodeParam createQrCodeParam = new WxPusherCreateQrCodeParam();
-        createQrCodeParam.setAppToken(wxPusherConfig.getAppToken());
+        WxPusherClient.CreateQrCodeParam createQrCodeParam = new WxPusherClient.CreateQrCodeParam();
         createQrCodeParam.setExtra(String.valueOf(userTokenVo.getId()));
-        createQrCodeParam.setValidTime(wxPusherConfig.getQrCodeValidTime());
-        String responseStr = HttpUtil.post(wxPusherConfig.getApiCreateQrCode(), JSONUtil.toJsonStr(createQrCodeParam),
-                60000);
-        JSONObject responseJson = JSONUtil.parseObj(responseStr);
-        Integer responseCode = responseJson.get("code", Integer.class, true);
-        if (!Objects.equals(responseCode, wxPusherConfig.getSuccessCode())) {
-            log.warn("wxPush qrcode create error,reason: {}",responseStr);
-            return ApiResult.fail();
-        }
-        return ApiResult.success(responseJson.getByPath("data.url"));
+        return ApiResult.success(wxPusherClient.createQrCode(createQrCodeParam));
     }
 
     /**

@@ -70,3 +70,4 @@ wxPusher:
     validTime: 3600
   api:
     createQrCode: https://wxpusher.zjiecode.com/api/fun/create/qrcode
+    push: https://wxpusher.zjiecode.com/api/send/message
