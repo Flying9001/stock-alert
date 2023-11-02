@@ -103,10 +103,12 @@ public class TokenUtil {
                     if (!requestPath.startsWith(RequestConst.REQUEST_URL_PREFIX_ADMIN)) {
                         return ApiMsgEnum.USER_NO_PERMISSION;
                     }
+                    break;
                 case TokenConst.ACCOUNT_TYPE_USER:
                     if (!requestPath.startsWith(RequestConst.REQUEST_URL_PREFIX_APP)) {
                         return ApiMsgEnum.USER_NO_PERMISSION;
                     }
+                    break;
                 default: break;
             }
             // 刷新 Token

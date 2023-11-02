@@ -40,6 +40,7 @@
         <auth.jwt.version>3.16.0</auth.jwt.version>
         <stock.alert.version>1.0.0</stock.alert.version>
         <spring-boot.version>2.5.1</spring-boot.version>
+        <mysql-j.version>8.2.0</mysql-j.version>
 
     </properties>
 
@@ -65,9 +66,9 @@
         </dependency>
         <!-- mysql -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql-j.version}</version>
             <scope>runtime</scope>
         </dependency>
         <!-- Mybatis Plus(include Mybatis) -->
