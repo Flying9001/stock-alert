@@ -50,37 +50,11 @@
 - RabbitMQ  
 - Redis  
 
+## 部署
 
+[Stock Alert 部署文档](./doc/stock_alert_deploy_doc.md) 
 
-### 运行  
-
-#### 可执行文件(Linux/Unix)  
-
-下载项目打包文件  
-
-解压  
-
-修改数据库信息  
-
-修改邮箱信息  
-
-执行启动脚本  
-
-停止项目  
-
-
-
-#### 源码运行(Windows/Linux/Unix)  
-
-克隆项目  
-
-修改配置信息(数据库、邮箱等)  
-
-maven 打包  
-
-启动项目  
-
-​    
+   
 
 ### 文档  
 
