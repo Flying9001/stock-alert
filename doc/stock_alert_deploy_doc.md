@@ -1,6 +1,6 @@
 ## Stock Alert 部署文档
 
-Stock Alert 项目部署文档，已 centOS 7(Linux) 为例。
+Stock Alert 项目部署文档，以 centOS 7(Linux) 为例。
 
 
 
@@ -155,9 +155,9 @@ sudo yum install -y rabbitmq-server-3.7.10-1.el7.noarch.rpm
 配置  
 
 ```
-sudo systemctl start rabbitmq-server.service
+sudo systemctl start rabbitmq-server
 
-sudo systemctl enable rabbitmq-server.service
+sudo systemctl enable rabbitmq-server
 
 sudo rabbitmq-plugins enable rabbitmq_management
 
@@ -183,7 +183,7 @@ sudo yum install epel-release
 
 sudo yum install nginx
 
-sudo systemctl enabled nginxd
+sudo systemctl enabled nginx
 ```
 
 如遇到安装后请求返回 502，可参考:  
@@ -197,7 +197,7 @@ setsebool -P httpd_can_network_connect 1
 配置文件路径:  
 
 ```
-/etc/nginx/nginx.cnf
+/etc/nginx/nginx.conf
 ```
 
 配置文件示例:  
