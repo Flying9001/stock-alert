@@ -9,7 +9,7 @@ spring:
   datasource:
     url: "jdbc:mysql://172.16.140.10:3306/stock_alert?useUnicode=true&characterEncoding=utf8\
       &useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8\
-      &useSSL=false&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true\
+      &allowPublicKeyRetrieval=true&useSSL=false&allowMultiQueries=true&autoReconnect=true\
       &nullCatalogMeansCurrent=true"
     username: root
     password: "Qwert12345!"
