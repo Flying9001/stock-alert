@@ -1,152 +1,213 @@
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455013471152525313, 2, '002475', '立讯精密');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455013591168339969, 2, '300750', '宁德时代');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455013775155679233, 1, '600009', '上海机场');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455014012049969153, 2, '002487', '大金重工');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455014373175349250, 2, '002707', '众信旅游');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455016754466279426, 2, '000333', '美的集团');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455016832698437633, 2, '002415', '海康威视');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455016909085102081, 2, '002008', '大族激光');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455017032607354882, 2, '300413', '芒果超媒');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455017148223344642, 2, '002594', '比亚迪');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455017344499994626, 2, '000725', '京东方Ａ');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455017477094526977, 1, '605011', '杭州热电');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455017628878000130, 2, '002457', '青龙管业');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455084911742795778, 1, '600745', '闻泰科技');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455085225002778626, 1, '516800', '智能制造');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455085312198164482, 1, '515000', '科技ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455085552804413441, 1, '516020', '化工ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455085945391267842, 1, '512170', '医疗ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086006548414465, 1, '515330', '天弘300');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086080313638913, 1, '513330', '恒生互联');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086251206361090, 2, '159967', '创成长');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086340586979330, 1, '515170', '食品饮料');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086396689989634, 1, '515210', '钢铁ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086456911806465, 1, '510230', '金融ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086516277985281, 1, '515880', '通信ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086574188740609, 1, '512720', '计算机');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086642958548994, 1, '512290', '生物医药');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455086746754990082, 2, '159865', '养殖ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455087871956729858, 1, '515220', '煤炭ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088022242836481, 2, '159902', '中小100');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088108620333057, 1, '510050', '50ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088163783819266, 1, '510500', '500ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088214832693249, 1, '510300', '300ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088276279246850, 2, '159915', '创业板');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088569083609089, 1, '512070', '证券保险');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088797467656194, 1, '513180', '恒指科技');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088885543845890, 2, '159869', '游戏ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455088986286833665, 2, '000630', '铜陵有色');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455089072932765697, 1, '601212', '白银有色');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455089126120734722, 1, '512200', '地产ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455089192843722754, 1, '512010', '医药ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455089779312279553, 2, '160723', '嘉实原油');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455089866448945153, 2, '162411', '华宝油气');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090141796614146, 1, '515030', '新汽车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090199740923905, 1, '588000', '科创50');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090262412214273, 2, '159995', '芯片ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090327419731969, 1, '512980', '传媒ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090380989382658, 1, '515260', '电子ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090489680576513, 2, '159931', '金融ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090593175027714, 2, '159920', '恒生ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090651933032449, 2, '159996', '家电ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090719624904706, 1, '513050', '中概互联');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090784590479362, 1, '512880', '证券ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455090851976167426, 1, '510800', '上证50');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091122793988098, 2, '159934', '黄金ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091211931336705, 1, '512581', '环保ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091441972133889, 1, '515050', '5GETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091492442193922, 1, '512800', '银行ETF');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091634712985601, 2, '300348', '长亮科技');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091693185777666, 2, '000100', 'TCL科技');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091771782840322, 1, '601872', '招商轮船');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091855039774721, 2, '000063', '中兴通讯');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455091929614499842, 2, '300059', '东方财富');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092012032573441, 1, '603195', '公牛集团');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092103552286721, 1, '601857', '中国石油');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092187920711682, 2, '002714', '牧原股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092257017675777, 2, '002157', '正邦科技');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092359455162369, 2, '300144', '宋城演艺');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092424257159169, 2, '000651', '格力电器');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092890076561409, 2, '002236', '大华股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455092957634215937, 1, '601155', '新城控股');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093014789996545, 1, '600776', '东方通信');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093097023520769, 2, '002352', '顺丰控股');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093179940716545, 1, '600660', '福耀玻璃');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093252254711809, 2, '300866', '安克创新');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093325566951426, 1, '600309', '万华化学');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093400221368322, 1, '601766', '中国中车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093491032244226, 2, '000558', '莱茵体育');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093578361847809, 2, '002460', '赣锋锂业');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093709089914882, 2, '002223', '鱼跃医疗');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093771979309057, 1, '603392', '万泰生物');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093829164449794, 1, '600196', '复星医药');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455093976820727810, 2, '002901', '大博医疗');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455094033338974209, 2, '000518', '四环生物');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455094128344154113, 1, '600789', '鲁抗医药');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455094189211893761, 1, '600085', '同仁堂');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455094271411863554, 2, '300122', '智飞生物');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455094403909926913, 1, '600763', '通策医疗');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455102216015036417, 2, '300357', '我武生物');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455102288199008258, 2, '000538', '云南白药');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455102347426775042, 2, '000661', '长春高新');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455102436354408449, 2, '300015', '爱尔眼科');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455102572526682113, 2, '002044', '美年健康');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455103765323825154, 1, '600905', '三峡能源');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104054592389122, 1, '600116', '三峡水利');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104160066551810, 2, '002532', '天山铝业');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104214999351297, 2, '002131', '利欧股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104262726336514, 2, '000157', '中联重科');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104326861438977, 1, '600031', '三一重工');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104389172019202, 2, '000680', '山推股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104680818753537, 1, '600815', '厦工股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104751132065793, 2, '000528', '柳 工');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104795189035009, 2, '300198', '纳川股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455104850184749058, 2, '002205', '国统股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455137827535745025, 2, '002372', '伟星新材');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455137967742939138, 1, '601595', '上海电影');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138012798152706, 1, '600977', '中国电影');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138078816497665, 2, '002739', '万达电影');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138227722678273, 1, '600316', '洪都航空');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138316839055362, 1, '601021', '春秋航空');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138404168658946, 2, '002928', '华夏航空');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138504899063810, 1, '603885', '吉祥航空');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138595428921346, 1, '600115', '中国东航');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138647958384641, 1, '600029', '南方航空');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455138999898238977, 2, '000089', '深圳机场');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139091216625665, 1, '600004', '白云机场');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139190487412737, 2, '000796', '凯撒旅业');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139254052089858, 1, '603199', '九华旅游');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139327540490241, 1, '600054', '黄山旅游');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139383224070145, 2, '000610', '西安旅游');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139433522163713, 2, '000978', '桂林旅游');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139669833445377, 1, '601318', '中国平安');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139730210451458, 1, '600027', '华电国际');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139807389839362, 1, '600310', '桂东电力');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455139955390050306, 2, '000876', '新 希 望');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140015137910785, 2, '000001', '平安银行');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140082045448194, 2, '000010', '美丽生态');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140126152749057, 2, '000029', '深深房Ａ');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140196617056257, 1, '600048', '保利发展');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140263910469633, 1, '600036', '招商银行');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140428746616834, 1, '605499', '东鹏饮料');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140656295997442, 2, '002563', '森马服饰');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140793659453442, 1, '605338', '巴比食品');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140850005733378, 1, '600519', '贵州茅台');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140913348112385, 2, '000596', '古井贡酒');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455140983720144898, 1, '603369', '今世缘');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141055493074946, 2, '000858', '五 粮 液');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141116797022209, 1, '600887', '伊利股份');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141206882283521, 2, '000895', '双汇发展');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141612421148673, 1, '603288', '海天味业');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141670097022977, 2, '002515', '金字火腿');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141724656529409, 2, '002481', '双塔食品');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141787894050817, 1, '603719', '良品铺子');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141844039004162, 2, '300783', '三只松鼠');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455141922992582658, 2, '000625', '长安汽车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142089695195138, 1, '600733', '北汽蓝谷');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142138789523457, 1, '601238', '广汽集团');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142184318693377, 1, '600104', '上汽集团');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142272290025474, 1, '601633', '长城汽车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142323867381761, 1, '600609', '金杯汽车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142369866313729, 1, '600006', '东风汽车');
-INSERT INTO `stock_source` (`id`, `market_type`, `stock_code`, `company_name`) VALUES (1455142472266051586, 2, '000550', '江铃汽车');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455013471152525313,2,'002475','立讯精密'),
+	 (1455013591168339969,2,'300750','宁德时代'),
+	 (1455013775155679233,1,'600009','上海机场'),
+	 (1455014012049969153,2,'002487','大金重工'),
+	 (1455014373175349250,2,'002707','众信旅游'),
+	 (1455016909085102081,2,'002008','大族激光'),
+	 (1455017032607354882,2,'300413','芒果超媒'),
+	 (1455017148223344642,2,'002594','比亚迪'),
+	 (1455017344499994626,2,'000725','京东方Ａ'),
+	 (1455017477094526977,1,'605011','杭州热电');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455017628878000130,2,'002457','青龙管业'),
+	 (1455084911742795778,1,'600745','闻泰科技'),
+	 (1455085225002778626,1,'516800','智能制造'),
+	 (1455085312198164482,1,'515000','科技ETF'),
+	 (1455085552804413441,1,'516020','化工ETF'),
+	 (1455085945391267842,1,'512170','医疗ETF'),
+	 (1455086006548414465,1,'515330','天弘300'),
+	 (1455086080313638913,1,'513330','恒生互联'),
+	 (1455086251206361090,2,'159967','创成长'),
+	 (1455086340586979330,1,'515170','食品饮料');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455086396689989634,1,'515210','钢铁ETF'),
+	 (1455086456911806465,1,'510230','金融ETF'),
+	 (1455086516277985281,1,'515880','通信ETF'),
+	 (1455086574188740609,1,'512720','计算机'),
+	 (1455086642958548994,1,'512290','生物医药'),
+	 (1455086746754990082,2,'159865','养殖ETF'),
+	 (1455087871956729858,1,'515220','煤炭ETF'),
+	 (1455088022242836481,2,'159902','中小100'),
+	 (1455088108620333057,1,'510050','50ETF'),
+	 (1455088163783819266,1,'510500','500ETF');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455088214832693249,1,'510300','300ETF'),
+	 (1455088276279246850,2,'159915','创业板'),
+	 (1455088569083609089,1,'512070','证券保险'),
+	 (1455088797467656194,1,'513180','恒指科技'),
+	 (1455088885543845890,2,'159869','游戏ETF'),
+	 (1455088986286833665,2,'000630','铜陵有色'),
+	 (1455089072932765697,1,'601212','白银有色'),
+	 (1455089126120734722,1,'512200','地产ETF'),
+	 (1455089192843722754,1,'512010','医药ETF'),
+	 (1455089779312279553,2,'160723','嘉实原油');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455089866448945153,2,'162411','华宝油气'),
+	 (1455090141796614146,1,'515030','新汽车'),
+	 (1455090199740923905,1,'588000','科创50'),
+	 (1455090262412214273,2,'159995','芯片ETF'),
+	 (1455090327419731969,1,'512980','传媒ETF'),
+	 (1455090380989382658,1,'515260','电子ETF'),
+	 (1455090489680576513,2,'159931','金融ETF'),
+	 (1455090593175027714,2,'159920','恒生ETF'),
+	 (1455090651933032449,2,'159996','家电ETF'),
+	 (1455090719624904706,1,'513050','中概互联');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455090784590479362,1,'512880','证券ETF'),
+	 (1455090851976167426,1,'510800','上证50'),
+	 (1455091122793988098,2,'159934','黄金ETF'),
+	 (1455091211931336705,1,'512581','环保ETF'),
+	 (1455091441972133889,1,'515050','5GETF'),
+	 (1455091492442193922,1,'512800','银行ETF'),
+	 (1455091634712985601,2,'300348','长亮科技'),
+	 (1455091693185777666,2,'000100','TCL科技'),
+	 (1455091771782840322,1,'601872','招商轮船'),
+	 (1455091855039774721,2,'000063','中兴通讯');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455091929614499842,2,'300059','东方财富'),
+	 (1455092012032573441,1,'603195','公牛集团'),
+	 (1455092103552286721,1,'601857','中国石油'),
+	 (1455092187920711682,2,'002714','牧原股份'),
+	 (1455092257017675777,2,'002157','正邦科技'),
+	 (1455092359455162369,2,'300144','宋城演艺'),
+	 (1455092424257159169,2,'000651','格力电器'),
+	 (1455092890076561409,2,'002236','大华股份'),
+	 (1455092957634215937,1,'601155','新城控股'),
+	 (1455093014789996545,1,'600776','东方通信');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455093097023520769,2,'002352','顺丰控股'),
+	 (1455093179940716545,1,'600660','福耀玻璃'),
+	 (1455093252254711809,2,'300866','安克创新'),
+	 (1455093325566951426,1,'600309','万华化学'),
+	 (1455093400221368322,1,'601766','中国中车'),
+	 (1455093491032244226,2,'000558','莱茵体育'),
+	 (1455093578361847809,2,'002460','赣锋锂业'),
+	 (1455093709089914882,2,'002223','鱼跃医疗'),
+	 (1455093771979309057,1,'603392','万泰生物'),
+	 (1455093829164449794,1,'600196','复星医药');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455093976820727810,2,'002901','大博医疗'),
+	 (1455094033338974209,2,'000518','四环生物'),
+	 (1455094128344154113,1,'600789','鲁抗医药'),
+	 (1455094189211893761,1,'600085','同仁堂'),
+	 (1455094271411863554,2,'300122','智飞生物'),
+	 (1455094403909926913,1,'600763','通策医疗'),
+	 (1455102216015036417,2,'300357','我武生物'),
+	 (1455102288199008258,2,'000538','云南白药'),
+	 (1455102347426775042,2,'000661','长春高新'),
+	 (1455102436354408449,2,'300015','爱尔眼科');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455102572526682113,2,'002044','美年健康'),
+	 (1455103765323825154,1,'600905','三峡能源'),
+	 (1455104054592389122,1,'600116','三峡水利'),
+	 (1455104160066551810,2,'002532','天山铝业'),
+	 (1455104214999351297,2,'002131','利欧股份'),
+	 (1455104262726336514,2,'000157','中联重科'),
+	 (1455104326861438977,1,'600031','三一重工'),
+	 (1455104389172019202,2,'000680','山推股份'),
+	 (1455104680818753537,1,'600815','厦工股份'),
+	 (1455104751132065793,2,'000528','柳 工');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455104795189035009,2,'300198','纳川股份'),
+	 (1455104850184749058,2,'002205','国统股份'),
+	 (1455137827535745025,2,'002372','伟星新材'),
+	 (1455137967742939138,1,'601595','上海电影'),
+	 (1455138012798152706,1,'600977','中国电影'),
+	 (1455138078816497665,2,'002739','万达电影'),
+	 (1455138227722678273,1,'600316','洪都航空'),
+	 (1455138316839055362,1,'601021','春秋航空'),
+	 (1455138404168658946,2,'002928','华夏航空'),
+	 (1455138504899063810,1,'603885','吉祥航空');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455138595428921346,1,'600115','中国东航'),
+	 (1455138647958384641,1,'600029','南方航空'),
+	 (1455138999898238977,2,'000089','深圳机场'),
+	 (1455139091216625665,1,'600004','白云机场'),
+	 (1455139190487412737,2,'000796','凯撒旅业'),
+	 (1455139254052089858,1,'603199','九华旅游'),
+	 (1455139327540490241,1,'600054','黄山旅游'),
+	 (1455139383224070145,2,'000610','西安旅游'),
+	 (1455139433522163713,2,'000978','桂林旅游'),
+	 (1455139669833445377,1,'601318','中国平安');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455139730210451458,1,'600027','华电国际'),
+	 (1455139807389839362,1,'600310','桂东电力'),
+	 (1455139955390050306,2,'000876','新 希 望'),
+	 (1455140015137910785,2,'000001','平安银行'),
+	 (1455140082045448194,2,'000010','美丽生态'),
+	 (1455140126152749057,2,'000029','深深房Ａ'),
+	 (1455140196617056257,1,'600048','保利发展'),
+	 (1455140263910469633,1,'600036','招商银行'),
+	 (1455140428746616834,1,'605499','东鹏饮料'),
+	 (1455140656295997442,2,'002563','森马服饰');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455140793659453442,1,'605338','巴比食品'),
+	 (1455140850005733378,1,'600519','贵州茅台'),
+	 (1455140913348112385,2,'000596','古井贡酒'),
+	 (1455140983720144898,1,'603369','今世缘'),
+	 (1455141055493074946,2,'000858','五 粮 液'),
+	 (1455141116797022209,1,'600887','伊利股份'),
+	 (1455141206882283521,2,'000895','双汇发展'),
+	 (1455141612421148673,1,'603288','海天味业'),
+	 (1455141670097022977,2,'002515','金字火腿'),
+	 (1455141724656529409,2,'002481','双塔食品');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1455141787894050817,1,'603719','良品铺子'),
+	 (1455141844039004162,2,'300783','三只松鼠'),
+	 (1455141922992582658,2,'000625','长安汽车'),
+	 (1455142089695195138,1,'600733','北汽蓝谷'),
+	 (1455142138789523457,1,'601238','广汽集团'),
+	 (1455142184318693377,1,'600104','上汽集团'),
+	 (1455142272290025474,1,'601633','长城汽车'),
+	 (1455142323867381761,1,'600609','金杯汽车'),
+	 (1455142369866313729,1,'600006','东风汽车'),
+	 (1455142472266051586,2,'000550','江铃汽车');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1456100723496644610,1,'600071','凤凰光学'),
+	 (1456547669742981122,1,'600359','新农开发'),
+	 (1456562146785959938,2,'000333','美的集团'),
+	 (1456562219091566594,2,'002415','海康威视'),
+	 (1458640133258559490,2,'002326','永太科技'),
+	 (1468404049257779202,1,'600860','京城股份'),
+	 (1469117301562339329,2,'002265','西仪股份'),
+	 (1470214475763216385,1,'600698','湖南天雁'),
+	 (1470583632698601473,1,'600986','浙文互联'),
+	 (1470583707977969665,2,'002354','天神娱乐');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1472815348108619777,2,'002699','美盛文化'),
+	 (1473857941718298625,2,'001317','三羊马'),
+	 (1476010766493675521,2,'002432','九安医疗'),
+	 (1476010868524314625,1,'600976','健民集团'),
+	 (1476010926774808578,2,'002082','万邦德'),
+	 (1476010996110848002,2,'300108','吉药控股'),
+	 (1476011054139043841,2,'002873','新天药业'),
+	 (1476011291637313537,2,'002349','精华制药'),
+	 (1480367241445892097,1,'601666','平煤股份'),
+	 (1482887832669286401,2,'002370','亚太药业');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1484440087175688194,1,'603123','翠微股份'),
+	 (1484452596927213569,2,'000665','湖北广电'),
+	 (1484454281099653122,2,'002027','分众传媒'),
+	 (1484484153385725954,1,'601919','中远海控'),
+	 (1484484441903509505,2,'300999','金龙鱼'),
+	 (1484484666823061505,2,'300760','迈瑞医疗'),
+	 (1491588752445820929,2,'002878','元隆雅图'),
+	 (1491589195188162562,1,'600715','文投控股'),
+	 (1492392222002266114,1,'600847','万里股份'),
+	 (1492667518727241729,1,'601111','中国国航');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1493104907278893057,2,'000002','万  科Ａ'),
+	 (1494126110336630785,1,'601669','中国电建'),
+	 (1498492067649699842,1,'600588','用友网络'),
+	 (1501803619110895617,2,'002709','天赐材料'),
+	 (1509363863617835010,1,'600600','青岛啤酒'),
+	 (1512240900971991042,1,'601668','中国建筑'),
+	 (1529652996068098049,1,'601225','陕西煤业'),
+	 (1542683822271774721,2,'002902','铭普光磁'),
+	 (1542683958574071810,1,'603993','洛阳钼业'),
+	 (1559011036102705153,2,'002587','奥拓电子');
+INSERT INTO stock_alert.stock_source (ID,MARKET_TYPE,STOCK_CODE,COMPANY_NAME) VALUES
+	 (1562630423148777474,1,'512690','酒ETF'),
+	 (1568134905278341121,2,'000573','粤宏远Ａ'),
+	 (1581849764868235266,1,'600585','海螺水泥');
