@@ -1,0 +1,17 @@
+version: '3'
+services:
+  stock-alert-schedule:
+    image: "stock-alert-schedule"
+    build: .
+    container_name: "stock-alert-schedule"
+    restart: always
+    ports:
+      - "8090:8090"
+    volumes:
+      - /opt/springboot/stock-alert-schedule/conf:/app/conf
+      - /opt/springboot/logs/stock-alert-schedule:/logs/stock-alert-schedule
+
+
+      
+      
+  

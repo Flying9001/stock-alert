@@ -1,0 +1,65 @@
+version: '3'
+services:
+  redis:
+    image: "redis:7.2.3"
+    container_name: "redis_7.2.3"
+    restart: always
+    ports:
+      - "6379:6379"
+    command:
+      - --requirepass "xxx"
+      - --bind 0.0.0.0
+
+  db_mysql:
+    image: "mysql:8.2.0"
+    container_name: "mysql_8.2.0"
+    env_file: docker.env
+    restart: always
+    ports:
+      - "3306:3306"
+    command:
+      - --bind-address=0.0.0.0
+      - --lower_case_table_names=1
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    volumes:
+      - /var/data/docker/mysql:/var/lib/mysql   
+
+
+  mq_rabbitmq:
+    image: "rabbitmq:3.12.8"
+    container_name: "rabbitmq_3.12.8"
+    env_file: docker.env
+    restart: always
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+    volumes:
+      - /var/data/docker/rabbitmq:/var/lib/rabbitmq
+
+
+  stock-alert:
+    image: "stock-alert"
+    build: .
+    depends_on:
+      redis:
+        condition: service_started
+      db_mysql:
+        condition: service_started
+      mq_rabbitmq:
+        condition: service_started
+    container_name: "stock-alert"
+    restart: always
+    ports:
+      - "8089:8089"
+    volumes:
+      - /opt/springboot/stock-alert/conf:/app/conf
+      - /opt/springboot/logs/stock-alert:/logs/stock-alert
+
+
+      
+      
+  

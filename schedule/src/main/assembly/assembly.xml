@@ -23,12 +23,22 @@
             <includes>
                 <include>*.yml</include>
                 <include>*.properties</include>
+                <include>*.xml</include>
             </includes>
         </fileSet>
         <fileSet>
             <fileMode>775</fileMode>
             <directory>deploy/bin</directory>
             <outputDirectory>./bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <fileMode>775</fileMode>
+            <directory>deploy/docker</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>*.*</include>
+                <include>*</include>
+            </includes>
         </fileSet>
 
     </fileSets>

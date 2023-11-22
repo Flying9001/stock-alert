@@ -23,6 +23,7 @@
             <includes>
                 <include>*.yml</include>
                 <include>*.properties</include>
+                <include>*.xml</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -31,9 +32,12 @@
             <outputDirectory>./bin</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${basedir}</directory>
+            <fileMode>775</fileMode>
+            <directory>deploy/docker</directory>
+            <outputDirectory>./</outputDirectory>
             <includes>
-                <include>*.md</include>
+                <include>*.*</include>
+                <include>*</include>
             </includes>
         </fileSet>
 
