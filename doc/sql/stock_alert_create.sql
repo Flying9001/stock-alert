@@ -3,6 +3,9 @@
 /* Created on:     2023/8/9 11:00:38                            */
 /*==============================================================*/
 
+DROP DATABASE IF EXISTS `stock_alert`;
+CREATE DATABASE `stock_alert` DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci';
+USE `stock_alert`;
 
 DROP TABLE IF EXISTS ALERT_MESSAGE;
 
