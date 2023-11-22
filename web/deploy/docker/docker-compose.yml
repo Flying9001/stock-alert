@@ -53,6 +53,7 @@ services:
         condition: service_started
     container_name: "stock-alert"
     restart: always
+    network_mode: host
     ports:
       - "8089:8089"
     volumes:

@@ -10,6 +10,7 @@ path="/opt/springboot/"
 # 运行镜像
 docker run -dt \
 --name stock-alert \
+--restart=always \
 -p 8089:8089 \
 -v ${path}/stock-alert/conf:/app/conf \
 -v ${path}/logs/stock-alert:/logs/stock-alert \

@@ -5,6 +5,7 @@ services:
     build: .
     container_name: "stock-alert-schedule"
     restart: always
+    network_mode: host
     ports:
       - "8090:8090"
     volumes:
