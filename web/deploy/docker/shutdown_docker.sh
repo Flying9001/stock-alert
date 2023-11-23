@@ -1,23 +1,29 @@
 #!/bin/sh
 # shutdown stock alert docker app
 
+# 应用名称
+appName="stock-alert-app"
+
 # 获取容器 id
-cid=$(docker container ls -a | grep stock-alert | awk '{ print $1 }')
+cid=$(docker container ls -a | grep ${appName} | awk '{ print $1 }')
 
 if [[ -z "${cid}" ]]
 then 
-  echo "no stock-alert app running!"
+  echo "no ${appName} running!"
 else
-  echo "stock-alert container id: ${cid}"
+  echo "${appName} container id: ${cid}"
   # 停止容器
+  echo "stop container ${appName}"
   docker container stop ${cid}
 
   # 删除容器
+  echo "remove container ${appName}"
   docker container rm ${cid}
  
   # 删除镜像
-  docker image rm stock-alert
+  echo "stop container ${appName}"
+  docker image rm ${appName}
 
-  echo "stock-alert stopped successfully!"
+  echo "${appName} stopped successfully!"
 fi
 

@@ -1,9 +1,9 @@
 version: '3'
 services:
-  stock-alert-schedule:
-    image: "stock-alert-schedule"
+  stock-alert-schedule-app:
+    image: "stock-alert-schedule-app"
     build: .
-    container_name: "stock-alert-schedule"
+    container_name: "stock-alert-schedule-app"
     restart: always
     network_mode: host
     ports:

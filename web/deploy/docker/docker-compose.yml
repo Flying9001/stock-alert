@@ -41,8 +41,8 @@ services:
       - /var/data/docker/rabbitmq:/var/lib/rabbitmq
 
 
-  stock-alert:
-    image: "stock-alert"
+  stock-alert-app:
+    image: "stock-alert-app"
     build: .
     depends_on:
       redis:
@@ -51,7 +51,7 @@ services:
         condition: service_started
       mq_rabbitmq:
         condition: service_started
-    container_name: "stock-alert"
+    container_name: "stock-alert-app"
     restart: always
     network_mode: host
     ports:
