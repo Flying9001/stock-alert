@@ -2,6 +2,7 @@ package com.ljq.stock.alert.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -285,10 +287,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 			return ApiResult.fail(ApiMsgEnum.USER_ACCOUNT_NOT_EXIST);
 		}
 		// 校验是否重复绑定
-		int countUserOauth = userOauthDao.selectCount(Wrappers.lambdaQuery(UserOauthEntity.class)
-				.eq(UserOauthEntity::getUserId, bindWechatMiniParam.getUserId()));
-		if (countUserOauth > 0) {
-			return ApiResult.fail(ApiMsgEnum.USER_WECHAT_MINI_BIND_REPEAT);
+		List<UserOauthEntity> userOauthList = userOauthDao.selectList(Wrappers.lambdaQuery(UserOauthEntity.class)
+				.eq(UserOauthEntity::getAccessId, loginRespVo.getOpenid()));
+		if (CollUtil.isNotEmpty(userOauthList)) {
+			if (Objects.equals(bindWechatMiniParam.getUserId(),userOauthList.get(0).getUserId())) {
+				return ApiResult.fail(ApiMsgEnum.USER_WECHAT_MINI_BIND_REPEAT);
+			}
+			return ApiResult.fail(ApiMsgEnum.USER_WECHAT_MINI_BIND_OTHER);
 		}
 		UserOauthEntity userOauthEntity = new UserOauthEntity();
 		userOauthEntity.setUserId(bindWechatMiniParam.getUserId());
