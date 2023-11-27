@@ -362,10 +362,16 @@ dos2unix.sh
 #!/bin/sh
 # stock-alert 项目执行脚本格式转换
 
-dos2unix /opt/springboot/stock-alert/bin/startup.sh
-dos2unix /opt/springboot/stock-alert/bin/shutdown.sh
-dos2unix /opt/springboot/stock-alert-schedule/bin/startup.sh
-dos2unix /opt/springboot/stock-alert-schedule/bin/shutdown.sh
+# 项目目录
+path=/opt/springboot/
+
+dos2unix ${path}/stock-alert/bin/startup.sh
+dos2unix ${path}/stock-alert/bin/shutdown.sh
+dos2unix ${path}/stock-alert/start_docker.sh
+dos2unix ${path}/stock-alert/shutdown_docker.sh
+
+dos2unix ${path}/stock-alert-schedule/bin/startup.sh
+dos2unix ${path}/stock-alert-schedule/bin/shutdown.sh
 ```
 
 添加脚本执行权限  

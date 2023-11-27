@@ -54,6 +54,8 @@
 
 [Stock Alert 部署文档](./doc/stock_alert_deploy_doc.md) 
 
+[Stock Alert Docker 一键部署文档](./doc/stock_alert_deploy_with_docker_doc.md)  
+
    
 
 ### 文档  
