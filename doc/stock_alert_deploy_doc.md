@@ -380,6 +380,12 @@ dos2unix ${path}/stock-alert-schedule/bin/shutdown.sh
 sudo chmod +x ./dos2unix.sh
 ```
 
+在执行 stock-alert-schedule 项目时，如果未设置管理员账号，系统会自动生成一个，账号密码随机生成，在启动日志中，格式为  
+
+```verilog
+init-初始化管理员账号-account:xxxx,passcode:xxxxx
+```
+
 
 
 ### 10 日志  
