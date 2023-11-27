@@ -39,7 +39,7 @@ mkdir /opt/springboot
 ```
 cd /opt/springboot
 
-tar -zxvf tar -zxvf stock-alert-1.0.0.tar.gz 
+tar -zxvf stock-alert-1.0.0.tar.gz 
 
 tar -zxvf stock-alert-schedule-1.0.0.tar.gz 
 ```
