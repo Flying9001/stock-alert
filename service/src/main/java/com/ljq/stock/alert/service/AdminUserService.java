@@ -1,6 +1,8 @@
 package com.ljq.stock.alert.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ljq.stock.alert.common.api.ApiResult;
+import com.ljq.stock.alert.model.entity.AdminUserEntity;
 import com.ljq.stock.alert.model.param.adminuser.*;
 
 /**
@@ -9,7 +11,7 @@ import com.ljq.stock.alert.model.param.adminuser.*;
  * @author junqiang.lu
  * @date 2022-08-15 11:08:13
  */
-public interface AdminUserService {
+public interface AdminUserService extends IService<AdminUserEntity> {
 
 	/**
      * 保存(单条)

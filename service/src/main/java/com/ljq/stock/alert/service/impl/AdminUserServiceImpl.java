@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
 import com.ljq.stock.alert.common.api.ApiResult;
 import com.ljq.stock.alert.common.constant.EnableEnum;
@@ -33,7 +34,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Service("adminUserService")
-public class AdminUserServiceImpl implements AdminUserService {
+public class AdminUserServiceImpl extends ServiceImpl<AdminUserDao, AdminUserEntity> implements AdminUserService {
 
 	@Autowired
 	private AdminUserDao adminUserDao;
