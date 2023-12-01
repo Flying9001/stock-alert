@@ -1,7 +1,10 @@
 package com.ljq.stock.alert.service.util;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.PageUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.api.ApiMsgEnum;
@@ -11,6 +14,7 @@ import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.constant.StockIndexEnum;
 import com.ljq.stock.alert.common.exception.CommonException;
 import com.ljq.stock.alert.common.util.SimpleHttpClientUtil;
+import com.ljq.stock.alert.common.util.ThreadPoolUtil;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.vo.StockIndexVo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: 股票工具类
@@ -58,11 +64,9 @@ public class StockUtil {
                 throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
             }
             return createStockIndexList(EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            log.error("{}", e.getMessage());
+        } catch (Exception e) {
+            log.error("get stock index alive from sina error.", e);
             throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
-        } catch (ArrayIndexOutOfBoundsException e2) {
-            throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
         }
     }
 
@@ -99,17 +103,83 @@ public class StockUtil {
         if (CollectionUtil.isEmpty(stockList)) {
             return Collections.emptyList();
         }
-        switch (apiConfig.getActive()) {
-            case StockConst.STOCK_API_SINA:
-                return getStocksFromSina(apiConfig, stockList);
-            case StockConst.STOCK_API_TENCENT:
-                return getStocksFromTencent(apiConfig, stockList);
-            case StockConst.STOCK_API_NETEASE:
-                return getStocksFromNetease(apiConfig, stockList);
-            default:
-                break;
+        int pageSize = 500;
+        int pageCount = PageUtil.totalPage(stockList.size(), pageSize);
+        List<StockSourceEntity> stockResultList = new ArrayList<>(pageSize);
+        CountDownLatch countDownLatch = new CountDownLatch(pageCount);
+        long time = 0;
+        for (int i = 0; i < pageCount; i++) {
+            List<StockSourceEntity> stockTempList;
+            int currentPoint = i * pageSize;
+            if (i == (pageCount - 1)) {
+                stockTempList = stockList.subList(currentPoint, stockList.size());
+            } else {
+                stockTempList = stockList.subList(currentPoint, currentPoint + pageSize);
+            }
+            time = time + RandomUtil.randomLong(100L, 300L);
+            ThreadPoolUtil.getSchedulePool("alive-stock").schedule(() -> {
+                countDownLatch.countDown();
+                switch (apiConfig.getActive()) {
+                    case StockConst.STOCK_API_SINA:
+                        return stockResultList.addAll(getStocksFromSina(apiConfig, stockTempList));
+                    case StockConst.STOCK_API_TENCENT:
+                        return stockResultList.addAll(getStocksFromTencent(apiConfig, stockTempList));
+                    case StockConst.STOCK_API_NETEASE:
+                        return stockResultList.addAll(getStocksFromNetease(apiConfig, stockTempList));
+                    default:
+                        break;
+                }
+                return stockResultList.addAll(getStocksFromSina(apiConfig, stockTempList));
+            }, time, TimeUnit.MILLISECONDS);
         }
-        return Collections.emptyList();
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            log.error("get stock alive data from sina error", e);
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
+        }
+        return stockResultList;
+    }
+
+    /**
+     * 获取市场所有股票(新浪接口)
+     *
+     * @param apiConfig
+     * @return
+     */
+    public static List<StockSourceEntity> getAllStockFromSina(StockApiConfig apiConfig) {
+        int pageCount = 100;
+        List<StockSourceEntity> stockSourceList = new ArrayList<>(1000);
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("num", "100");
+        paramMap.put("sort", "symbol");
+        paramMap.put("node", "hs_a");
+        Map<String, String> headersMap = new HashMap<>(8);
+        headersMap.put("Origin", "https://finance.sina.com.cn/");
+        headersMap.put("Referer", "https://finance.sina.com.cn/");
+        headersMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" +
+                " (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36");
+        CountDownLatch countDownLatch = new CountDownLatch(pageCount);
+        long time = 0;
+        for (int i = 1; i <= pageCount; i++) {
+            int finalI = i;
+            time = time + RandomUtil.randomLong(3L, 6L);
+            ThreadPoolUtil.getSchedulePool("sina-all-stock").schedule(() -> {
+                    paramMap.put("page", String.valueOf(finalI));
+                    HttpResponse httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAllStockSina(),
+                            null, paramMap, headersMap);
+                    stockSourceList.addAll(createStocksFromSinaAll(EntityUtils.toString(httpResponse.getEntity())));
+                    countDownLatch.countDown();
+                    return null;
+            }, time, TimeUnit.SECONDS);
+        }
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            log.error("get all stock data from sina error", e);
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
+        }
+        return stockSourceList;
     }
 
     /**
@@ -135,11 +205,9 @@ public class StockUtil {
             }
             return createStockFromSina(EntityUtils.toString(httpResponse.getEntity(), "UTF-8"),
                     marketType, stockCode);
-        } catch (IOException e) {
-            log.error("{}", e.getMessage());
+        } catch (Exception e) {
+            log.error("get stock alive from sina error", e);
             throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
-        } catch (ArrayIndexOutOfBoundsException e2) {
-            throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
         }
     }
 
@@ -173,11 +241,9 @@ public class StockUtil {
                         stockList.get(i).getStockCode(), stockList.get(i).getId()));
             }
             return resultStockList;
-        } catch (IOException e) {
-            log.error("{}", e.getMessage());
+        } catch (Exception e) {
+            log.error("get stock list alive from sina error.", e);
             throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
-        } catch (ArrayIndexOutOfBoundsException e2) {
-            throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
         }
     }
 
@@ -359,6 +425,34 @@ public class StockUtil {
     }
 
     /**
+     * 根据新浪所有股票接口返回创建股票对象
+     *
+     * @param stockData
+     * @return
+     */
+    private static List<StockSourceEntity> createStocksFromSinaAll(String stockData) {
+        JSONArray jsonArray = JSONUtil.parseArray(stockData);
+        if (jsonArray.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<StockSourceEntity> stockSourceList = new ArrayList<>(100);
+        StockSourceEntity stockSource;
+        JSONObject jsonObject;
+        for (int i = 0; i < jsonArray.size(); i++) {
+            stockSource = new StockSourceEntity();
+            jsonObject = jsonArray.get(i,JSONObject.class, true);
+            stockSource.setStockCode(jsonObject.get("code",String.class, true));
+            MarketEnum marketEnum = MarketEnum.getMarketByTypeCode(jsonObject.get("symbol",
+                    String.class, true).substring(0,2));
+            stockSource.setMarketType(marketEnum.getType());
+            stockSource.setMarketTypeCode(marketEnum.getCode());
+            stockSource.setCompanyName(jsonObject.get("name", String.class, true));
+            stockSourceList.add(stockSource);
+        }
+        return stockSourceList;
+    }
+
+    /**
      * 根据新浪接口返回数据创建股票对象
      *
      * @param stockData 股票数据
@@ -518,14 +612,12 @@ public class StockUtil {
      */
     private static String getQueryParamForNetease(int marketType, String stockCode) {
         switch (marketType) {
-            case StockConst.MARKET_TYPE_SHANGHAI:
+            case MarketEnum.MARKET_TYPE_SHANGHAI:
                 return "0" + stockCode;
-            case StockConst.MARKET_TYPE_SHENZHEN:
+            case MarketEnum.MARKET_TYPE_SHENZHEN:
                 return "1" + stockCode;
-            case StockConst.MARKET_TYPE_HK:
+            case MarketEnum.MARKET_TYPE_BEIJING:
                 return "2" + stockCode;
-            case StockConst.MARKET_TYPE_USA:
-                return "3" + stockCode;
             default:
                 return "-1";
         }

@@ -36,5 +36,23 @@ public class StockApiConfig {
     @Value(value = "${stockApi.active: sina}")
     private String active;
 
+    /**
+     * 新浪获取市场所有股票接口地址
+     */
+    @Value(value = "${stockApi.apiAllStockSina: https://vip.stock.finance.sina.com.cn/quotes_service/api/" +
+            "json_v2.php/Market_Center.getHQNodeData}")
+    private String apiAllStockSina;
+
+    /**
+     * 麦蕊获取市场所有股票接口地址
+     */
+    @Value(value = "${stockApi.apiAllStockMyData: https://api.mairui.club/hslt/list/}")
+    private String apiAllStockMyData;
+
+    /**
+     * 麦蕊获取市场所有股票接口地址
+     */
+    @Value(value = "${stockApi.apiMyDataLicence: xxx}")
+    private String apiMyDataLicence;
 
 }

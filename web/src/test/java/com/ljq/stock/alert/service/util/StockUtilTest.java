@@ -1,11 +1,13 @@
 package com.ljq.stock.alert.service.util;
 
+import cn.hutool.core.util.PageUtil;
 import cn.hutool.json.JSONUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
 import com.ljq.stock.alert.model.entity.StockSourceEntity;
 import com.ljq.stock.alert.model.vo.StockIndexVo;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class StockUtilTest {
@@ -57,6 +59,39 @@ class StockUtilTest {
         List<StockIndexVo> stockIndexVoList = StockUtil.getStockIndexLive(apiConfig);
         System.out.println("------------------------------------------");
         System.out.println(JSONUtil.toJsonStr(stockIndexVoList));
+
+    }
+
+    /**
+     * 列表分割测试
+     */
+    @Test
+    void listSubTest() {
+        int countTotal = 105;
+        int pageSize = 10;
+        List<String> stringList = new ArrayList<>(countTotal);
+        // list 伪造数据
+        for (int i = 0; i < countTotal; i++) {
+            stringList.add(i+1 + "");
+        }
+
+        // 分组解析数据
+        int pageCount = PageUtil.totalPage(stringList.size(),pageSize);
+        System.out.println("pageCount:" + pageCount);
+
+        List<String> stringTempList;
+        for (int i = 0; i < pageCount; i++) {
+            int currentPoint = i * pageSize;
+            if (i == pageCount - 1) {
+                stringTempList = stringList.subList(currentPoint, stringList.size());
+            } else {
+                stringTempList = stringList.subList(currentPoint, currentPoint + pageSize);
+            }
+            System.out.println("i=" + i);
+            System.out.println("list:" + stringTempList);
+        }
+
+
 
     }
 }

@@ -94,5 +94,14 @@ public interface StockSourceService extends IService<StockSourceEntity> {
 	 */
 	ApiResult<List<StockIndexVo>> queryIndexList();
 
+	/**
+	 * 初始化股票数据
+	 *
+	 * @param initDataParam
+	 * @return
+	 */
+	ApiResult<Void> initStockData(StockSourceInitDataParam initDataParam);
+
+
 
 }

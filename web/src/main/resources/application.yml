@@ -33,6 +33,9 @@ stockApi:
   apiTencent: https://sqt.gtimg.cn/q=
   apiNetease: https://api.money.126.net/data/feed/
   active: sina
+  apiAllStockSina: https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData
+  apiAllStockMyData: https://api.mairui.club/hslt/list/
+  apiMyDataLicence: xxx
 
 
 ## 微信配置

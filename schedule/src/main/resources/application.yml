@@ -5,7 +5,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: stock-alert
+    name: stock-alert-schedule
   datasource:
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,4 +33,7 @@ stockApi:
   apiTencent: https://sqt.gtimg.cn/q=
   apiNetease: https://api.money.126.net/data/feed/
   active: sina
+  apiAllStockSina: https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData
+  apiAllStockMyData: https://api.mairui.club/hslt/list/
+  apiMyDataLicence: xxx
 

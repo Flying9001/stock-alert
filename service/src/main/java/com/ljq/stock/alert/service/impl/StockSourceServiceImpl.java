@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 股票源业务层具体实现类
@@ -263,6 +265,42 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	@Override
 	public ApiResult<List<StockIndexVo>> queryIndexList() {
 		return ApiResult.success(StockUtil.getStockIndexLive(stockApiConfig));
+	}
+
+	/**
+	 * 初始化股票数据
+	 *
+	 * @param initDataParam
+	 * @return
+	 */
+	@Override
+	public ApiResult<Void> initStockData(StockSourceInitDataParam initDataParam) {
+		ThreadUtil.newThread(() -> {
+			List<StockSourceEntity> stockNetList = null;
+			switch (initDataParam.getDataSource().toLowerCase()) {
+				case "mydata":
+					// TODO 麦蕊数据
+
+
+				default:
+					stockNetList = StockUtil.getAllStockFromSina(stockApiConfig);
+					break;
+			}
+			if (CollUtil.isEmpty(stockNetList)) {
+				return;
+			}
+			// 查询本地股票数据
+			List<StockSourceEntity> stockDbList = super.list();
+			// 去除本地已经存在的股票数据
+			Map<String, String> stockDbMap = stockDbList.stream().collect(Collectors
+					.toMap(StockSourceEntity::getStockCode, StockSourceEntity::getCompanyName));
+			List<StockSourceEntity> stockTempList = stockNetList.stream().filter(stockSourceEntity ->
+					Objects.isNull(stockDbMap.get(stockSourceEntity.getStockCode()))).collect(Collectors.toList());
+			log.info("未同步股票数量: {}", stockTempList.size());
+			// 保存新股票
+			super.saveBatch(stockTempList);
+		}, "init-stock-thread").start();
+		return ApiResult.success();
 	}
 
 	/**
