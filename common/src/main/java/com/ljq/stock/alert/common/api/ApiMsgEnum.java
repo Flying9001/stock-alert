@@ -36,6 +36,7 @@ public enum ApiMsgEnum {
     STOCK_UNKNOWN_MARKET_TYPE("api.response.stock.unknownMarketType", "未知股票证券市场"),
     STOCK_QUERY_ERROR("api.response.stock.queryError", "未查询到股票数据"),
     STOCK_DELETE_ERROR_USER_HAS_FOLLOWED("api.response.stock.userHasFollowed", "当前股票用户已经关注,不可删除"),
+    STOCK_INIT_REPEAT("api.response.stock.initRepeat","股票初始化正在进行中,请勿频繁重复操作"),
 
     /**
      * 用户信息

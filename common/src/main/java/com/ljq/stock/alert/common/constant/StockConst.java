@@ -32,10 +32,12 @@ public class StockConst {
      * sina: 新浪
      * tencent: 腾讯
      * netease: 网易
+     * mydata: 麦蕊
      */
     public static final String STOCK_API_SINA = "sina";
     public static final String STOCK_API_TENCENT = "tencent";
     public static final String STOCK_API_NETEASE = "netease";
+    public static final String STOCK_API_MYDATA = "mydata";
 
 
 }

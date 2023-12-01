@@ -2,6 +2,7 @@ package com.ljq.stock.alert.schedule.init;
 
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.constant.StockConst;
+import com.ljq.stock.alert.model.param.stocksource.StockSourceInitDataParam;
 import com.ljq.stock.alert.service.StockSourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -32,9 +33,11 @@ public class InitStockSourceHandler implements ApplicationRunner {
         if (existFlag) {
             return;
         }
-        log.info("init-将所有数据库中的股票添加到缓存");
-        // 将所有数据库中的股票添加到缓存
-        stockSourceService.allDbToCache();
+        // 从证券市场初始化股票
+        log.info("init-从证券市场初始化股票");
+        StockSourceInitDataParam initDataParam = new StockSourceInitDataParam();
+        initDataParam.setDataSource(StockConst.STOCK_API_SINA);
+        stockSourceService.initStockData(initDataParam);
     }
 
 

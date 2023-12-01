@@ -26,6 +26,7 @@ import com.ljq.stock.alert.model.vo.StockIndexVo;
 import com.ljq.stock.alert.service.StockSourceService;
 import com.ljq.stock.alert.service.util.StockUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ThreadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -275,13 +276,19 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 	 */
 	@Override
 	public ApiResult<Void> initStockData(StockSourceInitDataParam initDataParam) {
+		// 防止频繁重复请求
+		String initThreadName = "init-stock-thread";
+		Collection<Thread> threads = ThreadUtils.findThreadsByName(initThreadName);
+		if (CollUtil.isNotEmpty(threads)) {
+			return ApiResult.fail(ApiMsgEnum.STOCK_INIT_REPEAT);
+		}
 		ThreadUtil.newThread(() -> {
 			List<StockSourceEntity> stockNetList = null;
 			switch (initDataParam.getDataSource().toLowerCase()) {
-				case "mydata":
+				case StockConst.STOCK_API_MYDATA:
 					// TODO 麦蕊数据
 
-
+					break;
 				default:
 					stockNetList = StockUtil.getAllStockFromSina(stockApiConfig);
 					break;
@@ -298,8 +305,14 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 					Objects.isNull(stockDbMap.get(stockSourceEntity.getStockCode()))).collect(Collectors.toList());
 			log.info("未同步股票数量: {}", stockTempList.size());
 			// 保存新股票
+			if (CollUtil.isEmpty(stockTempList)) {
+				return;
+			}
+			// 批量保存数据
 			super.saveBatch(stockTempList);
-		}, "init-stock-thread").start();
+			// 将数据保存到缓存中
+			this.allDbToCache();
+		}, initThreadName).start();
 		return ApiResult.success();
 	}
 

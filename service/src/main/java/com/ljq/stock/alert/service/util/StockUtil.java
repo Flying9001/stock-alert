@@ -118,18 +118,21 @@ public class StockUtil {
             }
             time = time + RandomUtil.randomLong(100L, 300L);
             ThreadPoolUtil.getSchedulePool("alive-stock").schedule(() -> {
-                countDownLatch.countDown();
                 switch (apiConfig.getActive()) {
                     case StockConst.STOCK_API_SINA:
-                        return stockResultList.addAll(getStocksFromSina(apiConfig, stockTempList));
+                        stockResultList.addAll(getStocksFromSina(apiConfig, stockTempList));
+                        break;
                     case StockConst.STOCK_API_TENCENT:
-                        return stockResultList.addAll(getStocksFromTencent(apiConfig, stockTempList));
+                        stockResultList.addAll(getStocksFromTencent(apiConfig, stockTempList));
+                        break;
                     case StockConst.STOCK_API_NETEASE:
-                        return stockResultList.addAll(getStocksFromNetease(apiConfig, stockTempList));
+                        stockResultList.addAll(getStocksFromNetease(apiConfig, stockTempList));
+                        break;
                     default:
                         break;
                 }
-                return stockResultList.addAll(getStocksFromSina(apiConfig, stockTempList));
+                countDownLatch.countDown();
+                return null;
             }, time, TimeUnit.MILLISECONDS);
         }
         try {
