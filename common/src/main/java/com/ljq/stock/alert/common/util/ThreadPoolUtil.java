@@ -86,7 +86,7 @@ public class ThreadPoolUtil {
      * 停止公共线程池
      */
     public static void shutdownCommonPool() {
-        scheduleThreadPoolExecutor.shutdown();
+        commonThreadPoolExecutor.shutdown();
     }
 
     /**

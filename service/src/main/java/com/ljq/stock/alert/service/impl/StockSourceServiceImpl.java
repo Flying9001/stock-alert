@@ -286,8 +286,7 @@ public class StockSourceServiceImpl extends ServiceImpl<StockSourceDao, StockSou
 			List<StockSourceEntity> stockNetList = null;
 			switch (initDataParam.getDataSource().toLowerCase()) {
 				case StockConst.STOCK_API_MYDATA:
-					// TODO 麦蕊数据
-
+					stockNetList = StockUtil.getAllStockFromMyData(stockApiConfig);
 					break;
 				default:
 					stockNetList = StockUtil.getAllStockFromSina(stockApiConfig);

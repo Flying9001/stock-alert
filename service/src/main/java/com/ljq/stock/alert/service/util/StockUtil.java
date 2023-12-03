@@ -186,6 +186,43 @@ public class StockUtil {
     }
 
     /**
+     * 获取市场所有股票(新浪接口)
+     *
+     * @param apiConfig
+     * @return
+     */
+    public static List<StockSourceEntity> getAllStockFromMyData(StockApiConfig apiConfig) {
+        List<StockSourceEntity> stockSourceList = new ArrayList<>(1000);
+        try {
+            HttpResponse httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiAllStockMyData(),
+                    apiConfig.getApiMyDataLicence(), null, null);
+            if (!Objects.equals(httpResponse.getStatusLine().getStatusCode(), HttpStatus.SC_OK)) {
+                throw new CommonException(ApiMsgEnum.STOCK_QUERY_ERROR);
+            }
+            JSONArray jsonArray = JSONUtil.parseArray(EntityUtils.toString(httpResponse.getEntity(),
+                    StandardCharsets.UTF_8));
+            log.debug("stock size: {}", jsonArray.size());
+            StockSourceEntity stockSource;
+            for (int i = 0; i < jsonArray.size(); i++) {
+                stockSource = new StockSourceEntity();
+                JSONObject jsonObject = jsonArray.get(i, JSONObject.class, true);
+                stockSource.setStockCode(jsonObject.get("dm",String.class, true));
+                stockSource.setCompanyName(jsonObject.get("mc", String.class, true));
+                MarketEnum marketEnum = MarketEnum.getMarketByTypeCode(jsonObject.get("jys", String.class,true));
+                stockSource.setMarketType(marketEnum.getType());
+                stockSource.setMarketTypeCode(marketEnum.getCode());
+                stockSourceList.add(stockSource);
+            }
+        } catch (Exception e) {
+            log.error("get all stock from mydata error", e);
+            throw new CommonException(ApiMsgEnum.UNKNOWN_ERROR);
+        }
+        return stockSourceList;
+    }
+
+
+
+    /**
      * 从新浪接口获取股票对象
      *
      * @param apiConfig 股票接口配置
