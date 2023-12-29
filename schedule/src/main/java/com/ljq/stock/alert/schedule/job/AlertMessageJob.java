@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ljq.stock.alert.common.component.RedisUtil;
 import com.ljq.stock.alert.common.config.StockApiConfig;
+import com.ljq.stock.alert.common.config.TaskExecutorConfig;
 import com.ljq.stock.alert.common.constant.StockConst;
 import com.ljq.stock.alert.common.util.CacheKeyUtil;
 import com.ljq.stock.alert.dao.AlertMessageDao;
@@ -21,6 +22,8 @@ import com.ljq.stock.alert.service.util.MessageHelper;
 import com.ljq.stock.alert.service.util.StockUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,7 @@ import java.util.*;
  * @Date: 2021/5/8
  */
 @Slf4j
+@EnableAsync
 @Component
 public class AlertMessageJob {
 
@@ -54,6 +58,7 @@ public class AlertMessageJob {
      * 刷新股票数据
      * 5 秒 1 次
      */
+    @Async(value = TaskExecutorConfig.STOCK_ALERT_SCHEDULE_NAME)
     @Scheduled(fixedDelay = 5 * 1000L, initialDelay = 5 * 1000L)
     public void flashStockData() {
         // 从缓存中读取所有股票数据
@@ -62,6 +67,7 @@ public class AlertMessageJob {
         if (CollUtil.isEmpty(stockCacheList)) {
             return;
         }
+        log.debug("测试定时任务是否停止");
         // 查询股票数据
         List<StockSourceEntity> stockLiveList = StockUtil.getStocksLive(stockApiConfig, stockCacheList);
         // 更新缓存中股票数据
@@ -76,6 +82,7 @@ public class AlertMessageJob {
      * 比对股票数据
      * 10 秒 1 次
      */
+    @Async(value = TaskExecutorConfig.STOCK_ALERT_SCHEDULE_NAME)
     @Scheduled(fixedDelay = 10 * 1000L, initialDelay = 30 * 1000L)
     public void compareStockPrice() {
         // 查询所有用户关注的股票
@@ -104,6 +111,7 @@ public class AlertMessageJob {
      * 消息重试,最多重试 5 次
      * 120 秒 1 次
      */
+    @Async(value = TaskExecutorConfig.STOCK_ALERT_SCHEDULE_NAME)
     @Scheduled(fixedDelay = 120 * 1000L, initialDelay = 30 * 1000L)
     public void messageReTry() {
         // 统计所有当天发送失败的消息
@@ -136,6 +144,7 @@ public class AlertMessageJob {
     /**
      * 周报，每周五下午五点向用户发送当周所关注股票的最新数据
      */
+    @Async(value = TaskExecutorConfig.STOCK_ALERT_SCHEDULE_NAME)
     @Scheduled(cron = "0 0 17 ? * 5")
     public void weekReport() {
         // 查询所有有关注股票的用户(分页分段)

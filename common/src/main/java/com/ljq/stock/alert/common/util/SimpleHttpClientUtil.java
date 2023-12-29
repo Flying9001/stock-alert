@@ -30,6 +30,21 @@ import java.util.Map;
  */
 public class SimpleHttpClientUtil {
 
+    /**
+     * 默认连接超时时间
+     */
+    private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
+
+    /**
+     * 默认请求超时时间
+     */
+    private static final int DEFAULT_REQUEST_TIMEOUT = 30000;
+
+    /**
+     * 默认读取超时时间
+     */
+    private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
+
     private static volatile HttpClient httpClient;
 
     private SimpleHttpClientUtil(){
@@ -51,8 +66,9 @@ public class SimpleHttpClientUtil {
                                      Map<String, String> headersMap) throws IOException {
         initHttpClient();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(10000)
-                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
+                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
+                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
                 .build();
         HttpGet httpGet = new HttpGet(getRequestUrl(host, path, paramsMap));
         httpGet.setConfig(requestConfig);
@@ -81,8 +97,9 @@ public class SimpleHttpClientUtil {
                                       Map<String, String> headersMap) throws IOException {
         initHttpClient();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(10000)
-                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
+                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
+                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
                 .build();
         HttpPost httpPost = new HttpPost(getRequestUrl(host, path, paramsMap));
         httpPost.setConfig(requestConfig);
@@ -110,8 +127,9 @@ public class SimpleHttpClientUtil {
             throws IOException {
         initHttpClient();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(10000)
-                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
+                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
+                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
                 .build();
         String uri = host;
         if (path != null && path.length() > 0) {
@@ -177,8 +195,9 @@ public class SimpleHttpClientUtil {
                                       Map<String, String> headersMap) throws IOException {
         initHttpClient();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(10000)
-                .setConnectTimeout(5000)
+                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
+                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
+                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
                 .build();
         String uri = host;
         if (path != null && path.length() > 0) {
