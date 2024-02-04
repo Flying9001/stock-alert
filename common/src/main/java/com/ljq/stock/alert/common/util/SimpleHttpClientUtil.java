@@ -1,51 +1,66 @@
 package com.ljq.stock.alert.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Consts;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Description: 网络请求工具类--Powered by Apache HttpClient
  * @Author: junqiang.lu
  * @Date: 2019/5/16
  */
+@Slf4j
 public class SimpleHttpClientUtil {
 
-    /**
-     * 默认连接超时时间
-     */
-    private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
 
     /**
-     * 默认请求超时时间
+     * 连接池最大连接数
      */
-    private static final int DEFAULT_REQUEST_TIMEOUT = 30000;
+    private static final int CONNECT_MAX_TOTAL = 100;
 
     /**
-     * 默认读取超时时间
+     * 连接最大并发数
      */
-    private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
+    private static final int CONNECT_MAX_PER_ROUTE = 20;
 
-    private static volatile HttpClient httpClient;
+    /**
+     * 连接超时时间,单位:毫秒
+     */
+    private static final int CONNECT_TIMEOUT = 5000;
+
+    /**
+     * 发起请求超时时间,单位:毫秒
+     */
+    private static final int CONNECT_REQUEST_TIMEOUT = 5000;
+
+    /**
+     * 读取超时时间,单位:毫秒
+     */
+    private static final int SOCKET_TIMEOUT = 10000;
+
+    private static volatile CloseableHttpClient httpClient;
 
     private SimpleHttpClientUtil(){
     }
@@ -62,24 +77,15 @@ public class SimpleHttpClientUtil {
      * @return
      * @throws IOException
      */
-    public static HttpResponse doGet(String host, String path, Map<String, String> paramsMap,
-                                     Map<String, String> headersMap) throws IOException {
-        initHttpClient();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
-                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
-                .build();
-        HttpGet httpGet = new HttpGet(getRequestUrl(host, path, paramsMap));
-        httpGet.setConfig(requestConfig);
+    public static CloseableHttpResponse doGet(String host, String path, Map<String, String> paramsMap,
+                                              Map<String, String> headersMap) throws IOException {
+        HttpGet httpGet = new HttpGet(getRequestUri(host, path, paramsMap));
         httpGet.setHeader(HTTP.CONTENT_TYPE, ContentType.create(ContentType.APPLICATION_FORM_URLENCODED
                 .getMimeType(), Consts.UTF_8).toString());
-        if (headersMap != null && !headersMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : headersMap.entrySet()) {
-                httpGet.addHeader(entry.getKey(), entry.getValue());
-            }
+        if (Objects.nonNull(headersMap) && !headersMap.isEmpty()) {
+            headersMap.forEach(httpGet::addHeader);
         }
-        return httpClient.execute(httpGet);
+        return getHttpClient().execute(httpGet);
     }
 
     /**
@@ -93,24 +99,15 @@ public class SimpleHttpClientUtil {
      * @return
      * @throws IOException
      */
-    public static HttpResponse doPost(String host, String path, Map<String, String> paramsMap,
+    public static CloseableHttpResponse doPost(String host, String path, Map<String, String> paramsMap,
                                       Map<String, String> headersMap) throws IOException {
-        initHttpClient();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
-                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
-                .build();
-        HttpPost httpPost = new HttpPost(getRequestUrl(host, path, paramsMap));
-        httpPost.setConfig(requestConfig);
+        HttpPost httpPost = new HttpPost(getRequestUri(host, path, paramsMap));
         httpPost.setHeader(HTTP.CONTENT_TYPE, ContentType.create(ContentType.APPLICATION_FORM_URLENCODED
                 .getMimeType(), Consts.UTF_8).toString());
-        if (headersMap != null && !headersMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : headersMap.entrySet()) {
-                httpPost.addHeader(entry.getKey(), entry.getValue());
-            }
+        if (Objects.nonNull(headersMap) && !headersMap.isEmpty()) {
+            headersMap.forEach(httpPost::addHeader);
         }
-        return httpClient.execute(httpPost);
+        return getHttpClient().execute(httpPost);
     }
 
     /**
@@ -123,29 +120,16 @@ public class SimpleHttpClientUtil {
      * @param headersMap 请求头参数
      * @return
      */
-    public static HttpResponse doPost(String host, String path, String jsonParams, Map<String, String> headersMap)
+    public static CloseableHttpResponse doPost(String host, String path, String jsonParams, Map<String, String> headersMap)
             throws IOException {
-        initHttpClient();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
-                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
-                .build();
-        String uri = host;
-        if (path != null && path.length() > 0) {
-            uri += path;
-        }
-        HttpPost httpPost = new HttpPost(uri);
+        HttpPost httpPost = new HttpPost(getRequestUri(host,path, null));
         StringEntity stringentity = new StringEntity(jsonParams, ContentType.APPLICATION_JSON);
         httpPost.setEntity(stringentity);
-        httpPost.setConfig(requestConfig);
         httpPost.addHeader(HTTP.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
-        if (headersMap != null && !headersMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : headersMap.entrySet()) {
-                httpPost.addHeader(entry.getKey(), entry.getValue());
-            }
+        if (Objects.nonNull(headersMap) && !headersMap.isEmpty()) {
+            headersMap.forEach(httpPost::addHeader);
         }
-        return httpClient.execute(httpPost);
+        return getHttpClient().execute(httpPost);
     }
 
     /**
@@ -158,23 +142,16 @@ public class SimpleHttpClientUtil {
      * @param headersMap 请求头参数
      * @return
      */
-    public static HttpResponse doPost(String host, String path, List<NameValuePair> nameValuePairList,
+    public static CloseableHttpResponse doPost(String host, String path, List<NameValuePair> nameValuePairList,
                                       Map<String, String> headersMap) throws IOException {
-        initHttpClient();
-        String uri = host;
-        if (path != null && path.length() > 0) {
-            uri += path;
-        }
-        HttpPost httpPost = new HttpPost(uri);
+        HttpPost httpPost = new HttpPost(getRequestUri(host, path, null));
         httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairList,Consts.UTF_8));
         httpPost.setHeader(HTTP.CONTENT_TYPE, ContentType.create(ContentType.APPLICATION_FORM_URLENCODED.getMimeType(),
                 Consts.UTF_8).toString());
-        if (headersMap != null && !headersMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : headersMap.entrySet()) {
-                httpPost.addHeader(entry.getKey(), entry.getValue());
-            }
+        if (Objects.nonNull(headersMap) && !headersMap.isEmpty()) {
+            headersMap.forEach(httpPost::addHeader);
         }
-        return httpClient.execute(httpPost);
+        return getHttpClient().execute(httpPost);
     }
 
     /**
@@ -190,20 +167,10 @@ public class SimpleHttpClientUtil {
      * @param headersMap 请求头参数
      * @return
      */
-    public static HttpResponse doPost(String host, String path, Map<String, String> paramsMap,
+    public static CloseableHttpResponse doPost(String host, String path, Map<String, String> paramsMap,
                                       InputStream fileInputStream, String name, String fileOriginalName,
                                       Map<String, String> headersMap) throws IOException {
-        initHttpClient();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(DEFAULT_REQUEST_TIMEOUT)
-                .setSocketTimeout(DEFAULT_SOCKET_TIMEOUT)
-                .setConnectTimeout(DEFAULT_CONNECT_TIMEOUT)
-                .build();
-        String uri = host;
-        if (path != null && path.length() > 0) {
-            uri += path;
-        }
-        HttpPost httpPost = new HttpPost(uri);
+        HttpPost httpPost = new HttpPost(getRequestUri(host, path, paramsMap));
         MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
         // 解决中文文件名乱码问题
         entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -216,24 +183,34 @@ public class SimpleHttpClientUtil {
             entityBuilder.addBinaryBody(name, fileInputStream, ContentType.DEFAULT_BINARY, fileOriginalName);
         }
         httpPost.setEntity(entityBuilder.build());
-        httpPost.setConfig(requestConfig);
-        if (headersMap != null && !headersMap.isEmpty()) {
-            for (Map.Entry<String, String> entry : headersMap.entrySet()) {
-                httpPost.addHeader(entry.getKey(), entry.getValue());
-            }
+        if (Objects.nonNull(headersMap) && !headersMap.isEmpty()) {
+            headersMap.forEach(httpPost::addHeader);
         }
-        return httpClient.execute(httpPost);
+        return getHttpClient().execute(httpPost);
     }
 
     /**
      * 初始化 httpClient
      * @return
      */
-    private static HttpClient initHttpClient() {
-        if  (httpClient == null) {
+    private static CloseableHttpClient getHttpClient() {
+        if (Objects.isNull(httpClient)) {
             synchronized (SimpleHttpClientUtil.class) {
-                if (httpClient == null) {
-                    httpClient = HttpClients.createDefault();
+                if (Objects.isNull(httpClient)) {
+                    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+                    connectionManager.setMaxTotal(CONNECT_MAX_TOTAL);
+                    connectionManager.setDefaultMaxPerRoute(CONNECT_MAX_PER_ROUTE);
+
+                    RequestConfig requestConfig = RequestConfig.custom()
+                            .setConnectTimeout(CONNECT_TIMEOUT)
+                            .setConnectionRequestTimeout(CONNECT_REQUEST_TIMEOUT)
+                            .setSocketTimeout(SOCKET_TIMEOUT)
+                            .build();
+                    httpClient = HttpClientBuilder.create()
+                            .setConnectionManager(connectionManager)
+                            .setDefaultRequestConfig(requestConfig)
+                            .build();
+                    log.info("new HttpClient,{}", httpClient);
                 }
             }
         }
@@ -241,35 +218,28 @@ public class SimpleHttpClientUtil {
     }
 
     /**
-     * 获取完整请求地址(包含参数)
-     * 参数拼接在 url 中
+     * 获取请求 URI
      *
-     * @param host 请求地址
-     * @param path 接口路径
-     * @param paramsMap 请求参数
+     * @param host
+     * @param path
+     * @param paramsMap
      * @return
      */
-    private static String getRequestUrl(String host, String path, Map<String, String> paramsMap) throws UnsupportedEncodingException {
-        String uri = host;
-        if (path != null && path.length() > 0) {
-            uri += path;
-        }
-        StringBuilder reqUrl = new StringBuilder(uri);
-        if (paramsMap != null && !paramsMap.isEmpty()) {
-            StringBuilder params = new StringBuilder();
-            for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-                params.append("&" + entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()));
+    private static URI getRequestUri(String host, String path, Map<String, String> paramsMap) {
+        try {
+            String uri = host;
+            if (Objects.nonNull(path) && path.length() > 0) {
+                uri += path;
             }
-            String paramConnector = "?";
-            if (!uri.contains(paramConnector)) {
-                reqUrl.append(paramConnector);
-                reqUrl.append(params.toString().substring(1));
-            } else {
-                reqUrl.append(params.toString());
+            URIBuilder uriBuilder = new URIBuilder(uri);
+            if (Objects.nonNull(paramsMap) && !paramsMap.isEmpty()) {
+                paramsMap.forEach(uriBuilder::addParameter);
             }
+            return uriBuilder.build();
+        } catch (URISyntaxException e) {
+            log.error("get request uri error", e);
         }
-
-        return reqUrl.toString();
+        return null;
     }
 
 
