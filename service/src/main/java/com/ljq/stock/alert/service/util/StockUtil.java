@@ -20,6 +20,7 @@ import com.ljq.stock.alert.model.vo.StockIndexVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -237,7 +238,7 @@ public class StockUtil {
         String pathParam = getQueryParam(marketEnum.getCode(), stockCode);
         Map<String, String> headersMap = new HashMap<>(8);
         headersMap.put("Referer", "https://finance.sina.com.cn/");
-        HttpResponse httpResponse = null;
+        CloseableHttpResponse httpResponse = null;
         try {
             httpResponse = SimpleHttpClientUtil.doGet(apiConfig.getApiSina(), pathParam, null, headersMap);
             if (!Objects.equals(httpResponse.getStatusLine().getStatusCode(), HttpStatus.SC_OK)) {

@@ -192,9 +192,6 @@ public class AlertMessageMqReceiver {
         } catch (Exception e) {
             log.error("alert message send error", e);
             // 更新消息状态
-            MessagePushResultEntity pushResultError = new MessagePushResultEntity();
-            pushResultError.setPushResult(MessageConst.MESSAGE_SEND_FAIL);
-            pushResultError.setRetryTime(pushResultError.getRetryTime() + 1);
             LambdaUpdateWrapper<MessagePushResultEntity> wrapper = Wrappers.lambdaUpdate(MessagePushResultEntity.class);
             wrapper.eq(MessagePushResultEntity::getMessageId, alertMessage.getId());
             // 根据异常类型判定是什么方式推送失败
@@ -203,7 +200,9 @@ public class AlertMessageMqReceiver {
             } else {
                 wrapper.eq(MessagePushResultEntity::getPushType, UserPushConst.USER_PUSH_TYPE_PUSHPLUS_WECHAT_PUBLIC);
             }
-            pushResultDao.update(pushResultError, wrapper);
+            wrapper.set(MessagePushResultEntity::getPushResult, MessageConst.MESSAGE_SEND_FAIL)
+                            .setSql("retry_time = retry_time + 1");
+            pushResultDao.update(null, wrapper);
             // 释放消息消费资源
             String cacheKey = CacheKeyUtil.create(MessageConst.CACHE_KEY_ALERT_MESSAGE_TO_SEND,
                     String.valueOf(alertMessage.getId()), null);

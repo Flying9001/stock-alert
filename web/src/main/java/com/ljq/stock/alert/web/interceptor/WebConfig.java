@@ -7,8 +7,7 @@ import org.springframework.web.servlet.config.annotation.*;
 
 /**
  * @Description: web 应用配置
- * @Author: junqiang.lu
- * @Date: 2020/9/4
+ * @Author: Mr.lu
  */
 @Configuration
 @EnableWebMvc
@@ -55,8 +54,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
+                .allowCredentials(true)
                 .allowedMethods("GET","HEAD","POST","PUT","PATCH","DELETE","OPTIONS","TRACE")
-                .allowedOrigins("*")
+                .allowedOriginPatterns("*")
                 .allowedHeaders("*")
                 .maxAge(3600);
     }
